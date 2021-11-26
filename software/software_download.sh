@@ -1,0 +1,1 @@
+# script for downloading bioinformatics software tools, such as PLINK

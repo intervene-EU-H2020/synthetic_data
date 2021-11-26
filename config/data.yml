@@ -1,0 +1,129 @@
+# specify which pipeline/s you want to run by setting their value to `true`
+pipelines:
+  generate_genotype_data:   true  # generate synthetic genotype data
+  generate_phenotype_data:  false # generate synthetic phenotype data
+  evaluation:               true  # evaluate synthetic data quality after generating the data
+
+# configuration for genotype data generation
+# - you can heavily customise population structure/admixture of the synthetic data
+#   by creating a list of custom population groups with the following parameters:
+#
+#   `id`:          a name for your custom population group, e.g. `example1`
+#   `numsamples`:  the number of samples you want to generate for this population group, e.g. 100
+#   `populations`: the population structure/admixture composition for the population group,
+#                  as a list of superpopulation/population codes (based on the 1000 Genomes dataset)
+#                  that you want to include, and their corresponding proportions (which must sum to 100)
+#
+#                  for example, if you want to generate 100 genotypes with EUR ancestry and 200
+#                  genotypes with AFR ancestry, you could write
+#                   
+#                   - id: EUR_pop
+#                     numsamples: 100
+#                     populations:
+#                       - EUR: 100
+#                   - id: AFR_pop
+#                     numsamples: 200
+#                     populations:
+#                       - AFR: 100
+#
+#                 or, if you wanted 100 admixed genotypes where each genotype is composed of 50% 
+#                 EUR ancestry and 50% AFR ancestry, you could write
+#                 
+#                   - id: admix_pop
+#                     numsamples: 100
+#                     populations:
+#                       - EUR: 50
+#                       - AFR: 50
+#
+#                you can specify custom population groups using *either* superpopulations or populations, 
+#                but you cannot mix superpopulations and populations within the same custom population group
+#                (see a list of codes at the bottom of this document)
+genotype_data:
+  samples:
+    use_default: false
+    custom:
+      - id: examplepop1
+        numsamples: 1000
+        populations: 
+          - EUR: 100
+      - id: examplepop2
+        numsamples: 500
+        populations:
+          - GBR: 30
+          - IBS: 70
+    default:
+      nsamples: 10000
+      superpopulation: all # specify `all` or give a specific superpopulation, e.g. `EUR`
+  # recombination rate (default values were determined by our optimisation procedure)
+  rho:
+    AFR: 0.001 # default 0.001
+    AMR: 0.001 # default 0.001
+    EAS: 0.001 # default 0.001
+    EUR: 0.001 # default 0.001
+    SAS: 0.001 # default 0.001
+  # mean of effective population size (default values were determined by our optimisation procedure)
+  Ne:
+    AFR: 2000 # default 2000
+    AMR: 2000 # default 2000
+    EAS: 2000 # default 2000
+    EUR: 2000 # default 2000
+    SAS: 2000 # default 2000
+
+# TODO replace default parameter values after running likelihood free inference
+
+# configuration for phenotype data generation
+# TODO
+
+# configuration for synthetic data evaluation
+# - specify which metrics you want to use by setting the value to true
+evaluation:
+  metrics:
+    aats:     true  # nearest neighbour adversarial accuracy
+    kinship:  true  # kinship relatedness
+    ld:       true  # linkage disequilibrium
+    maf:      true  # minor allele frequency divergences
+    pca:      true  # principal components analysis
+
+
+# superpopulation code list:
+#
+#   AFR African
+#   AMR Admixed American
+#   EAS East Asian
+#   EUR European
+#   SAS South Asian
+#
+#
+# population code list:
+# 
+#   CHB Han Chinese             Han Chinese in Beijing, China
+#   JPT Japanese                Japanese in Tokyo, Japan
+#   CHS Southern Han Chinese    Han Chinese South
+#   CDX Dai Chinese             Chinese Dai in Xishuangbanna, China
+#   KHV Kinh Vietnamese         Kinh in Ho Chi Minh City, Vietnam
+#   CHD Denver Chinese          Chinese in Denver, Colorado (pilot 3 only)
+
+#   CEU CEPH                    Utah residents (CEPH) with Northern and Western European ancestry 
+#   TSI Tuscan                  Toscani in Italia 
+#   GBR British                 British in England and Scotland 
+#   FIN Finnish                 Finnish in Finland 
+#   IBS Spanish                 Iberian populations in Spain 
+
+#   YRI Yoruba                  Yoruba in Ibadan, Nigeria
+#   LWK Luhya                   Luhya in Webuye, Kenya
+#   GWD Gambian                 Gambian in Western Division, The Gambia 
+#   MSL Mende                   Mende in Sierra Leone
+#   ESN Esan                    Esan in Nigeria
+
+#   ASW African-American SW     African Ancestry in Southwest US  
+#   ACB African-Caribbean       African Caribbean in Barbados
+#   MXL Mexican-American        Mexican Ancestry in Los Angeles, California
+#   PUR Puerto Rican            Puerto Rican in Puerto Rico
+#   CLM Colombian               Colombian in Medellin, Colombia
+#   PEL Peruvian                Peruvian in Lima, Peru
+
+#   GIH Gujarati                Gujarati Indian in Houston, TX
+#   PJL Punjabi                 Punjabi in Lahore, Pakistan
+#   BEB Bengali                 Bengali in Bangladesh
+#   STU Sri Lankan              Sri Lankan Tamil in the UK
+#   ITU Indian                  Indian Telugu in the UK
