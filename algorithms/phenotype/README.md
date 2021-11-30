@@ -17,5 +17,7 @@ where ```Parfile``` is a parameter file in plain text, and ```seed``` is a numer
 
 _This will be updated to connect with config_
 
+**It also takes a reference file for LD, but it's a little too big for github (~36Mb in .gz)**
+
 
 
