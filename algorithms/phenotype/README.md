@@ -1,6 +1,6 @@
 # Phenotype generation algorithm
 
-"Working code" for phenotype generation, subject to further updates.
+_"Working code" for phenotype generation, subject to further updates._
 
 Dependents: gsl, blas
 
