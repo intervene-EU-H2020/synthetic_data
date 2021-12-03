@@ -1,11 +1,45 @@
-# specify which pipeline/s you want to run by setting their value to `true`
-pipelines:
-  generate_genotype_data:   true  # generate synthetic genotype data
-  generate_phenotype_data:  false # generate synthetic phenotype data
-  evaluation:               true  # evaluate synthetic data quality after generating the data
+####################################
+# GLOBAL PARAMETERS                #
+####################################
 
-# configuration for genotype data generation
-# - you can heavily customise population structure/admixture of the synthetic data
+global_parameters: 
+  random_seed: 123 # speicfy a random seed for reproducibility (note that all chromosomes part of the same dataset MUST use the same seed number)
+  chromosome: all # specify `all` or give a number from 1 to 22
+  superpopulation: none # if creating data for a specific superpopulation, choose from `AFR`, `AMR`, `EAS`, `EUR`, `SAS` (otherwise set to "none")
+
+
+####################################
+# FILEPATHS                        #
+####################################
+
+# - the chromosome number can be given as a wildcard by specifying {chromosome} in the filepath
+# - the superpopulation can be given as a wildcard by specifying {superpop} in the filepath
+filepaths:
+  input_directory: data/inputs
+  output_directory: data/outputs/test
+  raw_data_inputs: data/inputs/raw
+  raw_vcf_input: data/inputs/raw/1KGPhase3.chr{chromosome}.vcf.gz
+  variant_list: data/inputs/external/variant_list.txt
+  genetic_map: data/inputs/raw/genetic_maps/chr{chromosome}.interpolated_genetic_map
+  processed_data_inputs: data/inputs/processed
+  processed_vcf_input: data/inputs/processed/1KGPhase3.chr{chromosome}.hapmap.vcf.gz
+  distfile: data/inputs/processed/genetic_distances/chr{chromosome}.distfile
+  hap1_matrix: data/inputs/processed/1KGPhase3.chr{chromosome}.hapmap.h1
+  hap2_matrix: data/inputs/processed/1KGPhase3.chr{chromosome}.hapmap.h2
+  metadata: data/inputs/processed/metadata.chr{chromosome}
+  synthetic_data_prefix: test
+
+software_paths:
+    plink: software/plink
+    king: software/king
+    vcftools: software/vcftools
+
+
+####################################
+# GENOTYPE DATA                    #
+####################################
+
+#   You can heavily customise population structure/admixture of the synthetic data
 #   by creating a list of custom population groups with the following parameters:
 #
 #   `id`:          a name for your custom population group, e.g. `example1`
@@ -40,7 +74,7 @@ pipelines:
 #                (see a list of codes at the bottom of this document)
 genotype_data:
   samples:
-    use_default: false
+    use_default: true
     custom:
       - id: examplepop1
         numsamples: 1000
@@ -69,13 +103,19 @@ genotype_data:
     EUR: 2000 # default 2000
     SAS: 2000 # default 2000
 
-# TODO replace default parameter values after running likelihood free inference
+# TODO replace default parameter values after running likelihood free inference optimisation
 
-# configuration for phenotype data generation
+####################################
+# PHENOTYPE DATA                   #
+####################################
+
 # TODO
 
-# configuration for synthetic data evaluation
-# - specify which metrics you want to use by setting the value to true
+####################################
+# EVALUATION                       #
+####################################
+
+# Specify which metrics you want to use by setting the value to true
 evaluation:
   metrics:
     aats:     true  # nearest neighbour adversarial accuracy
@@ -84,6 +124,51 @@ evaluation:
     maf:      true  # minor allele frequency divergences
     pca:      true  # principal components analysis
 
+
+####################################
+# OPTIMISATION                     #
+####################################
+
+# configuration for likelihood free inference optimisation procedure
+optimisation:
+  # prior distributions - specify lower/upper bounds for uniform priors
+  priors:
+    rho:
+      uniform_lower: 0
+      uniform_upper: 0.1
+    Ne:
+      uniform_lower: 1000
+      uniform_upper: 50000
+  # inference type - simulation-based rejection ABC or emulation-based rejection ABC
+  simulation_rejection_ABC:
+    run: true
+    n_particles: 500
+    threshold: 0.05
+    max_iter: 100
+    write_progress: true
+  emulation_rejection_ABC:
+    run: true
+    n_particles: 500
+    threshold: 0.05
+    n_design_points: 50
+    max_iter: 10000
+    write_progress: true
+  # choice of summary statistic/s
+  summary_statistics:
+    ld_decay: true
+    kinship: true
+  # choice of superpopulation/s
+  superpopulations:
+    AFR: true
+    AMR: true
+    EAS: true
+    EUR: true
+    SAS: true
+
+
+####################################
+# ADDITIONAL INFORMATION           #
+####################################
 
 # superpopulation code list:
 #
