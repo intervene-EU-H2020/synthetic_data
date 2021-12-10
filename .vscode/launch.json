@@ -14,7 +14,8 @@
             "juliaEnv": "${command:activeJuliaEnvironment}",
             "args": [
                 // options for likelihood-free inference
-                "--config", "config.yml"
+                "--config", "config.yml",
+                "--preprocessing"
               ]
         }
     ]

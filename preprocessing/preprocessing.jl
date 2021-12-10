@@ -1,30 +1,30 @@
 using Printf
 
 include("../utils/parameter_parsing.jl")
-include("preprocessing_utils.jl")
+include("utils.jl")
 
 
-"""Run the full pre-processing pipeline
+"""Implements the full sequence of pre-processing steps
 """
 function preprocessing_pipeline(filepaths)
     isdir(filepaths.output_dir) || mkdir(filepaths.output_dir)
 
     @info "Filtering SNPs"
-    extract_variants(filepaths.vcftools, filepaths.vcf_input, filepaths.vcf_output, filepaths.variant_list)
+    extract_variants(filepaths.vcftools, filepaths.vcf_input_raw, filepaths.vcf_input_processed_prefix, filepaths.vcf_input_processed, filepaths.variant_list)
     
     @info "Creating genetic distance files"
-    get_genetic_distances(filepaths.vcf_output, filepaths.mapfile, filepaths.distfile)
+    get_genetic_distances(filepaths.vcf_input_processed, filepaths.genetic_mapfile, filepaths.genetic_distfile)
 
     @info "Storing haplotype matrices"
-    convert_vcf_to_hap(filepaths.vcf_output, filepaths.hap1_output, filepaths.hap2_output)
+    convert_vcf_to_hap(filepaths.vcf_input_processed, filepaths.hap1_matrix_output, filepaths.hap2_matrix_output)
 
     @info "Storing metadata files"
-    convert_vcf_to_meta(filepaths.vcf_output, filepaths.meta_output)
-
-    # TODO delete files not needed
+    convert_vcf_to_meta(filepaths.vcf_input_processed, filepaths.metadata_output)
 end
 
 
+"""Entry point to running the pre-processing pipeline
+"""
 function run_preprocessing(options)
     chromosome = parse_chromosome(options)
     superpopulation = parse_superpopulation(options)

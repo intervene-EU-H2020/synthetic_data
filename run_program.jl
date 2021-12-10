@@ -1,6 +1,6 @@
 using ArgParse, YAML
 
-include("preprocessing/run_preprocessing.jl")
+include("preprocessing/preprocessing.jl")
 
 """Executes the program, according to which pipelines and configuration options are specified in the input
 

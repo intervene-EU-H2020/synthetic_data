@@ -7,15 +7,16 @@
 struct Filepaths
     input_dir::String
     output_dir::String
-    vcf_input::String
-    vcf_output::String
+    vcf_input_raw::String
+    vcf_input_processed_prefix::String
+    vcf_input_processed::String
     variant_list::String
     vcftools::String
-    mapfile::String
-    distfile::String
-    hap1_output::String
-    hap2_output::String
-    meta_output::String
+    genetic_mapfile::String
+    genetic_distfile::String
+    hap1_matrix_output::String
+    hap2_matrix_output::String
+    metadata_output::String
 end
 
 
@@ -53,15 +54,16 @@ format_filepath(filepath, chromosome, superpopulation) = replace(replace(filepat
 function parse_filepaths(options, chromosome, superpopulation)
     input_dir = format_filepath(options["filepaths"]["input_dir"], chromosome, superpopulation)
     output_dir = format_filepath(options["filepaths"]["output_dir"], chromosome, superpopulation)
-    vcf_input = format_filepath(options["filepaths"]["vcf_input"], chromosome, superpopulation)
-    vcf_output = format_filepath(options["filepaths"]["vcf_output"], chromosome, superpopulation)  
+    vcf_input_raw = format_filepath(options["filepaths"]["vcf_input_raw"], chromosome, superpopulation)
+    vcf_input_processed_prefix = format_filepath(options["filepaths"]["vcf_input_processed_prefix"], chromosome, superpopulation)  
+    vcf_input_processed = format_filepath(options["filepaths"]["vcf_input_processed"], chromosome, superpopulation)  
     variant_list = format_filepath(options["filepaths"]["variant_list"], chromosome, superpopulation)
     vcftools = format_filepath(options["software_paths"]["vcftools"], chromosome, superpopulation)
-    mapfile = format_filepath(options["filepaths"]["mapfile"], chromosome, superpopulation)
-    distfile = format_filepath(options["filepaths"]["distfile"], chromosome, superpopulation)
-    hap1_output = format_filepath(options["filepaths"]["hap1_output"], chromosome, superpopulation)
-    hap2_output = format_filepath(options["filepaths"]["hap2_output"], chromosome, superpopulation)
-    meta_output = format_filepath(options["filepaths"]["meta_output"], chromosome, superpopulation)
+    genetic_mapfile = format_filepath(options["filepaths"]["genetic_mapfile"], chromosome, superpopulation)
+    genetic_distfile = format_filepath(options["filepaths"]["genetic_distfile"], chromosome, superpopulation)
+    hap1_matrix_output = format_filepath(options["filepaths"]["hap1_matrix_output"], chromosome, superpopulation)
+    hap2_matrix_output = format_filepath(options["filepaths"]["hap2_matrix_output"], chromosome, superpopulation)
+    metadata_output= format_filepath(options["filepaths"]["metadata_output"], chromosome, superpopulation)
 
-    return Filepaths(input_dir, output_dir, vcf_input, vcf_output, variant_list, vcftools, mapfile, distfile, hap1_output, hap2_output, meta_output)
+    return Filepaths(input_dir, output_dir, vcf_input_raw, vcf_input_processed_prefix, vcf_input_processed, variant_list, vcftools, genetic_mapfile, genetic_distfile, hap1_matrix_output, hap2_matrix_output, metadata_output)
 end
