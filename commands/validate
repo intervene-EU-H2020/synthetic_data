@@ -1,0 +1,4 @@
+#!/bin/sh
+# Preprocess the raw datasets
+echo "Validating synthetic dataset"
+echo "$DATA_DIR"

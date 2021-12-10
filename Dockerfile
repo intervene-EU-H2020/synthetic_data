@@ -161,4 +161,17 @@ RUN set -eux; \
 # Clean up
     rm -rf $DOWNLOAD_DIR
 
-CMD ["julia", "--version"]
+
+# ************************* Add intervene user *********************************
+RUN useradd -rm -d /home/intervene -s /bin/bash -g root -G sudo -u 1001 intervene
+USER intervene
+WORKDIR /home/intervene
+ENV DATA_DIR "$WORKDIR/data"
+
+# Copy source files
+COPY . .
+
+# Setup path for commands
+ENV PATH "/home/intervene/commands":$PATH
+
+CMD ["sh"]

@@ -1,0 +1,4 @@
+#!/bin/sh
+# Downloads reference datasets
+echo "Download 1000Genomes dataset"
+echo "$DATA_DIR"
