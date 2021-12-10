@@ -13,11 +13,17 @@ The data that we provide already pre-processed as a default option is prepared a
 ### Usage
 
 - The raw datasets can be downloaded by running `preprocessing/data_download.sh data/inputs/raw`, which will download the raw data to the `data/inputs/raw` directory
-- The raw datasets can be preprocessed by running `preprocessing/preprocessing.jl config/preprocessing.yml`, where input parameters are configured in the `config/preprocessing.yml` file
+- The raw datasets can be preprocessed by running `preprocessing/main.jl --config config/preprocessing.yml`, where input parameters are configured in the `config/preprocessing.yml` file
 
 ## Custom pre-processing
 
-If using your own dataset, you will need to prepare the following inputs:
+If using your own dataset, you can either use the `preprocessing/main.jl` script to pre-process your dataset or pre-process the dataset yourself.
+
+If using the `preprocessing/main.jl` script:
+- The program expects the input to be phased genotype data in VCF format, following the VCF convention of encoding the phased genotype as allele values separated by the "|" character
+- See the `config/preprocessing.yml` file for other inputs that need to be specified 
+
+If not using the `preprocessing/main.jl` script, you will need to create the following inputs:
 - Haplotype matrix files: the `convert_vcf_to_hap()` function in `preprocessing/utils.jl` shows how to convert a (phased) VCF file to the haplotype matrix input required by the synthetic data algorithm
 - Genetic distance files: specifying conversion from basepair to centimorgan distances
 - Metadata files: information about the genetic variants, to be stored with the synthetic dataset

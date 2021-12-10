@@ -4,8 +4,8 @@
 
 global_parameters: 
   random_seed: 123 # speicfy a random seed for reproducibility (note that all chromosomes part of the same dataset MUST use the same seed number)
-  chromosome: all # specify `all` or give a number from 1 to 22
-  superpopulation: none # if creating data for a specific superpopulation, choose from `AFR`, `AMR`, `EAS`, `EUR`, `SAS` (otherwise set to "none")
+  chromosome: 1 # specify `all` or give a number from 1 to 22
+  superpopulation: none # if creating data for a specific superpopulation, choose from `AFR`, `AMR`, `EAS`, `EUR`, `SAS` (otherwise set to `none`)
 
 
 ####################################
@@ -13,26 +13,24 @@ global_parameters:
 ####################################
 
 # - the chromosome number can be given as a wildcard by specifying {chromosome} in the filepath
-# - the superpopulation can be given as a wildcard by specifying {superpop} in the filepath
+# - the superpopulation can be given as a wildcard by specifying {superpopulation} in the filepath
 filepaths:
-  input_directory: data/inputs
-  output_directory: data/outputs/test
-  raw_data_inputs: data/inputs/raw
-  raw_vcf_input: data/inputs/raw/1KGPhase3.chr{chromosome}.vcf.gz
-  variant_list: data/inputs/external/variant_list.txt
-  genetic_map: data/inputs/raw/genetic_maps/chr{chromosome}.interpolated_genetic_map
-  processed_data_inputs: data/inputs/processed
-  processed_vcf_input: data/inputs/processed/1KGPhase3.chr{chromosome}.hapmap.vcf.gz
+  input_dir: data/inputs
+  output_dir: data/outputs/test
+  vcf_input: data/inputs/raw/1KGPhase3.chr{chromosome}.vcf.gz
+  vcf_output: data/inputs/processed/1KGPhase3.chr{chromosome}.hapmap.vcf.gz
+  variant_list: data/external/variant_lists/hapmap_variant_list_chr{chromosome}.txt
+  mapfile: data/inputs/raw/genetic_maps/chr{chromosome}.interpolated_genetic_map
   distfile: data/inputs/processed/genetic_distances/chr{chromosome}.distfile
-  hap1_matrix: data/inputs/processed/1KGPhase3.chr{chromosome}.hapmap.h1
-  hap2_matrix: data/inputs/processed/1KGPhase3.chr{chromosome}.hapmap.h2
-  metadata: data/inputs/processed/metadata.chr{chromosome}
+  hap1_output: data/inputs/processed/1KGPhase3.chr{chromosome}.hapmap.h1
+  hap2_output: data/inputs/processed/1KGPhase3.chr{chromosome}.hapmap.h2
+  meta_output: data/inputs/processed/metadata.chr{chromosome}
   synthetic_data_prefix: test
 
 software_paths:
     plink: software/plink
     king: software/king
-    vcftools: software/vcftools
+    vcftools: vcftools
 
 
 ####################################

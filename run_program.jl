@@ -1,16 +1,17 @@
 using ArgParse, YAML
 
+include("preprocessing/run_preprocessing.jl")
 
 """Executes the program, according to which pipelines and configuration options are specified in the input
 
-Note that any combination of pipelines can be run together, except the optimisation pipeline, which runs immediately (possibly after preprocessing) then exits
+Note that any combination of pipelines can be run together, except the optimisation pipeline, which exits immediately after running
 
 Also note that there is a specific ordering to the pipeline execution
 """
 function run_program(pipelines, options)
     if pipelines["preprocessing"]
         @info "running the preprocessing pipeline"
-        # TODO
+        run_preprocessing(options)
     end
 
     if pipelines["optimisation"]

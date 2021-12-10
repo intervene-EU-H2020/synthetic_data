@@ -1,11 +1,12 @@
+using DelimitedFiles, LsqFit, DataFrames, CSV, Mmap
+
+
 """Using the vcftools software, create a VCF file retaining only the variants in a given list
 """
 function extract_variants(vcftools, vcf_input, vcf_output, variant_list)
-    vcf_cmd = `$vcftools --gzvcf $vcf_input \
-                    --snps $variant_list \
-                    --out $vcf_output`
+    vcf_cmd = `$vcftools --gzvcf $vcf_input --snps $variant_list --out $vcf_output`
     run(vcf_cmd)
-
+    
     @assert isfile(filepaths.vcf_output) "Error occurred with creation of VCF file"
 end
 
@@ -13,7 +14,7 @@ end
 """Create a map of basepair distances to centimorgan distances
 """
 # TODO method for converting basepair to centimorgan distances is not accurate - needs to be replaced
-function get_genetic_distances(datafile, mapfile, outfile)
+function get_genetic_distances(datafile, mapfile, output)
     df = CSV.read(mapfile, DataFrame; header=["ID", "POS", "MAP"])
 
     xdata = [convert(Float64,x) for x in df.POS]
@@ -40,7 +41,7 @@ function get_genetic_distances(datafile, mapfile, outfile)
     end
     
     df = DataFrame(Index = 1:length(snpid), Variant = snpid, Distance = cmpred)
-    CSV.write(outfile, df)
+    CSV.write(output, df)
 end
 
 
@@ -92,7 +93,13 @@ end
 """Store metadata from VCF files
 """
 function convert_vcf_to_meta(datafile, output)
-    # TODO
+    snp_info = []
+    for line in eachline(datafile)
+        if !startswith(line, "#")
+            push!(snp_info, string(join(split(line)[1:9], "\t"), "\t"))
+        end
+    end
+    writedlm(output, snp_info)
 end
 
 
