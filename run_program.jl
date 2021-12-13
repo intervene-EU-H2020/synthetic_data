@@ -1,6 +1,7 @@
 using ArgParse, YAML
 
 include("preprocessing/preprocessing.jl")
+include("algorithms/genotype/genotype_algorithm.jl")
 
 """Executes the program, according to which pipelines and configuration options are specified in the input
 
@@ -22,12 +23,15 @@ function run_program(pipelines, options)
 
     if pipelines["genotype"]
         @info "generating synthetic genotype data"
-        # TODO
+        create_synthetic_genotype(options)
     end
 
     if pipelines["phenotype"]
         @info "generating synthetic phenotype data"
-        # TODO
+        # TODO - create phenotype using Zhiyu's program
+        # create Parfile using inputs from config.yml 
+        # convert genotype data to .traw format using plink --recode A-transpose
+        # run the tool for simulating phenotypes
     end
 
     if pipelines["evaluation"]

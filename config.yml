@@ -3,7 +3,7 @@
 ####################################
 
 global_parameters: 
-  random_seed: 123 # specify a random seed for reproducibility (note that all chromosomes part of the same dataset MUST use the same seed number)
+  random_seed: 123 # specify a random seed for reproducibility
   chromosome: 1 # specify `all` or give a number from 1 to 22
   superpopulation: none # if creating data for a specific superpopulation, choose from `AFR`, `AMR`, `EAS`, `EUR`, `SAS` (otherwise set to `none`)
 
@@ -72,6 +72,7 @@ software_paths:
 #                but you cannot mix superpopulations and populations within the same custom population group
 #                (see a list of codes at the bottom of this document)
 genotype_data:
+  filetype: "plink" # specify either "plink" or "vcf" - note that "plink" means bed/bim/fam format
   samples:
     use_default: true
     custom:
