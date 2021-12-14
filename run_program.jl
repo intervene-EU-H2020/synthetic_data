@@ -1,7 +1,9 @@
 using ArgParse, YAML
 
 include("preprocessing/preprocessing.jl")
+include("optimisation/abc.jl")
 include("algorithms/genotype/genotype_algorithm.jl")
+include("evaluation/evaluation.jl")
 
 """Executes the program, according to which pipelines and configuration options are specified in the input
 
@@ -17,7 +19,7 @@ function run_program(pipelines, options)
 
     if pipelines["optimisation"]
         @info "optimising model parameter values"
-        # TODO
+        run_optimisation(options)
         exit(0)
     end
 
@@ -36,7 +38,7 @@ function run_program(pipelines, options)
 
     if pipelines["evaluation"]
         @info "evaluating synthetic data quality"
-        # TODO
+        run_evaluation(options)
     end
 end
 

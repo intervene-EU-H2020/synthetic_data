@@ -20,6 +20,7 @@ function preprocessing_pipeline(filepaths)
 
     @info "Storing metadata files"
     convert_vcf_to_meta(filepaths.vcf_input_processed, filepaths.metadata_output)
+    cp(filepaths.popfile_raw, filepaths.popfile_processed)
 end
 
 

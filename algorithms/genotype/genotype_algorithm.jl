@@ -4,23 +4,6 @@ include("../../utils/parameter_parsing.jl")
 include("write_output.jl")
 
 
-"""Struct specifying the metadata for constructing synthetic data
-"""
-struct GenomicMetadata
-    nsamples::Integer
-    nvariants::Integer
-    haplotypes::Dict # {pop : [list of ids for haplotypes in the reference set]}
-    population_groups::Vector # [list of population groups for haplotypes in the reference set]
-    population_weights::Dict # {popgroup: {pop : frac}}
-    population_Ns::Dict # {pop : N}
-    population_Nes::Dict # {pop : Ne}
-    population_rhos::Dict # {pop : rho}
-    genetic_distances::Dict # {chr : [list of genetic distances (in centimorgans) at each variant position]}
-    filetype::String
-    filename::String
-end
-
-
 """Sample effective population size
 """
 function sample_T(N, Ne)
@@ -67,7 +50,7 @@ The reference table has the following columns:
 
 Note that the start and end variant positions are included in the segment
 """
-function create_reference_table(chromosome, metadata)
+function create_reference_table(metadata)
     ref_df = DataFrame(H=Int[], I=String[], S=Int[], E=Int[], P=String[], Q=String[])
     @showprogress for hap in 1:(2*nsamples)
         happop = metadata.population_groups[haplotype]
@@ -83,7 +66,7 @@ function create_reference_table(chromosome, metadata)
             seghap = rand(metadata.haplotypes[segpop])
             # update the start and end (variant) positions of the segment
             start_pos = pos
-            end_pos = min(update_variant_position(pos, L, genetic_distances[chromosome]), nvariants)
+            end_pos = min(update_variant_position(pos, L, genetic_distances), nvariants)
             ref_df = push!(ref_df, [hap, seghap, start_pos, end_pos, happop, segpop])
             pos = end_pos+1
         end
@@ -92,35 +75,25 @@ function create_reference_table(chromosome, metadata)
 end
 
 
-"""Create the metadata struct containing the information for constructing synthetic genotypes
-"""
-function create_metadata(options, filepaths)
-    # TODO - create metadata struct and also do error checking on inputs
-    nsamples = 
-    nvariants = 
-    return GenomicMetadata(nsamples, ...)
-end
-
-
 """Create the synthetic data for the specified chromosome
 """
 function create_synthetic_genotype_for_chromosome(chromosome, superpopulation, options)
     # create the reference dataframe then store the data using the specified file format
     fp = parse_filepaths(options, chromosome, superpopulation)
-    metadata = create_metadata(options, fp)
-    ref_df = create_reference_table(chromosome_i, metadata)
+    metadata = parse_genomic_metadata(options, superpopulation, fp)
+    ref_df = create_reference_table(metadata)
 
-    if metadata.filetype == "plink"
-        write_to_plink(ref_df, metadata) # TODO
-    elseif metadata.filetype == "vcf"
-        write_to_vcf(ref_df, metadata) # TODO
+    if metadata.outfile_type == "plink"
+        write_to_plink(ref_df, metadata.batchsize, metadata)
+    elseif metadata.outfile_type == "vcf"
+        write_to_vcf(ref_df, metadata)
     else
-        throw(error("Config error: filetype not supported"))
+        throw(error("Config error: outfile_type not supported"))
     end
 end
 
 
-"""Entry point to running the pre-processing pipeline
+"""Entry point to running the algorithm for generating a synthetic genotype dataset
 """
 function create_synthetic_genotype(options)
     chromosome = parse_chromosome(options)

@@ -5,7 +5,7 @@
 global_parameters: 
   random_seed: 123 # specify a random seed for reproducibility
   chromosome: 1 # specify `all` or give a number from 1 to 22
-  superpopulation: none # if creating data for a specific superpopulation, choose from `AFR`, `AMR`, `EAS`, `EUR`, `SAS` (otherwise set to `none`)
+  superpopulation: "EUR" # if creating data for a specific superpopulation, choose from `AFR`, `AMR`, `EAS`, `EUR`, `SAS` (otherwise set to `none`)
 
 
 ####################################
@@ -15,21 +15,24 @@ global_parameters:
 # - the chromosome number can be given as a wildcard by specifying {chromosome} in the filepath
 # - the superpopulation can be given as a wildcard by specifying {superpopulation} in the filepath
 filepaths:
-  input_dir: data/inputs
-  output_dir: data/outputs/test
   vcf_input_raw: data/inputs/raw/1KGPhase3.chr{chromosome}.vcf.gz
   vcf_input_processed_prefix: data/inputs/processed/1KGPhase3.chr{chromosome}.hapmap
   vcf_input_processed: data/inputs/processed/1KGPhase3.chr{chromosome}.hapmap.recode.vcf
   variant_list: data/external/variant_lists/hapmap_variant_list_chr{chromosome}.txt
   genetic_mapfile: data/inputs/raw/genetic_maps/chr{chromosome}.interpolated_genetic_map
   genetic_distfile: data/inputs/processed/1KGPhase3.chr{chromosome}.hapmap.distfile
-  hap1_matrix_output: data/inputs/processed/1KGPhase3.chr{chromosome}.hapmap.h1
-  hap2_matrix_output: data/inputs/processed/1KGPhase3.chr{chromosome}.hapmap.h2
-  metadata_output: data/inputs/processed/1KGPhase3.chr{chromosome}.metadata
-  synthetic_data_prefix: test
+  hap1_matrix: data/inputs/processed/1KGPhase3.chr{chromosome}.hapmap.h1
+  hap2_matrix: data/inputs/processed/1KGPhase3.chr{chromosome}.hapmap.h2
+  vcf_metadata: data/inputs/processed/1KGPhase3.chr{chromosome}.metadata
+  popfile_raw: data/inputs/raw/1KGPhase3.pop.panel
+  popfile_processed: data/inputs/processed/1KGPhase3.pop.panel
+  synthetic_data_prefix: data/outputs/test/test{chromosome}
+  evaluation_reference: data/inputs/raw/1KGPhase3.chr{chromosome}.{superpopulation}
+  evaluation_output: data/outputs/test/evaluation/test{chromosome}
 
 software_paths:
     plink: software/plink
+    plink2: software/plink2
     king: software/king
     vcftools: vcftools
 
@@ -51,11 +54,11 @@ software_paths:
 #                  genotypes with AFR ancestry, you could write
 #                   
 #                   - id: EUR_pop
-#                     numsamples: 100
+#                     nsamples: 100
 #                     populations:
 #                       - EUR: 100
 #                   - id: AFR_pop
-#                     numsamples: 200
+#                     nsamples: 200
 #                     populations:
 #                       - AFR: 100
 #
@@ -63,7 +66,7 @@ software_paths:
 #                 EUR ancestry and 50% AFR ancestry, you could write
 #                 
 #                   - id: admix_pop
-#                     numsamples: 100
+#                     nsamples: 100
 #                     populations:
 #                       - EUR: 50
 #                       - AFR: 50
@@ -72,22 +75,22 @@ software_paths:
 #                but you cannot mix superpopulations and populations within the same custom population group
 #                (see a list of codes at the bottom of this document)
 genotype_data:
-  filetype: "plink" # specify either "plink" or "vcf" - note that "plink" means bed/bim/fam format
+  filetype: "plink" # specify either `plink` or `vcf` - note that `plink` means bed/bim/fam format
+  batchsize: 5000 # batchsize is only needed for `plink` output - batchsize value will be ignored for `vcf`
   samples:
     use_default: true
     custom:
       - id: examplepop1
-        numsamples: 1000
+        nsamples: 1000
         populations: 
           - EUR: 100
       - id: examplepop2
-        numsamples: 500
+        nsamples: 500
         populations:
           - GBR: 30
           - IBS: 70
     default:
-      nsamples: 10000
-      superpopulation: all # specify `all` or give a specific superpopulation, e.g. `EUR`
+      nsamples: 1000 # code will use superpopulation specified by global variable
   # recombination rate (default values were determined by our optimisation procedure)
   rho:
     AFR: 0.001 # default 0.001
