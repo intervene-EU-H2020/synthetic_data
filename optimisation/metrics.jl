@@ -1,26 +1,20 @@
-# TODO refactor and move these to evaluation directory
-
 
 """
 Function that implements the LD decay metric for ABC
-
-Arguments
-- plink_file::String: string giving filepath to the plink file prefix containing genotype
 """
-function LD_decay(plink_file::String)
+function LD_decay(plink_file, plink, mapthin, out_prefix, bp_to_cm_map)
     # thin snp list to speed up calculations
     # keep 20 snps every 10^6 bases and create a new bim
     bim_file = @sprintf("%s.bim", plink_file)
-    snp_thin = @sprintf("%s_snp-thin_%s", parsed_args["outfile_prefix"], parsed_args["opt_superpop"])
-    map_thin = parsed_args["mapthin"]
-    plink = parsed_args["plink"]
-    run(`$map_thin -n -b 20 $bim_file $snp_thin`)
+    snp_thin = @sprintf("%s_snp_thin", out_prefix)
+    run(`$mapthin -n -b 20 $bim_file $snp_thin`)
     
     # compute r2 values between all pairs
     run(`$plink --bfile $plink_file --extract $snp_thin --r2 --ld-window-r2 0 --ld-window 999999 --ld-window-kb 8000 --out $snp_thin`)
     
     # extract the distance between each pair and the r2 value
     ld_df = DataFrame(CSV.File(@sprintf("%s.ld", snp_thin), delim=' ', ignorerepeated=true))
+
     # convert bp to cm
     ld_df.CM_A = [bp_to_cm_map[x] for x in ld_df.BP_A]
     ld_df.CM_B = [bp_to_cm_map[x] for x in ld_df.BP_B]
@@ -37,17 +31,17 @@ function LD_decay(plink_file::String)
 end
 
 
-function kinship_cross(plink_file, plink_file_ref)
-    king = parsed_args["king"]
-
-    output = @sprintf("%s_%s.cross.king", parsed_args["outfile_prefix"], parsed_args["opt_superpop"])
+"""
+Function that implements an efficient relatedness metric for ABC
+"""
+function kinship_cross(plink_file, nsamples_plink_file, plink_file_ref, nsamples_plink_file_refs, king, out_prefix)
+    output = @sprintf("%s.cross.king", out_prefix)
     input = @sprintf("%s.bed", plink_file)
     cross_input = @sprintf("%s.bed", plink_file_ref)
     
     run(`$king -b $input,$cross_input --related --prefix $output`)
-
-    nsamples = 8000
-    total_number_pairs = 3202 * nsamples # TODO don't hardcode these numbers
+    
+    total_number_pairs = nsamples_plink_file*nsamples_plink_file_refs
 
     cols = [:ID1, :ID2, :N_SNP, :HetHet, :IBS0, :HetConc, :HomIBS0, :Kinship, :IBD1Seg, :IBD2Seg, :PropIBD, :InfType]
     
@@ -74,7 +68,6 @@ function kinship_cross(plink_file, plink_file_ref)
     total_related_samples = duplicate_samples + first_degree_samples + second_degree_samples
     
     data = [duplicate_pairs, first_degree_pairs, second_degree_pairs, total_related_pairs, duplicate_samples, first_degree_samples, second_degree_samples, total_related_samples]
-    print(data)
     
     return [1:length(data) data]
 end

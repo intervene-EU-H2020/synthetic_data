@@ -20,14 +20,16 @@ struct Filepaths
     synthetic_data_prefix::String
     vcftools::String
     plink::String
+    plink2::String
     king::String
+    mapthin::String
     evaluation_reference::String
 end
 
 
 """Struct specifying the metadata for constructing synthetic genotype data
 """
-struct GenomicMetadata
+mutable struct GenomicMetadata
     nsamples::Integer
     nvariants::Integer
     H1::Matrix
@@ -104,9 +106,11 @@ function parse_filepaths(options, chromosome, superpopulation)
 
     vcftools = format_filepath(options["software_paths"]["vcftools"], chromosome, superpopulation, false)
     plink = format_filepath(options["software_paths"]["plink"], chromosome, superpopulation, false)
+    plink2 = format_filepath(options["software_paths"]["plink2"], chromosome, superpopulation, false)
     king = format_filepath(options["software_paths"]["king"], chromosome, superpopulation, false)
+    mapthin = format_filepath(options["software_paths"]["mapthin"], chromosome, superpopulation, false)
 
-    return Filepaths(vcf_input_raw, vcf_input_processed_prefix, vcf_input_processed, variant_list, genetic_mapfile, genetic_distfile, hap1_matrix_output, hap2_matrix_output, metadata_output, popfile_raw, popfile_processed, synthetic_data_prefix, vcftools, plink, king, evaluation_reference)
+    return Filepaths(vcf_input_raw, vcf_input_processed_prefix, vcf_input_processed, variant_list, genetic_mapfile, genetic_distfile, hap1_matrix_output, hap2_matrix_output, metadata_output, popfile_raw, popfile_processed, synthetic_data_prefix, vcftools, plink, plink2, king, mapthin, evaluation_reference)
 end
 
 

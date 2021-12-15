@@ -1,40 +1,67 @@
 """Run likelihood-free inference for optimising model parameters
 """
 
+include("metrics.jl")
+include("../algorithms/genotype/genotype_algorithm.jl")
+
+
+"""Struct for storing metadata required by the ABC procedure
+"""
+struct ABCMetadata
+    statistics::Vector # list of summary statistics included in the optimisation 
+    ref_prefix::String # prefix for the reference dataset
+    out_prefix::String # prefix for the synthetic dataset
+    superpopulation::String # abbreviation for superpopulation
+    nsamples_ref::Integer # number of samples in reference dataset
+    nsamples_syn::Integer # number of samples in synthetic dataset
+    bp_to_cm_map::Dict # a mapping to convert bp to cm distances
+    plink::String # plink software path
+    king::String # king software path
+    mapthin::String # mapthin software path
+end
+
 
 """
 Simulator function for the optimisation pipeline 
 
-
 Arguments
 - var_params::Vector{Float64}: list of the form [Ne_s, rho_s]
 """
-# TODO refactor code
 function simulator_function(var_params::AbstractArray{Float64,1})
     Ne_s = var_params[1]
     rho_s = var_params[2]
-    
-    outfile_prefix = @sprintf("%s_%s", parsed_args["outfile_prefix"], parsed_args["opt_superpop"])
-    
-    # simulate a synthetic dataset with these parameter values
-    generate_synthetic_data(parsed_args["hapfile1"], parsed_args["hapfile2"], ind_map, variant_dist, poplist, popdist, outfile_prefix, "plink", parsed_args["batchsize"], rho_s, Ne_s, parsed_args["sigma"], parsed_args["vcffile"], parsed_args["plink"])
-    
-    # calculate the summary statistic
-    if parsed_args["opt_metric"]=="ld_decay"
-        sumstat = LD_decay(outfile_prefix)
-    elseif parsed_args["opt_metric"]=="kinship"
-        sumstat = kinship_cross2(outfile_prefix, parsed_args["opt_reference"])
-    elseif parsed_args["opt_metric"]=="combined"
-        # concatenate multiple summary statistics
-        sumstat_ld = LD_decay(outfile_prefix)
-        sumstat_kin = kinship(outfile_prefix)
-        sumstat = vcat(sumstat_ld, sumstat_kin)
-    end
+
+    # simulate a synthetic dataset with these parameter values and calculate the summary statistic
+    genomic_metadata.Nes[abc_metadata.superpopulation] = Ne_s
+    genomic_metadata.rhos[abc_metadata.superpopulation] = rho_s
+    create_synthetic_genotype_for_chromosome(genomic_metadata) 
+    sumstat = calculate_summary_statistic(abc_metadata.out_prefix, abc_metadata.nsamples_syn, abc_metadata.ref_prefix, abc_metadata.nsamples_ref, abc_metadata.statistics, abc_metadata.plink, abc_metadata.king, abc_metadata.mapthin, abc_metadata.bp_to_cm_map)
     
     return sumstat
 end
 
 
+"""Calculate summary statistics for ABC
+"""
+function calculate_summary_statistic(syn_prefix, nsamples_syn, ref_prefix, nsamples_ref, statistics, plink, king, mapthin, bp_to_cm_map)
+    sumstat = NaN
+    if "ld_decay" ∈ statistics
+        sumstat = LD_decay(syn_prefix, plink, mapthin, syn_prefix, bp_to_cm_map)
+    end
+    if "kinship" ∈ statistics
+        sumstat_kin = kinship_cross(syn_prefix, nsamples_syn, ref_prefix, nsamples_ref, king, syn_prefix)
+        if isnan(sumstat)
+            sumstat = sumstat_kin
+        else
+            sumstat = vcat(sumstat, sumstat_kin)
+        end
+    end
+    return sumstat
+end
+
+
+"""Create priors for ABC
+"""
 function get_priors(options)
     # uses uniform priors
     Ne_lower = options["optimisation"]["priors"]["Ne"]["uniform_lower"]
@@ -45,55 +72,131 @@ function get_priors(options)
 end
 
 
-function get_calculation_data()
-    # TODO 
-    # setup any additional metadata required for the calculations
-    if parsed_args["opt_metric"]=="ld_decay" || parsed_args["opt_metric"]=="combined"
-        # create a mapping to convert bp to cm distances
-        bp_to_cm_df = DataFrame(CSV.File(parsed_args["distfile"]))
-        bp_to_cm_df.BP = [parse(Int64,split(x,":")[2]) for x in bp_to_cm_df.Variant]
-        bp_to_cm_map = Dict(zip(bp_to_cm_df.BP,bp_to_cm_df.Distance))
+"""Run the simulation rejection ABC
+"""
+function run_simulation_rejection_abc(sumstat_reference, simulator_function, priors, sim_options)
+    abc_result = SimulatedABCRejection(sumstat_reference, simulator_function, priors, sim_options["threshold"], sim_options["n_particles"], max_iter=sim_options["max_iter"], write_progress=sim_options["write_progress"])
+    return abc_result
+end
+
+
+"""Run the emulation rejection ABC
+"""
+function run_emulation_rejection_abc(sumstat_reference, simulator_function, priors, emu_options)
+    abc_result = EmulatedABCRejection(sumstat_reference, simulator_function, priors, emu_options["threshold"], emu_options["n_particles"], emu_options["n_design_points"], max_iter=emu_options["max_iter"], write_progress=emu_options["write_progress"])
+    return abc_result
+end
+
+
+"""Save results from ABC procedure
+"""
+function save_results(abc_result, output_prefix, simulation_type)
+    plot_ref = plot(abc_result)
+    savefig(plot_ref, @sprintf("%s_%s.png", output_prefix, simulation_type))
+    
+    Nes = abc_result.population[:,1]
+    rhos = abc_result.population[:,2]
+    ds = abc_result.distances
+    df = DataFrame(Ne=Nes, ρ=rhos, d=ds)
+    CSV.write(@sprintf("%s_%s.csv", output_prefix, simulation_type), df)
+end
+
+
+"""Splits the reference dataset into 2 datasets for calculating cross relatedness
+"""
+function create_cross_datasets(ref_prefix, plink)
+    # make the cross dataset
+    fam_df = DataFrame(CSV.File(@sprintf("%s.fam", ref_prefix), header=["FID","IID","F","M","S","P"]))
+    fam_df.R = rand(size(fam_df)[1])
+    sort!(fam_df, [:R])
+    fam_df = fam_df[:, [:FID, :IID]]
+    fam_file1 = @sprintf("%s_1.txt", ref_prefix)
+    fam_file2 = @sprintf("%s_2.txt", ref_prefix)
+    threshold = Int(ceil(size(fam_df)[1]/2))
+    fam1_df = fam_df[1:threshold,:]
+    fam2_df = fam_df[threshold+1:size(fam_df)[1],:]
+    CSV.write(fam_file1, fam1_df, delim="\t")
+    CSV.write(fam_file2, fam2_df, delim="\t")
+    
+    ref2_prefix = @sprintf("%s_1", ref_prefix)
+    cross_prefix = @sprintf("%s_2", ref_prefix)
+
+    run(`$plink --bfile $ref_prefix --keep $fam_file1 --make-bed --out $ref2_prefix`)
+    run(`$plink --bfile $ref_prefix --keep $fam_file2 -make-bed --out $cross_prefix`)
+    
+    return ref2_prefix, cross_prefix, nsamples_ref, nsamples_cross # TODO nsamples
+end
+
+
+"""Calculates the ABC summary statistics for the reference dataset
+"""
+function get_reference_statistics(ref_prefix, nsamples_ref, statistics, plink, king, mapthin, bp_to_cm_map)
+    cross_prefix = NaN
+    nsamples_cross = NaN
+    if "kinship" ∈ statistics
+        ref_prefix, cross_prefix, nsamples_ref, nsamples_cross = create_cross_datasets(ref_prefix, plink)
     end
+
+    sumstat = calculate_summary_statistic(ref_prefix, nsamples_ref, cross_prefix, nsamples_cross, statistics, plink, king, mapthin, bp_to_cm_map)
+    return sumstat
 end
 
 
-function get_reference_statistics()
-    # TODO
+"""Create the struct containing metadata for the ABC procedure
+"""
+function get_abc_metadata(filepaths, superpopulation)
+    # create a mapping to convert bp to cm distances
+    bp_to_cm_df = DataFrame(filepaths.genetic_distfile)
+    bp_to_cm_df.BP = [parse(Int64,split(x,":")[2]) for x in bp_to_cm_df.Variant]
+    bp_to_cm_map = Dict(zip(bp_to_cm_df.BP,bp_to_cm_df.Distance))
+
+    statistics = [k for k in ["ld_decay", "kinship"] if options["optimisation"]["summary_statistics"][k]]
+
+    ref_prefix = filepaths.evaluation_reference
+    out_prefix = filepaths.optimisation_output
+    nsamples_ref = # TODO
+    nsamples_syn = options["genotype_data"]["samples"]["default"]["nsamples"]
+
+    ABCMetadata(statistics, ref_prefix, out_prefix, superpopulation, nsamples_ref, nsamples_syn, bp_to_cm_map, filepaths.plink, filepaths.king, filepaths.mapthin)
 end
 
 
-function run_simulation_rejection_abc()
-    # TODO
-end
-
-
-function run_emulation_rejection_abc()
-    # TODO
-end
-
-
-function run_abc(options, fp)
-
+"""Runs the Approximate Bayesian Computation (ABC) procedure for the specified superpopulation
+"""
+function run_abc_for_superpopulation(options, filepaths, superpopulation)
     @info "Setting up optimisation pipeline"
 
-    priors = get_priors(options)
+    priors  = get_priors(options)
     @info @sprintf("Using priors %s", priors)
+    
+    global abc_metadata = get_abc_metadata(filepaths, superpopulation)
+    # TODO filepaths need to be configured correctly
+    global genomic_metadata = parse_genomic_metadata(options, superpopulation, filepaths)
 
-    get_calculation_data()
+    sumstat_reference = get_reference_statistics(abc_metadata.ref_prefix, abc_metadata.nsamples_ref, abc_metadata.statistics, abc_metadata.plink, abc_metadata.king, abc_metadata.mapthin, abc_metadata.bp_to_cm_map)
+    
+    @info "Summary statistic for reference data"
+    print(sumstat_reference)
 
-    get_reference_statistics()
-
-    if options["optimisation"]["simulation_rejection_ABC"]["run"]
-        run_simulation_rejection_abc()
-    elseif options["optimisation"]["emulation_rejection_ABC"]["run"]
-        run_emulation_rejection_abc()
+    @info "Running optimisation pipeline"
+    t = @elapsed begin
+        if options["optimisation"]["simulation_rejection_ABC"]["run"]
+            sim_options = options["optimisation"]["simulation_rejection_ABC"]
+            abc_result = run_simulation_rejection_abc(sumstat_reference, simulator_function, priors, sim_options)
+            save_results(abc_result, abc_metadata.out_prefix, "sim")
+        elseif options["optimisation"]["emulation_rejection_ABC"]["run"]
+            emu_options = options["optimisation"]["emulation_rejection_ABC"]
+            abc_result = run_emulation_rejection_abc(sumstat_reference, simulator_function, priors, emu_options)
+            save_results(abc_result, abc_metadata.out_prefix, "emu")
+        end
     end
+
+    @info @sprintf("Optimisation completed in %.2f minutes", t/60)
 end
 
 
 """Entry point to running the optimisation pipeline
 """
-# TODO move the chromosome if/else block to the run_program.jl file
 function run_optimisation(options)
     chromosome = parse_chromosome(options)
     superpopulation = parse_superpopulation(options)
@@ -101,10 +204,10 @@ function run_optimisation(options)
     if chromosome == "all"
         for chromosome_i in 1:22
             fp = parse_filepaths(options, chromosome_i, superpopulation)
-            run_abc(options, fp)
+            run_abc_for_superpopulation(options, fp, superpopulation)
         end
     else
         fp = parse_filepaths(options, chromosome, superpopulation)
-        run_abc(options, fp)
+        run_abc_for_superpopulation(options, fp, superpopulation)
     end
 end

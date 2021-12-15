@@ -1,9 +1,6 @@
 """Parses input options and runs evaluation pipeline
 """
 
-# TODO need to add all relevant filepaths to config.yml
-# TODO need to connect this pipeline to evaluation scripts - will need editing if not in functional format
-
 function run_kinship_evaluation()
     # TODO
 end

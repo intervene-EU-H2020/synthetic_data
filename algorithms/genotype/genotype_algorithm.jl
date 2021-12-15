@@ -77,10 +77,8 @@ end
 
 """Create the synthetic data for the specified chromosome
 """
-function create_synthetic_genotype_for_chromosome(chromosome, superpopulation, options)
+function create_synthetic_genotype_for_chromosome(metadata)
     # create the reference dataframe then store the data using the specified file format
-    fp = parse_filepaths(options, chromosome, superpopulation)
-    metadata = parse_genomic_metadata(options, superpopulation, fp)
     ref_df = create_reference_table(metadata)
 
     if metadata.outfile_type == "plink"
@@ -102,9 +100,13 @@ function create_synthetic_genotype(options)
     # synthetic genotype files are generated chromosome-by-chromosome
     if chromosome == "all"
         for chromosome_i in 1:22
-            create_synthetic_genotype_for_chromosome(chromosome_i, superpopulation, options)
+            fp = parse_filepaths(options, chromosome_i, superpopulation)
+            metadata = parse_genomic_metadata(options, superpopulation, fp)
+            create_synthetic_genotype_for_chromosome(metadata)
         end
     else
-        create_synthetic_genotype_for_chromosome(chromosome, superpopulation, options)
+        fp = parse_filepaths(options, chromosome, superpopulation)
+        metadata = parse_genomic_metadata(options, superpopulation, fp)
+        create_synthetic_genotype_for_chromosome(metadata)
     end
 end

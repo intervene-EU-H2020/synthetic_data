@@ -29,12 +29,14 @@ filepaths:
   synthetic_data_prefix: data/outputs/test/test{chromosome}
   evaluation_reference: data/inputs/raw/1KGPhase3.chr{chromosome}.{superpopulation}
   evaluation_output: data/outputs/test/evaluation/test{chromosome}
+  optimisation_output: data/outputs/test/optimisation/test{chromosome}
 
 software_paths:
     plink: software/plink
     plink2: software/plink2
     king: software/king
     vcftools: vcftools
+    mapthin: software/mapthin
 
 
 ####################################
@@ -133,6 +135,7 @@ evaluation:
 ####################################
 
 # configuration for likelihood free inference optimisation procedure
+# note that this code uses a single superpopulation and ignores custom population structures
 optimisation:
   # prior distributions - specify lower/upper bounds for uniform priors
   priors:
@@ -160,14 +163,6 @@ optimisation:
   summary_statistics:
     ld_decay: true
     kinship: true
-  # choice of superpopulation/s
-  superpopulations:
-    AFR: true
-    AMR: true
-    EAS: true
-    EUR: true
-    SAS: true
-
 
 ####################################
 # ADDITIONAL INFORMATION           #
