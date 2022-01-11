@@ -1,4 +1,3 @@
 #!/bin/sh
 # Preprocess the raw datasets
-echo "Proprocessing datasets from data directory"
-echo "$DATA_DIR"
+julia run_program.jl --preprocessing "$@"

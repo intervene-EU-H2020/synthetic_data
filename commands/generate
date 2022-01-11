@@ -1,4 +1,3 @@
 #!/bin/sh
 # Generate synthetic data
-echo "Generating synthetic data"
-echo "$DATA_DIR"
+julia run_program.jl --genotype --phenotype "$@"
