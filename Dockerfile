@@ -166,7 +166,9 @@ RUN set -eux; \
 WORKDIR /opt/intervene
 ENV SCRIPT_DIR "/opt/intervene/scripts"
 ENV DATA_DIR "/data"
+ENV JULIA_PROJECT $SCRIPT_DIR
 RUN mkdir -p $DATA_DIR
+RUN echo "cat banner.txt\n" >> ~/.bashrc
 
 # Copy source files
 WORKDIR $SCRIPT_DIR
@@ -174,7 +176,6 @@ COPY . .
 
 # Install Julia packages
 RUN set -eux; \
-	echo "$DATA_DIR"; \
 	julia --project=$SCRIPT_DIR -e "using Pkg; Pkg.instantiate()"
 
 # Setup path for commands
