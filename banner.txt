@@ -1,0 +1,11 @@
+INTERVENE Synthetic dataset
+
+Available commands:
+    - fetch
+    - preprocess
+    - generate
+    - evaluate
+
+To run the docker image:
+$ docker run -v <path_to_data_folder>:/data -it <image>:<tag> <command> [options]
+
