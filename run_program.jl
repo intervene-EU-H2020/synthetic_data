@@ -43,7 +43,7 @@ function parse_commandline()
         "--config"
             help = "filepath to YAML configuration file"
             arg_type = String
-            required = true
+            required = false
         "--preprocessing"
             help = "preprocesses raw data to use as input for synthetic data generation"
             action = :store_true
@@ -68,7 +68,13 @@ end
 function main()
     parsed_args = parse_commandline()
 
-    options = YAML.load_file(parsed_args["config"])
+    options = YAML.load_file("config.yml")
+    if parsed_args["config"] != nothing
+        options_override = YAML.load_file(parsed_args["config"])
+        options = merge(options, options_override)
+    end
+
+    println(options)
 
     pipelines = Dict("preprocessing" => parsed_args["preprocessing"], 
                      "genotype" => parsed_args["genotype"],
