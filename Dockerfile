@@ -164,14 +164,25 @@ RUN set -eux; \
 
 # ************************* Add intervene user *********************************
 RUN useradd -rm -d /home/intervene -s /bin/bash -g root -G sudo -u 1001 intervene
-USER intervene
 WORKDIR /home/intervene
-ENV DATA_DIR "$WORKDIR/data"
+ENV SCRIPT_DIR "/home/intervene/scripts"
+ENV DATA_DIR "/home/intervene/data"
+RUN mkdir -p $DATA_DIR
+USER intervene
 
 # Copy source files
+WORKDIR $SCRIPT_DIR
 COPY . .
+
+# Install Julia packages
+RUN set -eux; \
+	echo "$DATA_DIR"; \
+	julia --project=$SCRIPT_DIR -e "using Pkg; Pkg.instantiate()"
 
 # Setup path for commands
 ENV PATH "/home/intervene/commands":$PATH
 
 CMD ["sh"]
+
+# Run image as
+# docker run -v <path_to_data_directory>:/home/intervene/data: --user $(id -u):$(id -g) -it <image>:<tag>
