@@ -9,27 +9,10 @@ Insert image giving overview of pipeline here
 1. Make sure that you have [Docker](https://docs.docker.com/get-docker/) installed
 2. Rest of instructions explaining how to pull the image and run the container...
 
-### Generating synthetic datasets
+### Usage
 
-1. Setup the configuration files in the `config` directory
-1. Run the `synthetic_data.jl` Julia script
-1. Rest of instructions for generating synthetic datasets...
-
-### Evaluation of synthetic data quality
-
-1. Instructions for evaluating synthetic datasets after they've been generated...
-
-## Other pipelines
-
-Intended for internal use
-
-### Preprocessing
-
-Scripts for preprocessing raw datasets, with results stored in the `data/inputs/processed` directory
-
-### Optimisation
-
-Likelihood-free inference procedure for selecting optimal parameter values, which are set as the defaults in the synthetic data algorithm
+1. Setup the configuration in the `config.yml` file
+1. Run the Julia script `julia run_program.jl --config config.yml [--preprocessing] [--genotype] [--phenotype] [--evaluation] [--optimisation]`
 
 ## Code contributors
 
