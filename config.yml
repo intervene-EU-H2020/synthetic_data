@@ -78,7 +78,7 @@ software_paths:
 #                (see a list of codes at the bottom of this document)
 genotype_data:
   filetype: "plink" # specify either `plink` or `vcf` - note that `plink` means bed/bim/fam format
-  batchsize: 5000 # batchsize is only needed for `plink` output - batchsize value will be ignored for `vcf`
+  batchsize: 1000 # batchsize is only needed for `plink` output - batchsize value will be ignored for `vcf`
   samples:
     use_default: true
     custom:

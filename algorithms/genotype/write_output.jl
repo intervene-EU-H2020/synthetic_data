@@ -1,20 +1,25 @@
+using PyCall
+
+@pyimport bed_reader
+
+
 """Writes genotype data to PLINK BED/BIM/FAM output
 
 Output is written in batches then merged back together
 """
 function write_to_plink(ref_df, batchsize, metadata)
 
-    number_of_batches = Int(ceil(metadata.nsamplesmples/batchsize))
+    number_of_batches = Int(ceil(metadata.nsamples/batchsize))
 
     batch_files = Vector{String}(undef, number_of_batches)
     
     for batch_number in 1:number_of_batches
         batch_ref_df = get_batch_ref_df(ref_df, batch_number, batchsize)
         batch_file = write_to_plink_batch(batch_ref_df, batchsize, batch_number, metadata)
-        batch_files[batch_number] = batch_file
+        batch_files[batch_number] = batch_file[1:end-4]
+    end
 
-    outfile = @sprintf("%s.bed", metadata.outfile_prefix)
-    merge_batch_files(batch_files, outfile, metadata.plink)
+    merge_batch_files(batch_files, metadata.outfile_prefix, metadata.plink)
 end
 
 
@@ -31,27 +36,32 @@ end
 """Merge all the batch files together
 """
 function merge_batch_files(batch_files, outfile, plink)
+    if length(batch_files) > 1
+        # merge together the batch files
+        mergelist = @sprintf("%s_mergefile.txt", outfile)
+        basefile = batch_files[1]
+        io = open(mergelist, "w") do io
+        for x in batch_files[2:end]
+            println(io, x)
+        end
+        end
+        
+        run(`$plink --bfile $basefile --merge-list $mergelist --make-bed --out $outfile`)
 
-    # merge together the batch files
-    mergelist = @sprintf("%s_mergefile.txt", outfile)
-    basefile = batch_files[1]
-    
-    io = open(mergelist, "w") do io
-      for x in batch_files[2:end]
-        println(io, x)
-      end
+        # remove the batch files
+        for file_prefix in batch_files
+            rm(string(file_prefix,".bed"))
+            rm(string(file_prefix,".bim"))
+            rm(string(file_prefix,".fam"))
+        end
+        rm(mergelist)
+    else
+        # no files to merge - rename single batch file
+        file_prefix = batch_files[1]
+        mv(string(file_prefix,".bed"),string(outfile,".bed"))
+        mv(string(file_prefix,".bim"),string(outfile,".bim"))
+        mv(string(file_prefix,".fam"),string(outfile,".fam"))
     end
-    
-    run(`$plink --bfile $basefile --merge-list $mergelist --make-bed --out $outfile`)
-
-    # remove the batch files
-    for file_prefix in batch_files
-        run(`rm $file_prefix.bed`)
-        run(`rm $file_prefix.bim`)
-        run(`rm $file_prefix.fam`)
-    end
-
-    run(`rm $mergelist`)
 end
 
 
@@ -85,18 +95,17 @@ function get_genostr(batch_ref_df, batchsize, start_haplotype, metadata)
         end
     end
 
-    genostr = I1_batch + I2_batch
+    genostr = I_hap[1] + I_hap[2]
     return genostr
 end
 
 
-"""Writes the plink output for a single batch
+"""Writes the plink output for a single batch, using the Python package bed_reader
 """
 function write_to_plink_batch(batch_ref_df, batchsize, batch_number, metadata)
-
     properties = Dict("fid"=>[string("syn",x) for x in ((batch_number-1)*batchsize+1):((batch_number-1)*batchsize+batchsize)],
             "iid"=>[string("syn",x) for x in ((batch_number-1)*batchsize+1):((batch_number-1)*batchsize+batchsize)],
-            "chromosome"=>[split(f, "\t")[1][4:end] for f in metadata.fixed_fields], 
+            "chromosome"=>[split(f, "\t")[1][5:end] for f in metadata.fixed_fields], 
             "sid"=>[split(f, "\t")[3] for f in metadata.fixed_fields],
             "bp_position"=>[split(f, "\t")[2] for f in metadata.fixed_fields], 
             "allele_1"=>[split(f, "\t")[5] for f in metadata.fixed_fields], 
@@ -104,8 +113,8 @@ function write_to_plink_batch(batch_ref_df, batchsize, batch_number, metadata)
 
     start_haplotype = ((batch_number-1)*batchsize)*2+1
     genostr = get_genostr(batch_ref_df, batchsize, start_haplotype, metadata)
-
-    batch_file = @sprintf("%s_i.bed", metadata.outfile_prefix, (batch_number-1))
+    batch_file = @sprintf("%s_%i.bed", metadata.outfile_prefix, (batch_number-1))
+    
     bed_reader.to_bed(batch_file, genostr, properties=properties)
 
     return batch_file
@@ -129,7 +138,7 @@ function write_to_vcf(ref_df, metadata)
     # one column for each synthetic sample
     data_fields = string(join([string("syn",x) for x in 1:metadata.nsamples], "\t"), "\n") 
 
-    # note that we skip metadata lines
+    # note that we don't include any metadata lines
     
     out_string = string(file_format, fixed_columns, data_fields)
     
@@ -139,14 +148,14 @@ function write_to_vcf(ref_df, metadata)
         write(io, out_string)
         
         # write the remaining lines, variant-by-variant
-        @showprogress for snp_number in 0:metadata.nvariants-1
+        @showprogress for snp_number in 1:metadata.nvariants-1
             
-            batch_string = string(batch_string, metadata.fixed_fields[snp_number+1]) # append fixed fields at start of line
+            out_string = metadata.fixed_fields[snp_number] # append fixed fields at start of line
             snp_df = sort!(ref_df[(ref_df.S .<= snp_number).&(ref_df.E .> snp_number), :], :H)
-            I1_map = [string(metadata.H1[metadata.index_map[i],snp_number+1]) for i in snp_df.I[1:2:end]]
-            I2_map = [string(metadata.H2[metadata.index_map[i],snp_number+1]) for i in snp_df.I[1:2:end]]
-            batch_string = string(batch_string, join(broadcast.(*, I1_map, "|", I2_map, "\t"))[1:end-1], "\n")
-
+            I1_map = [string(metadata.H1[metadata.index_map[i],snp_number]) for i in snp_df.I[1:2:end]]
+            I2_map = [string(metadata.H2[metadata.index_map[i],snp_number]) for i in snp_df.I[1:2:end]]
+            out_string = string(out_string, join(broadcast.(*, I1_map, "|", I2_map, "\t"))[1:end-1], "\n")
+            
             write(io, out_string)
         
         end

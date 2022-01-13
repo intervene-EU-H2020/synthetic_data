@@ -1,7 +1,7 @@
 """Utility functions for parsing the options from the config file
 """
 
-using Mmap
+using Mmap, Printf
 
 """Struct specifying the filepaths for inputs and outputs
 """
@@ -45,7 +45,7 @@ mutable struct GenomicMetadata
     genetic_distances::Vector # [list of genetic distances (in centimorgans) at each variant position]
     outfile_type::String
     outfile_prefix::String
-    batchsize::String
+    batchsize::Integer
     plink::String
 end
 
@@ -80,7 +80,7 @@ end
 
 
 function format_filepath(filepath, chromosome, superpopulation, chr_required)
-    if chr_required && "{chromosome}" ∉ filepath
+    if chr_required && !occursin("{chromosome}", filepath)
         throw(error(@sprintf("Config error: no chromosome wildcard {chromosome} was specified for the filepath %s", filepath)))
     end
 
@@ -173,14 +173,16 @@ function get_population_structure(superpopulation, options, poplist)
     use_default = options["genotype_data"]["samples"]["use_default"]
     
     if use_default
-        @info "using default population structure"
+        @info "Using default population structure"
         nsamples = options["genotype_data"]["samples"]["default"]["nsamples"]
         if superpopulation == "none"
             population_groups = repeat(poplist, Int(ceil(nsamples/length(poplist))))[1:nsamples]
-            population_weights = Dict(pop=>100/length(poplist) for pop in poplist)
+            for pop in poplist
+                population_weights[pop] = Dict(pop=>100/length(poplist))
+            end
         else
             population_groups = vcat(population_groups, repeat([superpopulation],nsamples*2))
-            population_weights[superpopulation] = 100
+            population_weights[superpopulation] = Dict(superpopulation=>100)
         end
     else
         # TODO code needs to support population-level customisation
@@ -209,16 +211,17 @@ function parse_genomic_metadata(options, superpopulation, filepaths)
     H2 = open_hapfile(filepaths.hap2_matrix_output)
     fixed_fields = get_fixed_fields(filepaths.metadata_output)
     haplotypes = get_haplotype_list(filepaths.popfile_processed, poplist)
-    index_map = get_index_map(popfile)
+    index_map = get_index_map(filepaths.popfile_processed)
     population_N = get_population_sizes(haplotypes, poplist) 
     population_Nes = Dict(pop=>options["genotype_data"]["Ne"][pop] for pop in poplist)
     population_rhos = Dict(pop=>options["genotype_data"]["rho"][pop] for pop in poplist)
     genetic_distances = get_genetic_distances(filepaths.genetic_distfile)
     outfile_type = options["genotype_data"]["filetype"]
-    outfile_prefix = filepaths["synthetic_data_prefix"]
+    outfile_prefix = filepaths.synthetic_data_prefix
     batchsize = outfile_type=="plink" ? options["genotype_data"]["batchsize"] : -1
     plink = filepaths.plink
 
-    nvariants = length(variant_dist)
+    nvariants = length(genetic_distances)
 
-    return GenomicMetadata(nsamples, nvariants, H1, H2, fixed_fields, haplotypes, index_map, population_groups, population_weight, population_N, population_Nes, population_rhos, genetic_distances, outfile_type, outfile_prefix, batchsize, plink)
+    return GenomicMetadata(nsamples, nvariants, H1, H2, fixed_fields, haplotypes, index_map, population_groups, population_weights, population_N, population_Nes, population_rhos, genetic_distances, outfile_type, outfile_prefix, batchsize, plink)
+end

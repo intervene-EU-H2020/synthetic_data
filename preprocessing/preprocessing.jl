@@ -7,8 +7,6 @@ include("utils.jl")
 """Implements the full sequence of pre-processing steps
 """
 function preprocessing_pipeline(filepaths)
-    isdir(filepaths.output_dir) || mkdir(filepaths.output_dir)
-
     @info "Filtering SNPs"
     extract_variants(filepaths.vcftools, filepaths.vcf_input_raw, filepaths.vcf_input_processed_prefix, filepaths.vcf_input_processed, filepaths.variant_list)
     
@@ -20,7 +18,7 @@ function preprocessing_pipeline(filepaths)
 
     @info "Storing metadata files"
     convert_vcf_to_meta(filepaths.vcf_input_processed, filepaths.metadata_output)
-    cp(filepaths.popfile_raw, filepaths.popfile_processed)
+    cp(filepaths.popfile_raw, filepaths.popfile_processed, force=true)
 end
 
 

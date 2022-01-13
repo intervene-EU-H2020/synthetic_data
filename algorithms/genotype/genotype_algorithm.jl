@@ -27,7 +27,7 @@ end
 function update_variant_position(cur_pos, L, genetic_distances)
     var_pos = cur_pos
     dist = genetic_distances[var_pos]
-    while dist <= dist+L
+    while dist <= dist+L && var_pos<length(genetic_distances)
         var_pos += 1
         dist = genetic_distances[var_pos]
     end
@@ -52,13 +52,13 @@ Note that the start and end variant positions are included in the segment
 """
 function create_reference_table(metadata)
     ref_df = DataFrame(H=Int[], I=String[], S=Int[], E=Int[], P=String[], Q=String[])
-    @showprogress for hap in 1:(2*nsamples)
-        happop = metadata.population_groups[haplotype]
+    @showprogress for hap in 1:(2*metadata.nsamples)
+        happop = metadata.population_groups[hap]
         pos = 1
         # create segments until all variant positions are filled
-        while pos <= nvariants
+        while pos <= metadata.nvariants
             # sample a population group for the segment
-            segpop = sample(keys(metadata.population_weights[happop]), Weights(values(metadata.population_weights[happop])))
+            segpop = sample(collect(keys(metadata.population_weights[happop])), Weights(collect(values(metadata.population_weights[happop]))))
             # sample the segment distance
             T = sample_T(metadata.population_Ns[segpop], metadata.population_Nes[segpop])
             L = sample_L(T, metadata.population_rhos[segpop])
@@ -66,7 +66,7 @@ function create_reference_table(metadata)
             seghap = rand(metadata.haplotypes[segpop])
             # update the start and end (variant) positions of the segment
             start_pos = pos
-            end_pos = min(update_variant_position(pos, L, genetic_distances), nvariants)
+            end_pos = min(update_variant_position(pos, L, metadata.genetic_distances), metadata.nvariants)
             ref_df = push!(ref_df, [hap, seghap, start_pos, end_pos, happop, segpop])
             pos = end_pos+1
         end
@@ -78,12 +78,14 @@ end
 """Create the synthetic data for the specified chromosome
 """
 function create_synthetic_genotype_for_chromosome(metadata)
-    # create the reference dataframe then store the data using the specified file format
+    @info "Creating the algorithm mapping table"
     ref_df = create_reference_table(metadata)
 
     if metadata.outfile_type == "plink"
+        @info "Writing output to PLINK"
         write_to_plink(ref_df, metadata.batchsize, metadata)
     elseif metadata.outfile_type == "vcf"
+        @info "Writing output to VCF"
         write_to_vcf(ref_df, metadata)
     else
         throw(error("Config error: outfile_type not supported"))

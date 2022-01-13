@@ -14,23 +14,23 @@ Also note that there is a specific ordering to the pipeline execution
 """
 function run_program(pipelines, options)
     if pipelines["preprocessing"]
-        @info "running the preprocessing pipeline"
+        @info "Running the preprocessing pipeline"
         run_preprocessing(options)
     end
 
     if pipelines["optimisation"]
-        @info "optimising model parameter values"
+        @info "Optimising model parameter values"
         run_optimisation(options)
         exit(0)
     end
 
     if pipelines["genotype"]
-        @info "generating synthetic genotype data"
+        @info "Generating synthetic genotype data"
         create_synthetic_genotype(options)
     end
 
     if pipelines["phenotype"]
-        @info "generating synthetic phenotype data"
+        @info "Generating synthetic phenotype data"
         # TODO - create phenotype using Zhiyu's program
         # create Parfile using inputs from config.yml 
         # convert genotype data to .traw format using plink --recode A-transpose
@@ -38,7 +38,7 @@ function run_program(pipelines, options)
     end
 
     if pipelines["evaluation"]
-        @info "evaluating synthetic data quality"
+        @info "Evaluating synthetic data quality"
         run_evaluation(options)
     end
 end
@@ -51,7 +51,7 @@ function parse_commandline()
         "--config"
             help = "filepath to YAML configuration file"
             arg_type = String
-            required = true
+            required = false
         "--preprocessing"
             help = "preprocesses raw data to use as input for synthetic data generation"
             action = :store_true
@@ -76,7 +76,11 @@ end
 function main()
     parsed_args = parse_commandline()
 
-    options = YAML.load_file(parsed_args["config"])
+    options = YAML.load_file("config.yml")
+    if parsed_args["config"] != nothing
+        options_override = YAML.load_file(parsed_args["config"])
+        options = merge(options, options_override)
+    end
 
     pipelines = Dict("preprocessing" => parsed_args["preprocessing"], 
                      "genotype" => parsed_args["genotype"],

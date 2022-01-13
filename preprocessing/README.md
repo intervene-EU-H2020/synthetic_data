@@ -1,48 +1,41 @@
-# Pre-processing
+# Data pre-processing
 
-The pre-processing scripts prepare the raw data files to be used as input by the pipeline to generate synthetic datasets.
+The pre-processing scripts prepare the training data for generating synthetic datasets. There are options of using the provided 1000 Genomes dataset or pre-processing your own training dataset.
 
-## Standard (default) pre-processing
+## Standard pre-processing (default) 
 
-The data pre-processing procedure is rather time-consuming, so for users who want to quickly generate synthetic datasets, we provide an already pre-processed dataset:
+Use this option if you want to jump straight into generating synthetic datasets without having to run pre-processing yourself. The Docker container automatically downloads data that we've already pre-processed for use in the synthetic data algorithm. Based on the 1000 Genomes dataset, the data has been filtered to retain only the HapMap variants. Please note that synthetic datasets contain the same set of variants as the pre-processed training dataset.
 
-- Based on 1000 Genomes dataset downloaded from http://ftp.1000genomes.ebi.ac.uk/vol1/ftp/data_collections/1000G_2504_high_coverage/working/20201028_3202_phased/
-- Filtered to retain the variants listed in the files located at `data/external/variant_lists`. Please note that the synthetic dataset will contain the same set of variants as the pre-processed input dataset
+### How this data was created
 
-### Usage
-
-Download the raw datasets by running
+Raw datasets are downloaded by running
 ```
 preprocessing/data_download.sh data/inputs/raw
 ``` 
 This downloads the data to the `data/inputs/raw` directory.
 
-Configure the `config.yml` file and run the preprocessing pipeline
+The preprocessing pipeline is run using
 
 ```
 julia run_program.jl --config config.yml --preprocessing
 ```
+Note that setting `chromosome` to `all` in the `config.yml` will run the code for each chromosome sequentially. Alternatively you can run the preprocessing pipeline separately for each chromosome on different compute nodes.
 
 ## Custom pre-processing
 
-There may be cases where you want to use your own input dataset. In this case, you can either pre-process your input dataset using the pipeline we provide or do the pre-processing yourself.
+Use this option if you want to use your own training dataset. You will need to edit the `filepaths` section of `config.yml`. In particular, the pre-processing pipeline requires the following files as input:
 
-### If using the provided pipeline:
-- See the `config.yml` file for inputs that need to be specified 
-    - The program expects the genotype data input to be phased genotype data in VCF format, following the convention of encoding the phased genotype as allele values separated by the "|" character
-    - Provide a variant list specifying which variants to retain in the data
-    - Genetic distance maps can be downloaded using the `preprocessing/data_download.sh` script
-- Run the preprocessing pipeline using
+- `vcf_input_raw`: Genotype data given in phased VCF format (following the convention of encoding the phased genotype as allele values separated by the "|" character)
+- `variant_list`: `.txt` file giving a list of variants (one variant per line, no header) to retain during pre-processing. This corresponds to the variants that will be included in the synthetic dataset
+- `genetic_mapfile`: Genetic distance maps of basepair to centimorgan distances. Columns are variant id, basepair distance, centimorgan distance (no headers)
+- `popfile_raw`: A population file similar to https://ftp.1000genomes.ebi.ac.uk/vol1/ftp/data_collections/1000G_2504_high_coverage/20130606_g1k_3202_samples_ped_population.txt
 
+Note that for all of the above inputs, except `popfile_raw`, you will need to provide *one file for each chromosome*. In the `config.yml` file this is specified by using the `{chromosome}` wildcard in the filepath name.
+
+Please see examples of how these inputs should be formatted by viewing the default dataset provided.
+
+After updating the `config.yml` you can run the preprocessing pipeline using
 ```
 julia run_program.jl --config config.yml --preprocessing
 ```
 
-### If pre-processing the data yourself
-
-You will need to create the following files:
-- Haplotype matrix files: the `convert_vcf_to_hap()` function from `preprocessing/utils.jl` shows how to convert a (phased) VCF file to the haplotype matrix input required by the synthetic data algorithm
-- Genetic distance files: specifying conversion from basepair to centimorgan distances
-- Metadata files: information about the genetic variants, to be stored with the synthetic dataset
-
-There should be one set of inputs for each chromosome. Please see examples of the expected input data formats in the `data/inputs/processed` directory
