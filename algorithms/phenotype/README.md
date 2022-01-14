@@ -1,6 +1,6 @@
 # Phenotype generation algorithm
 
-# There are some changes in parameters. I will update this readme on Monday, hopefully #
+# !There are some changes in parameters. I will update this readme on Monday, hopefully #
 
 _"Working code" for phenotype generation, subject to further updates._
 
