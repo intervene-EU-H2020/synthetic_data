@@ -9,37 +9,59 @@ int main(int argc, char const *argv[])
     T = gsl_rng_default;
     r = gsl_rng_alloc (T);
 
+    memset(GenoEffProp, 0.0, sizeof(double) * nMaxPop * nMaxTrait);
+    memset(CovarEffProp, 0.0, sizeof(double) * nMaxPop * nMaxTrait);
+    memset(EnvEffProp, 0.0, sizeof(double) * nMaxPop * nMaxTrait);
+    memset(VarGeno, 0.0, sizeof(double) * nMaxPop * nMaxTrait);
+    memset(VarCovar, 0.0, sizeof(double) * nMaxPop * nMaxTrait);
+    memset(VarEnv, 0.0, sizeof(double) * nMaxPop * nMaxTrait);
+
     ReadParam(argv[1]);
 
     char *tok; char *p;
+    char tmpOutCausal[1000];
+    char tmpOutPheno[1000];
+    char tmpBuff[20];
     long int i, j, k, n;
     long int PopSampleCt[nMaxPop], tmpPopCt;
-    int SNPindex, PopIndex;
+    double tmpPheMean, tmpPheVar;
+    double tmpPheCutoff[nMaxPop];
+    int SNPindex, PopIndex, flag;
+    FILE *OutFileCausal;
+
     ExtractParam();
     ReadPopulation();
     ReadRef();
+
     if (!PolyFlag)
 		ReadCausal();
 
-    for (n = 0; n < nMaxPop; n++) {
-    	GenoEff[n] = malloc(sizeof(double) * nSamplePerPop[n]);
-		memset(GenoEff[n], 0.0, sizeof(double) * nSamplePerPop[n]);
-		EnvEff[n] = malloc(sizeof(double) * nSamplePerPop[n]);
-		memset(EnvEff[n], 0.0, sizeof(double) * nSamplePerPop[n]);
-		PhenoSim[n] = malloc(sizeof(double) * nSamplePerPop[n]);
-		memset(PhenoSim[n], 0.0, sizeof(double) * nSamplePerPop[n]);
+    for (n = 0; n < nMaxTrait; n++) {
+    	GenoEff[n] = malloc(sizeof(double) * nSample);
+		memset(GenoEff[n], 0.0, sizeof(double) * nSample);
+		CovarEff[n] = malloc(sizeof(double) * nSample);
+		memset(CovarEff[n], 0.0, sizeof(double) * nSample);
+		EnvEff[n] = malloc(sizeof(double) * nSample);
+		memset(EnvEff[n], 0.0, sizeof(double) * nSample);
+		for (i = 0; i < 2; i++) {
+			PhenoSim[n][i] = malloc(sizeof(double) * nSample);
+			memset(PhenoSim[n][i], 0.0, sizeof(double) * nSample);
+		}
     }
 
 	printf("memset, done.\n");
 
-	FILE *OutFileCausal;
-	OutFileCausal = fopen(OutCausal,"w");
-	if (OutFileCausal == NULL) {
-        printf("Cannot open output file.\n");
-        exit(0);
-    } //check first wether the output file can be opened
-    fprintf(OutFileCausal, "SNP\ttBaseEff\tMAF\tLDscore\tBeta\n");
-	fclose(OutFileCausal);
+	for (k = 0; k < nTrait; k++) {
+		strcpy(tmpOutCausal, OutCausal);
+		sprintf(tmpBuff, "%d", (int)k+1);
+		OutFileCausal = fopen(strcat(tmpOutCausal, tmpBuff),"w");
+		if (OutFileCausal == NULL) {
+	        printf("Cannot open output causal file.\n");
+	        exit(0);
+	    } //check first wether the output file can be opened
+	    fprintf(OutFileCausal, "SNP\ttBaseEff\tMAF\tLDscore\tBeta\n");
+		fclose(OutFileCausal);
+	}
 
 // takes traw as input
     FILE *InFileGeno;
@@ -84,19 +106,22 @@ int main(int argc, char const *argv[])
 				CHR = CHR-1;
 				tok = strtok_r(p, " ,\t", &p); // SNP ID
 				strcpy(SNP, tok);
-				CausalFlag = IsCausal(SNP);
-				if (CausalFlag) {
+				flag = IsCausal(SNP);
+				if (flag) {
 					k++;
 					tok = strtok_r(p, " ,\t", &p); // Morgan pos
 				    tok = strtok_r(p, " ,\t", &p); // BP pos
 				    tok = strtok_r(p, " ,\t", &p); // Ref Allele
 				    tok = strtok_r(p, " ,\t", &p); // ALT Allele
 				    j = 0;
-				    memset(PopSampleCt, 0, sizeof(long int)*nMaxPop);
+				    memset(PopSampleCt, 0, sizeof(long int) * nMaxPop);
+				    memset(PopMatTmp, 0, sizeof(double) * nMaxPop * nMaxInd);
+				    memset(GenoMat, 0, sizeof(double) * nMaxInd);
 				    while ((tok = strtok_r(p, " ,\t", &p))) {
+				    	GenoMat[j] = atof(tok);
 				    	PopIndex = PopIndicator[j++];
 				    	tmpPopCt = PopSampleCt[PopIndex];
-				    	GenoMat[PopIndex][tmpPopCt] = atof(tok);
+				    	PopMatTmp[PopIndex][tmpPopCt] = atof(tok);
 				    	PopSampleCt[PopIndex]++;
 				    }
 				    AnalyzeSNP(CHR, SNP);
@@ -108,31 +133,101 @@ int main(int argc, char const *argv[])
 		printf("Input genomat: %ld SNPs; Using in total %ld causal SNPs.\n", i, k);
 	}	
 
-	for (n = 0; n < nPop; n++) {
-		VarGeno[n] = gsl_stats_variance(GenoEff[n], 1, nSamplePerPop[n]);
-		VarEnv[n] = VarGeno[n]/herr[n] - VarGeno[n];
-		for (j = 0; j < nSamplePerPop[n]; j++) {
-			EnvEff[n][j] = gsl_ran_gaussian(r, sqrt(VarEnv[n]));
-			PhenoSim[n][j] = EnvEff[n][j] + GenoEff[n][j];
-		}
-		printf("Population %s: VarGeno = %lf, VarEnv = %lf, VarPheno = %lf\n", PopList[n], VarGeno[n], VarEnv[n], gsl_stats_variance(PhenoSim[n], 1, nSamplePerPop[n]));
+	if (nCovar) 
+		GetCovarEff();
+	GetEnvEff();
+
+	for (k = 0; k < nTrait; k++) {
+		memset(PopSampleCt, 0, sizeof(long int) * nMaxPop);
+		memset(PopMatTmp, 0, sizeof(double) * nMaxPop * nMaxInd);
+		for (i = 0; i < nSample; i++) {
+	    	PopIndex = PopIndicator[i];
+	    	tmpPopCt = PopSampleCt[PopIndex];
+	    	PopMatTmp[PopIndex][tmpPopCt] = GenoEff[k][i];
+	    	PopSampleCt[PopIndex]++;
+    	}
+	    for (n = 0; n < nPop; n++)
+	    	VarGeno[n][k] = gsl_stats_variance(PopMatTmp[n], 1, PopSampleCt[n]);
+
+	    memset(PopSampleCt, 0, sizeof(long int) * nMaxPop);
+		memset(PopMatTmp, 0, sizeof(double) * nMaxPop * nMaxInd);
+		for (i = 0; i < nSample; i++) {
+	    	PopIndex = PopIndicator[i];
+	    	tmpPopCt = PopSampleCt[PopIndex];
+	    	PopMatTmp[PopIndex][tmpPopCt] = CovarEff[k][i];
+	    	PopSampleCt[PopIndex]++;
+    	}
+	    for (n = 0; n < nPop; n++)
+	    	VarCovar[n][k] = gsl_stats_variance(PopMatTmp[n], 1, PopSampleCt[n]);
+
+	    memset(PopSampleCt, 0, sizeof(long int) * nMaxPop);
+		memset(PopMatTmp, 0, sizeof(double) * nMaxPop * nMaxInd);
+		for (i = 0; i < nSample; i++) {
+	    	PopIndex = PopIndicator[i];
+	    	tmpPopCt = PopSampleCt[PopIndex];
+	    	PopMatTmp[PopIndex][tmpPopCt] = EnvEff[k][i];
+	    	PopSampleCt[PopIndex]++;
+    	}
+	    for (n = 0; n < nPop; n++)
+	    	VarEnv[n][k] = gsl_stats_variance(PopMatTmp[n], 1, PopSampleCt[n]);
 	}
 
-	memset(PopSampleCt, 0, sizeof(long int)*nMaxPop);
 	FILE *OutFilePheno;
-	OutFilePheno = fopen(OutPheno,"w");
-	if (OutFilePheno == NULL) {
-        printf("Cannot open output file %s.\n", OutCausal);
-        exit(0);
-    }
-    fprintf(OutFilePheno, "Sample\tGenoEff\tEnvEff\tPhenotype\n");
-    for (j = 0; j < nSample; j++) {
-    	PopIndex = PopIndicator[j];
-    	tmpPopCt = PopSampleCt[PopIndex];
-		fprintf(OutFilePheno, "%s\t%lf\t%lf\t%lf\n", SampleList[j], GenoEff[PopIndex][tmpPopCt], EnvEff[PopIndex][tmpPopCt], PhenoSim[PopIndex][tmpPopCt]);
-		PopSampleCt[PopIndex]++;
-    }
-	fclose(OutFilePheno);
+	for (k = 0; k < nTrait; k++) {
+		strcpy(tmpOutPheno, OutPheno);
+		sprintf(tmpBuff, "%d", (int)k+1);
+		OutFilePheno = fopen(strcat(tmpOutPheno, tmpBuff),"w");
+		if (OutFilePheno == NULL) {
+	        printf("Cannot open output pheno file.\n");
+	        exit(0);
+	    }
+	    if (BinaryFlag)
+			fprintf(OutFilePheno, "Sample\tGenoEff\tCovarEff\tEnvEff\tPhenotype(liability)\tPhenotype(binary)\n");
+		else 
+			fprintf(OutFilePheno, "Sample\tGenoEff\tCovarEff\tEnvEff\tPhenotype\n");
+		memset(GCEweight, 0.0, sizeof(double) * nMaxPop * 3);
+		for (n = 0; n < nPop; n++) {
+			GCEweight[n][0] = sqrt(GenoEffProp[n][k]/VarGeno[n][k]);
+			GCEweight[n][1] = sqrt(CovarEffProp[n][k]/VarCovar[n][k]);
+			GCEweight[n][2] = sqrt(EnvEffProp[n][k]/VarEnv[n][k]);
+			// printf("GenoEffP = %lf, VarGeno = %lf, EnvEffP = %lf, VarEnv = %lf\n", GenoEffProp[n][k], VarGeno[n][k], EnvEffProp[n][k], VarEnv[n][k]);
+			GCEweight[n][0] = (isnan(GCEweight[n][0]) ? 0.0 : GCEweight[n][0]);
+			GCEweight[n][1] = (isnan(GCEweight[n][1]) ? 0.0 : GCEweight[n][1]);
+			GCEweight[n][2] = (isnan(GCEweight[n][2]) ? 0.0 : GCEweight[n][2]);
+		}
+		memset(PopSampleCt, 0, sizeof(long int) * nMaxPop);
+		memset(PopMatTmp, 0, sizeof(double) * nMaxPop * nMaxInd);
+		for (i = 0; i < nSample; i++) {
+			PopIndex = PopIndicator[i];
+			GenoEff[k][i] *= GCEweight[PopIndex][0];
+			CovarEff[k][i] *= GCEweight[PopIndex][1];
+			EnvEff[k][i] *= GCEweight[PopIndex][2];
+			PhenoSim[k][0][i] = GenoEff[k][i] + CovarEff[k][i] + EnvEff[k][i];
+	    	if (!BinaryFlag)
+				fprintf(OutFilePheno, "%s\t%lf\t%lf\t%lf\t%lf\n", SampleList[i], GenoEff[k][i], CovarEff[k][i], EnvEff[k][i], PhenoSim[k][0][i]);
+			else {
+				tmpPopCt = PopSampleCt[PopIndex];
+		    	PopMatTmp[PopIndex][tmpPopCt] = PhenoSim[k][0][i];
+		    	PopSampleCt[PopIndex]++;
+			}
+		}
+
+		if (BinaryFlag) {
+			for (n = 0; n < nPop; n++) {
+				tmpPheMean = gsl_stats_mean(PopMatTmp[n], 1, PopSampleCt[n]);
+				tmpPheVar = gsl_stats_variance(PopMatTmp[n], 1, PopSampleCt[n]);
+				tmpPheCutoff[n] = gsl_cdf_gaussian_Qinv(Prev[n][k], sqrt(tmpPheVar)) + tmpPheMean;
+				printf("Trait %ld, Population %ld: Phe Mean = %lf, Var = %lf, Diagnosis Cutoff = %lf\n", k, n, tmpPheMean, tmpPheVar, tmpPheCutoff[n]);
+			}
+			for (i = 0; i < nSample; i++) {
+				PopIndex = PopIndicator[i];
+				PhenoSim[k][1][i] = ((PhenoSim[k][0][i] > tmpPheCutoff[PopIndex]) ? 1.0 : 0.0 );
+				fprintf(OutFilePheno, "%s\t%lf\t%lf\t%lf\t%lf\t%d\n", SampleList[i], GenoEff[k][i], CovarEff[k][i], EnvEff[k][i], PhenoSim[k][0][i], (int) PhenoSim[k][1][i]); 
+			}
+		}
+		fclose(OutFilePheno);
+	}
+	printf("Writing phenotypes, done.\n");
 	return 0;
 }
 
