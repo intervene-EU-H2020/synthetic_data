@@ -24,10 +24,11 @@ end
 
 """Updates the variant position in the chromosome by adding the genetic distance L to the current position
 """
-function update_variant_position(cur_pos, L, genetic_distances)
+function update_variant_position(cur_pos, L, genetic_distances, nvariants)
     var_pos = cur_pos
     dist = genetic_distances[var_pos]
-    while dist <= dist+L && var_pos<length(genetic_distances)
+    objective = dist+L
+    while dist <= objective && var_pos<nvariants
         var_pos += 1
         dist = genetic_distances[var_pos]
     end
@@ -66,7 +67,7 @@ function create_reference_table(metadata)
             seghap = rand(metadata.haplotypes[segpop])
             # update the start and end (variant) positions of the segment
             start_pos = pos
-            end_pos = min(update_variant_position(pos, L, metadata.genetic_distances), metadata.nvariants)
+            end_pos = min(update_variant_position(pos, L, metadata.genetic_distances, metadata.nvariants), metadata.nvariants)
             ref_df = push!(ref_df, [hap, seghap, start_pos, end_pos, happop, segpop])
             pos = end_pos+1
         end

@@ -58,9 +58,9 @@ function merge_batch_files(batch_files, outfile, plink)
     else
         # no files to merge - rename single batch file
         file_prefix = batch_files[1]
-        mv(string(file_prefix,".bed"),string(outfile,".bed"))
-        mv(string(file_prefix,".bim"),string(outfile,".bim"))
-        mv(string(file_prefix,".fam"),string(outfile,".fam"))
+        mv(string(file_prefix,".bed"),string(outfile,".bed"),force=true)
+        mv(string(file_prefix,".bim"),string(outfile,".bim"),force=true)
+        mv(string(file_prefix,".fam"),string(outfile,".fam"),force=true)
     end
 end
 
@@ -84,7 +84,7 @@ function get_genostr(batch_ref_df, batchsize, start_haplotype, metadata)
             
             I_pos = 1
             for row in eachrow(hap_df)
-                segment = metadata.H1[metadata.index_map[row.I], (row.S+1):row.E]
+                segment = metadata.H1[metadata.index_map[row.I], row.S:row.E]
                 length_of_segment = length(segment)
                 I[I_pos:I_pos+length_of_segment-1] = segment
                 I_pos += length_of_segment
@@ -114,7 +114,7 @@ function write_to_plink_batch(batch_ref_df, batchsize, batch_number, metadata)
     start_haplotype = ((batch_number-1)*batchsize)*2+1
     genostr = get_genostr(batch_ref_df, batchsize, start_haplotype, metadata)
     batch_file = @sprintf("%s_%i.bed", metadata.outfile_prefix, (batch_number-1))
-    
+
     bed_reader.to_bed(batch_file, genostr, properties=properties)
 
     return batch_file
