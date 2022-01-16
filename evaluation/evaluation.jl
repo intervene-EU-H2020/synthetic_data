@@ -1,89 +1,139 @@
-"""Parses input options and runs evaluation pipeline
+"""Executes the pipeline for evaluating synthetic data quality
 """
 
-function run_kinship_evaluation()
-    # TODO
+include("../utils/reference_data.jl")
+include("metrics/eval_aats.jl")
+include("metrics/eval_kinship.jl")
+include("metrics/eval_ld.jl")
+include("metrics/eval_maf.jl")
+include("metrics/eval_pca.jl")
+
+
+function run_kinship_evaluation(ibsfile_real, ibsfile_synt, ibsfile_cross)
+    run_kinship(ibsfile_real, ibsfile_synt, ibsfile_cross)
 end
 
 
-function run_aats_evaluation()
-    # TODO
+function run_aats_evaluation(ibsfile_cross)
+    run_aats(ibsfile_cross)
 end
 
 
-function run_ld_evaluation()
-    # TODO
+function run_ld_evaluation(real_data_prefix, synt_data_prefix, eval_dir, plink_path)
+    run_ld(real_data_prefix, synt_data_prefix, eval_dir, plink_path)
 end
 
 
-function run_maf_evaluation()
-    # TODO
+function run_maf_evaluation(real_maf_file, synt_maf_file)
+    run_maf(real_maf_file, synt_maf_file)
 end
 
 
-function run_pca_evaluation()
-    # TODO 
+function run_pca_evaluation(real_data_prefix, synt_data_prefix)
+    run_pca(real_data_prefix, synt_data_prefix)
 end
 
 
-function run_external_tools(options, reference, filepaths)
-    plink = filepaths.plink
-    plink2 = filepaths.plink2
-    king = filepaths.king
+"""Computations for MAF using PLINK
+"""
+function run_maf_tools(plink, reffile_prefix, synfile_prefix, outdir)
+    @info "Running external tools for MAF"
+    reffile_out = @sprintf("%s.ref.maf", outdir)
+    synfile_out = @sprintf("%s.syn.maf", outdir)
+    run(`$plink --bfile $reffile_prefix --freq --out $reffile_out`)
+    run(`$plink --bfile $synfile_prefix --freq --out $synfile_out`)
+    real_maffile = @sprintf("%s.frq", reffile_out)
+    syn_maffile = @sprintf("%s.frq", synfile_out)
+    return real_maffile, syn_maffile
+end
 
-    reffile_prefix = reference
-    synfile_prefix = filepaths.synthetic_data_prefix
-    reffile_bed = @sprintf("%s.bed", reference)
-    synfile_bed = @sprintf("%s.bed", filepaths.synthetic_data_prefix)
 
-    if options["evaluation"]["metrics"]["maf"]
-        reffile_out = @sprintf("%s.ref.maf", filepaths.evaluation_output)
-        synfile_out = @sprintf("%s.syn.maf", filepaths.evaluation_output)
-        run(`$plink --bfile $reffile_prefix --freq --out $reffile_out`)
-        run(`$plink --bfile $synfile_prefix --freq --out $synfile_out`)
-    elseif options["evaluation"]["metrics"]["pca"]
-        reffile_out = @sprintf("%s.ref.pca", filepaths.evaluation_output)
-        synfile_out = @sprintf("%s.syn.pca", filepaths.evaluation_output)
-        run(`$plink2 --bfile $reffile_prefix --freq counts --pca allele-wts --out $reffile_out`)
-        run(`$plink2 --bfile $synfile_prefix --freq counts --pca allele-wts --out $synfile_out`)
-    elseif options["evaluation"]["metrics"]["kinship"] || options["evaluation"]["metrics"]["aats"]
-        reffile_out = @sprintf("%s.ref.king", filepaths.evaluation_output)
-        synfile_out = @sprintf("%s.syn.king", filepaths.evaluation_output)
-        crossfile_out = @sprintf("%s.cross.king", filepaths.evaluation_output)
-        run(`$king -b $reffile_bed --ibs --prefix $reffile_out`)
-        run(`$king -b $synfile_bed --ibs --prefix $synfile_out`)
-        run(`$king -b $reffile_bed,$synfile_bed --ibs --prefix $crossfile_out`)
+"""Computations for PCA using PLINK
+"""
+function run_pca_tools(plink2, reffile_prefix, synfile_prefix, outdir)
+    @info "Running external tools for PCA"
+    reffile_out = @sprintf("%s.ref.pca", outdir)
+    synfile_out = @sprintf("%s.syn.pca", outdir)
+    run(`$plink2 --bfile $reffile_prefix --freq counts --pca allele-wts --out $reffile_out`)
+    run(`$plink2 --bfile $synfile_prefix --freq counts --pca allele-wts --out $synfile_out`)
+    return reffile_out, synfile_out
+end
+
+
+"""Computations for relatedness using KING
+"""
+function run_relatedness_tools(king, reffile_prefix, synfile_prefix, outdir)
+    @info "Running external tools for relatedness"
+    reffile_bed = @sprintf("%s.bed", reffile_prefix)
+    synfile_bed = @sprintf("%s.bed", synfile_prefix)
+    reffile_out = @sprintf("%s.ref.king", outdir)
+    synfile_out = @sprintf("%s.syn.king", outdir)
+    crossfile_out = @sprintf("%s.cross.king", outdir)
+    run(`$king -b $reffile_bed --ibs --prefix $reffile_out`)
+    run(`$king -b $synfile_bed --ibs --prefix $synfile_out`)
+    run(`$king -b $reffile_bed,$synfile_bed --ibs --prefix $crossfile_out`)
+    real_ibsfile = @sprintf("%s.ibs0", reffile_out)
+    syn_ibsfile = @sprintf("%s.ibs0", synfile_out)
+    cross_ibsfile = @sprintf("%s.ibs0", crossfile_out)
+    return real_ibsfile, syn_ibsfile, cross_ibsfile
+end
+
+
+"""Runs computations using external tools such as PLINK and KING, 
+based on the selection of evaluation metrics
+"""
+function run_external_tools(metrics, reffile_prefix, synfile_prefix, filepaths)
+    external_files = Dict()
+    if metrics["maf"]
+        external_files["real_maffile"], external_files["syn_maffile"] = run_maf_tools(filepaths.plink, reffile_prefix, synfile_prefix, filepaths.evaluation_output)
     end
+    if metrics["pca"]
+        external_files["real_pcafile"], external_files["syn_pcafile"] = run_pca_tools(filepaths.plink2, reffile_prefix, synfile_prefix, filepaths.evaluation_output)
+    end
+    if metrics["kinship"] || metrics["aats"]
+        external_files["real_ibsfile"], external_files["syn_ibsfile"], external_files["cross_ibsfile"] = run_relatedness_tools(filepaths.king, reffile_prefix, synfile_prefix, filepaths.evaluation_output)
+    end
+    return external_files
 end
 
 
+"""Executes evaluation for the metrics specified in the configuration file
+"""
 function run_pipeline(options, chromosome, superpopulation)
-    fp = parse_filepaths(options, chromosome, superpopulation)
-    reference = get_reference_data(fp)
+    filepaths = parse_filepaths(options, chromosome, superpopulation)
+    genomic_metadata = parse_genomic_metadata(options, superpopulation, filepaths)
 
-    run_external_tools(options, reference, filepaths)
+    reffile_prefix, nsamples_ref = create_reference_dataset(filepaths.vcf_input_processed, filepaths.popfile_processed, genomic_metadata.population_weights, filepaths.plink, filepaths.reference_dir)
+    synfile_prefix = filepaths.synthetic_data_prefix
 
-    if options["evaluation"]["metrics"]["aats"]
-        run_aats_evaluation()
-    elseif options["evaluation"]["metrics"]["kinship"]
-        run_kinship_evaluation()
-    elseif options["evaluation"]["metrics"]["ld"]
-        run_ld_evaluation()
-    elseif options["evaluation"]["metrics"]["maf"]
-        run_maf_evaluation()
-    elseif options["evaluation"]["metrics"]["pca"]
-        run_pca_evaluation()
+    metrics = options["evaluation"]["metrics"]
+    external_files = run_external_tools(metrics, reffile_prefix, synfile_prefix, filepaths)
+
+    if metrics["aats"]
+        run_aats_evaluation(external_files["cross_ibsfile"])
+    end
+    if metrics["kinship"]
+        run_kinship_evaluation(external_files["real_ibsfile"], external_files["syn_ibsfile"], external_files["cross_ibsfile"])
+    end
+    if metrics["ld"]
+        run_ld_evaluation(reffile_prefix, synfile_prefix, filepaths.evaluation_output, filepaths.plink)
+    end
+    if metrics["maf"]
+        run_maf_evaluation(external_files["real_maffile"],  external_files["syn_maffile"])
+    end
+    if metrics["pca"]
+        run_pca_evaluation(external_files["real_pcafile"], external_files["syn_pcafile"])
     end
 end
 
 
-function get_reference_data(filepaths)
-    # TODO this dataset needs to be created
-    return filepaths.evaluation_reference
-end
+"""Entry point to running the evaluation pipeline for genotype data
 
-
-"""Entry point to running the evaluation pipeline
+Note that the evaluation pipeline assumes that the synthetic data you want 
+to evaluate has already been geneerated, using the setup specified in the
+configuration file. It is therefore recommended to run the pipeline with the 
+--genotype and --evaluation flags together, so that the program generates 
+the data and then immediately evaluates it using the correct settings.
 """
 function run_evaluation(options)
     chromosome = parse_chromosome(options)

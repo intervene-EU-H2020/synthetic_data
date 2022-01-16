@@ -18,12 +18,14 @@ struct Filepaths
     popfile_raw::String
     popfile_processed::String
     synthetic_data_prefix::String
+    evaluation_output::String
+    optimisation_output::String
+    reference_dir::String
     vcftools::String
     plink::String
     plink2::String
     king::String
     mapthin::String
-    evaluation_reference::String
 end
 
 
@@ -102,7 +104,9 @@ function parse_filepaths(options, chromosome, superpopulation)
     popfile_raw = format_filepath(options["filepaths"]["popfile_raw"], chromosome, superpopulation, false)
     popfile_processed = format_filepath(options["filepaths"]["popfile_processed"], chromosome, superpopulation, false)
     synthetic_data_prefix = format_filepath(options["filepaths"]["synthetic_data_prefix"], chromosome, superpopulation, true)
-    evaluation_reference = format_filepath(options["filepaths"]["evaluation_reference"], chromosome, superpopulation, true)
+    evaluation_output = format_filepath(options["filepaths"]["evaluation_output"], chromosome, superpopulation, true)
+    optimisation_output = format_filepath(options["filepaths"]["optimisation_output"], chromosome, superpopulation, true)
+    reference_dir = format_filepath(options["filepaths"]["reference_dir"], chromosome, superpopulation, false)
 
     vcftools = format_filepath(options["software_paths"]["vcftools"], chromosome, superpopulation, false)
     plink = format_filepath(options["software_paths"]["plink"], chromosome, superpopulation, false)
@@ -110,7 +114,7 @@ function parse_filepaths(options, chromosome, superpopulation)
     king = format_filepath(options["software_paths"]["king"], chromosome, superpopulation, false)
     mapthin = format_filepath(options["software_paths"]["mapthin"], chromosome, superpopulation, false)
 
-    return Filepaths(vcf_input_raw, vcf_input_processed_prefix, vcf_input_processed, variant_list, genetic_mapfile, genetic_distfile, hap1_matrix_output, hap2_matrix_output, metadata_output, popfile_raw, popfile_processed, synthetic_data_prefix, vcftools, plink, plink2, king, mapthin, evaluation_reference)
+    return Filepaths(vcf_input_raw, vcf_input_processed_prefix, vcf_input_processed, variant_list, genetic_mapfile, genetic_distfile, hap1_matrix_output, hap2_matrix_output, metadata_output, popfile_raw, popfile_processed, synthetic_data_prefix, evaluation_output, optimisation_output, reference_dir, vcftools, plink, plink2, king, mapthin)
 end
 
 
@@ -185,7 +189,6 @@ function get_population_structure(superpopulation, options, poplist)
             population_weights[superpopulation] = Dict(superpopulation=>100)
         end
     else
-        # TODO code needs to support population-level customisation
         custom_populations = options["genotype_data"]["samples"]["custom"]
         for pop in custom_populations
             population_groups = vcat(population_groups, repeat([pop["id"]],pop["nsamples"]*2))

@@ -27,9 +27,9 @@ filepaths:
   popfile_raw: data/inputs/raw/1KGPhase3.pop.panel
   popfile_processed: data/inputs/processed/1KGPhase3.pop.panel
   synthetic_data_prefix: data/outputs/test/test{chromosome}
-  evaluation_reference: data/inputs/raw/1KGPhase3.chr{chromosome}.{superpopulation}
   evaluation_output: data/outputs/test/evaluation/test{chromosome}
   optimisation_output: data/outputs/test/optimisation/test{chromosome}
+  reference_dir: data/inputs/reference
 
 software_paths:
     plink: software/plink
@@ -150,10 +150,10 @@ optimisation:
     run: true
     n_particles: 500
     threshold: 0.05
-    max_iter: 100
+    max_iter: 10
     write_progress: true
   emulation_rejection_ABC:
-    run: true
+    run: false
     n_particles: 500
     threshold: 0.05
     n_design_points: 50
@@ -162,7 +162,7 @@ optimisation:
   # choice of summary statistic/s
   summary_statistics:
     ld_decay: true
-    kinship: true
+    kinship: false
 
 ####################################
 # ADDITIONAL INFORMATION           #

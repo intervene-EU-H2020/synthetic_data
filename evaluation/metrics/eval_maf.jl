@@ -44,11 +44,8 @@ end
 
 
 ## main
-function main()
+function run_maf(real_maf_file, synt_maf_file)
     @info "Running MAF evaluations"
-    
-    real_maf_file = ARGS[1];
-    synt_maf_file = ARGS[2];
 
     ## Load MAF data
     @info "Loading MAF files"
@@ -84,9 +81,4 @@ function main()
     )
     savefig(fig, outfile)
     @info "MAF comparison plot save at $outfile"
-end
-
-
-if abspath(PROGRAM_FILE) == @__FILE__
-    main()
 end

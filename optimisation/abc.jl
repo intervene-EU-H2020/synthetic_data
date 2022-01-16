@@ -1,7 +1,10 @@
 """Run likelihood-free inference for optimising model parameters
 """
 
-include("metrics.jl")
+using GpABC
+
+include("summary_stats.jl")
+include("../utils/reference_data.jl")
 include("../algorithms/genotype/genotype_algorithm.jl")
 
 
@@ -32,24 +35,31 @@ function simulator_function(var_params::AbstractArray{Float64,1})
     rho_s = var_params[2]
 
     # simulate a synthetic dataset with these parameter values and calculate the summary statistic
-    genomic_metadata.Nes[abc_metadata.superpopulation] = Ne_s
-    genomic_metadata.rhos[abc_metadata.superpopulation] = rho_s
+    genomic_metadata.population_Nes[abc_metadata.superpopulation] = trunc(Int, Ne_s)
+    genomic_metadata.population_rhos[abc_metadata.superpopulation] = rho_s
     create_synthetic_genotype_for_chromosome(genomic_metadata) 
-    sumstat = calculate_summary_statistic(abc_metadata.out_prefix, abc_metadata.nsamples_syn, abc_metadata.ref_prefix, abc_metadata.nsamples_ref, abc_metadata.statistics, abc_metadata.plink, abc_metadata.king, abc_metadata.mapthin, abc_metadata.bp_to_cm_map)
+    sumstat = calculate_summary_statistic(abc_metadata.out_prefix, abc_metadata.nsamples_syn, abc_metadata.ref_prefix)
     
     return sumstat
 end
 
 
 """Calculate summary statistics for ABC
+
+Set use_cross=true if calculating kinship for the reference dataset (because the is only one dataset)
 """
-function calculate_summary_statistic(syn_prefix, nsamples_syn, ref_prefix, nsamples_ref, statistics, plink, king, mapthin, bp_to_cm_map)
+function calculate_summary_statistic(syn_prefix, nsamples_syn, ref_prefix, cross_prefix=NaN, nsamples_cross=NaN, use_cross=false)
     sumstat = NaN
-    if "ld_decay" ∈ statistics
-        sumstat = LD_decay(syn_prefix, plink, mapthin, syn_prefix, bp_to_cm_map)
+    if "ld_decay" ∈ abc_metadata.statistics
+        sumstat = LD_decay(syn_prefix, abc_metadata.plink, abc_metadata.mapthin, syn_prefix, abc_metadata.bp_to_cm_map)
     end
-    if "kinship" ∈ statistics
-        sumstat_kin = kinship_cross(syn_prefix, nsamples_syn, ref_prefix, nsamples_ref, king, syn_prefix)
+    if "kinship" ∈ abc_metadata.statistics
+        if use_cross
+            sumstat_kin = kinship_cross(cross_prefix, nsamples_cross, ref_prefix, abc_metadata.king, syn_prefix)
+        else
+            sumstat_kin = kinship_cross(syn_prefix, nsamples_syn, ref_prefix, abc_metadata.king, syn_prefix)
+        end
+
         if isnan(sumstat)
             sumstat = sumstat_kin
         else
@@ -118,46 +128,46 @@ function create_cross_datasets(ref_prefix, plink)
     CSV.write(fam_file1, fam1_df, delim="\t")
     CSV.write(fam_file2, fam2_df, delim="\t")
     
-    ref2_prefix = @sprintf("%s_1", ref_prefix)
-    cross_prefix = @sprintf("%s_2", ref_prefix)
+    cross1_prefix = @sprintf("%s_1", ref_prefix)
+    cross2_prefix = @sprintf("%s_2", ref_prefix)
+    nsamples_cross1 = length(fam1_df)
 
-    run(`$plink --bfile $ref_prefix --keep $fam_file1 --make-bed --out $ref2_prefix`)
-    run(`$plink --bfile $ref_prefix --keep $fam_file2 -make-bed --out $cross_prefix`)
+    run(`$plink --bfile $ref_prefix --keep $fam_file1 --make-bed --out $cross1_prefix`)
+    run(`$plink --bfile $ref_prefix --keep $fam_file2 -make-bed --out $cross2_prefix`)
     
-    return ref2_prefix, cross_prefix, nsamples_ref, nsamples_cross # TODO nsamples
+    return cross1_prefix, cross2_prefix, nsamples_cross1
 end
 
 
 """Calculates the ABC summary statistics for the reference dataset
 """
-function get_reference_statistics(ref_prefix, nsamples_ref, statistics, plink, king, mapthin, bp_to_cm_map)
-    cross_prefix = NaN
-    nsamples_cross = NaN
-    if "kinship" ∈ statistics
-        ref_prefix, cross_prefix, nsamples_ref, nsamples_cross = create_cross_datasets(ref_prefix, plink)
+function get_reference_statistics(ref_prefix, nsamples_ref)
+    if "kinship" ∈ abc_metadata.statistics
+        cross1_prefix, cross2_prefix, nsamples_cross1 = create_cross_datasets(ref_prefix, abc_metadata.plink)
+        sumstat = calculate_summary_statistic(ref_prefix, nsamples_ref, cross2_prefix, cross1_prefix, nsamples_cross1, true)
+    else
+        cross_prefix=NaN
+        sumstat = calculate_summary_statistic(ref_prefix, nsamples_ref, cross_prefix)
     end
-
-    sumstat = calculate_summary_statistic(ref_prefix, nsamples_ref, cross_prefix, nsamples_cross, statistics, plink, king, mapthin, bp_to_cm_map)
     return sumstat
 end
 
 
 """Create the struct containing metadata for the ABC procedure
 """
-function get_abc_metadata(filepaths, superpopulation)
+function get_abc_metadata(options, superpopulation, filepaths)
     # create a mapping to convert bp to cm distances
-    bp_to_cm_df = DataFrame(filepaths.genetic_distfile)
+    bp_to_cm_df = CSV.read(filepaths.genetic_distfile, DataFrame)
     bp_to_cm_df.BP = [parse(Int64,split(x,":")[2]) for x in bp_to_cm_df.Variant]
     bp_to_cm_map = Dict(zip(bp_to_cm_df.BP,bp_to_cm_df.Distance))
 
     statistics = [k for k in ["ld_decay", "kinship"] if options["optimisation"]["summary_statistics"][k]]
 
-    ref_prefix = filepaths.evaluation_reference
+    ref_prefix, nsamples_ref = create_reference_dataset(filepaths.vcf_input_processed, filepaths.popfile_processed, genomic_metadata.population_weights, filepaths.plink, filepaths.reference_dir)
     out_prefix = filepaths.optimisation_output
-    nsamples_ref = # TODO
     nsamples_syn = options["genotype_data"]["samples"]["default"]["nsamples"]
 
-    ABCMetadata(statistics, ref_prefix, out_prefix, superpopulation, nsamples_ref, nsamples_syn, bp_to_cm_map, filepaths.plink, filepaths.king, filepaths.mapthin)
+    return ABCMetadata(statistics, ref_prefix, out_prefix, superpopulation, nsamples_ref, nsamples_syn, bp_to_cm_map, filepaths.plink, filepaths.king, filepaths.mapthin)
 end
 
 
@@ -169,14 +179,12 @@ function run_abc_for_superpopulation(options, filepaths, superpopulation)
     priors  = get_priors(options)
     @info @sprintf("Using priors %s", priors)
     
-    global abc_metadata = get_abc_metadata(filepaths, superpopulation)
-    # TODO filepaths need to be configured correctly
     global genomic_metadata = parse_genomic_metadata(options, superpopulation, filepaths)
+    genomic_metadata.outfile_prefix = filepaths.optimisation_output
+    global abc_metadata = get_abc_metadata(options, superpopulation, filepaths)
 
-    sumstat_reference = get_reference_statistics(abc_metadata.ref_prefix, abc_metadata.nsamples_ref, abc_metadata.statistics, abc_metadata.plink, abc_metadata.king, abc_metadata.mapthin, abc_metadata.bp_to_cm_map)
-    
-    @info "Summary statistic for reference data"
-    print(sumstat_reference)
+    @info "Computing summary statistics for reference data"
+    sumstat_reference = get_reference_statistics(abc_metadata.ref_prefix, abc_metadata.nsamples_ref)
 
     @info "Running optimisation pipeline"
     t = @elapsed begin

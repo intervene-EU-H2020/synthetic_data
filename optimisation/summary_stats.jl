@@ -1,3 +1,4 @@
+using CategoricalArrays
 
 """
 Function that implements the LD decay metric for ABC
@@ -34,14 +35,12 @@ end
 """
 Function that implements an efficient relatedness metric for ABC
 """
-function kinship_cross(plink_file, nsamples_plink_file, plink_file_ref, nsamples_plink_file_refs, king, out_prefix)
+function kinship_cross(synfile, nsamples_synfile, reffile, king, out_prefix)
     output = @sprintf("%s.cross.king", out_prefix)
-    input = @sprintf("%s.bed", plink_file)
-    cross_input = @sprintf("%s.bed", plink_file_ref)
+    input = @sprintf("%s.bed", synfile)
+    cross_input = @sprintf("%s.bed", reffile)
     
     run(`$king -b $input,$cross_input --related --prefix $output`)
-    
-    total_number_pairs = nsamples_plink_file*nsamples_plink_file_refs
 
     cols = [:ID1, :ID2, :N_SNP, :HetHet, :IBS0, :HetConc, :HomIBS0, :Kinship, :IBD1Seg, :IBD2Seg, :PropIBD, :InfType]
     
@@ -56,18 +55,14 @@ function kinship_cross(plink_file, nsamples_plink_file, plink_file_ref, nsamples
     duplicate = kin_cross_filtered[in(["Dup/MZ"]).(kin_cross_filtered.InfType), :]
     first_degree = kin_cross_filtered[in(["FS","PO"]).(kin_cross_filtered.InfType), :]
     second_degree = kin_cross_filtered[in(["2nd"]).(kin_cross_filtered.InfType), :]
-
-    duplicate_pairs = size(duplicate)[1]/total_number_pairs
-    first_degree_pairs = size(first_degree)[1]/total_number_pairs
-    second_degree_pairs = size(second_degree)[1]/total_number_pairs
-    total_related_pairs = duplicate_pairs + first_degree_pairs + second_degree_pairs
     
-    duplicate_samples = length(Set(duplicate.ID1))/nsamples
-    first_degree_samples = length(Set(first_degree.ID1))/nsamples
-    second_degree_samples = length(Set(second_degree.ID1))/nsamples
+    # compute proportion of samples in synthetic data that are close relatives of reference data
+    duplicate_samples = length(Set(duplicate.ID1))/nsamples_synfile
+    first_degree_samples = length(Set(first_degree.ID1))/nsamples_synfile
+    second_degree_samples = length(Set(second_degree.ID1))/nsamples_synfile
     total_related_samples = duplicate_samples + first_degree_samples + second_degree_samples
     
-    data = [duplicate_pairs, first_degree_pairs, second_degree_pairs, total_related_pairs, duplicate_samples, first_degree_samples, second_degree_samples, total_related_samples]
+    data = [duplicate_samples, first_degree_samples, second_degree_samples, total_related_samples]
     
     return [1:length(data) data]
 end
