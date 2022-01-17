@@ -1,14 +1,40 @@
-# preprocess raw data files
+using Printf
 
-# setup directory structure
+include("../utils/parameter_parsing.jl")
+include("utils.jl")
 
-# filter SNPs
 
-# create genetic distance files
+"""Implements the full sequence of pre-processing steps
+"""
+function preprocessing_pipeline(filepaths)
+    @info "Filtering SNPs"
+    extract_variants(filepaths.vcftools, filepaths.vcf_input_raw, filepaths.vcf_input_processed_prefix, filepaths.vcf_input_processed, filepaths.variant_list)
+    
+    @info "Creating genetic distance files"
+    get_genetic_distances(filepaths.vcf_input_processed, filepaths.genetic_mapfile, filepaths.genetic_distfile)
 
-# create haplotype matrices
+    @info "Storing haplotype matrices"
+    convert_vcf_to_hap(filepaths.vcf_input_processed, filepaths.hap1_matrix_output, filepaths.hap2_matrix_output)
 
-# create metadata files
+    @info "Storing metadata files"
+    convert_vcf_to_meta(filepaths.vcf_input_processed, filepaths.metadata_output)
+    cp(filepaths.popfile_raw, filepaths.popfile_processed, force=true)
+end
 
-# create files needed for optimisation/evaluation procedures
-# e.g. ABC requires PLINK files for each superpopulation
+
+"""Entry point to running the pre-processing pipeline
+"""
+function run_preprocessing(options)
+    chromosome = parse_chromosome(options)
+    superpopulation = parse_superpopulation(options)
+    
+    if chromosome == "all"
+        for chromosome_i in 1:22
+            fp = parse_filepaths(options, chromosome_i, superpopulation)
+            preprocessing_pipeline(fp)
+        end
+    else
+        fp = parse_filepaths(options, chromosome, superpopulation)
+        preprocessing_pipeline(fp)
+    end
+end

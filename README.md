@@ -2,34 +2,53 @@
 
 Software program for generating large and realistic genotype+phenotype datasets. 
 
-Insert image giving overview of pipeline here
+TODO Insert image giving overview of pipeline here
 
-## Getting Started
+## Quickstart
 
-1. Make sure that you have [Docker](https://docs.docker.com/get-docker/) installed
-2. Rest of instructions explaining how to pull the image and run the container...
+1. Setup Docker container ...
+2. TODO
 
-### Generating synthetic datasets
+## Detailed usage
 
-1. Setup the configuration files in the `config` directory
-1. Run the `synthetic_data.jl` Julia script
-1. Rest of instructions for generating synthetic datasets...
+### Training data
 
-### Evaluation of synthetic data quality
+TODO update for containerized version of the program
 
-1. Instructions for evaluating synthetic datasets after they've been generated...
+By default, the code uses the publicly available 1000 Genomes dataset as the training dataset. This data is downloaded with the container so you can proceed directly to the next steps for creating synthetic datasets. However, if you would like to use your own training datasets, you will need to follow the instructions for [preprocessing training data](preprocessing/README.md).
 
-## Other pipelines
+### Creating synthetic datasets 
 
-Intended for internal use
+TODO replace with instructions for running containerized version of the program
 
-### Preprocessing
+The code implements several different pipelines, which can be run separately or together:
+- Preprocessing of training data
+- Creation of synthetic genotype and/or phenotype datasets
+- Evaluation of synthetic data quality
+- Optimisation of synthetic data algorithm parameters
 
-Scripts for preprocessing raw datasets, with results stored in the `data/inputs/processed` directory
+There is one main command for running the program, which has a number of optional flags for indicating which pipeline/s you would like to run:
+```
+julia run_program.jl --config config.yml [--preprocessing] [--genotype] [--phenotype] [--evaluation] [--optimisation]
+```
 
-### Optimisation
+- `--config config.yml` gives the path to the configuration file
+- `--preprocessing` is used for pre-processing training data
+- `--genotype` is used for creating synthetic genotype data
+- `--phenotype` is used for creating synthetic phenotype data
+- `--evaluation` is used for evaluating synthetic data quality
+- `--optimisation` is used for optimising synthetic data algorithm parameters
 
-Likelihood-free inference procedure for selecting optimal parameter values, which are set as the defaults in the synthetic data algorithm
+For example, if you wanted to create a synthetic genotype dataset and evaluate the data quality, you would run the command
+
+```
+julia run_program.jl --config config.yml --genotype --evaluation
+```
+
+### Configuration file
+
+TODO
+
 
 ## Code contributors
 

@@ -1,11 +1,53 @@
-# specify which pipeline/s you want to run by setting their value to `true`
-pipelines:
-  generate_genotype_data:   true  # generate synthetic genotype data
-  generate_phenotype_data:  false # generate synthetic phenotype data
-  evaluation:               true  # evaluate synthetic data quality after generating the data
+####################################
+# GLOBAL PARAMETERS                #
+####################################
 
-# configuration for genotype data generation
-# - you can heavily customise population structure/admixture of the synthetic data
+global_parameters: 
+  random_seed: 123 # specify a random seed for reproducibility
+  chromosome: 1 # specify `all` or give a number from 1 to 22
+  superpopulation: "EUR" # if creating data for a specific superpopulation, choose from `AFR`, `AMR`, `EAS`, `EUR`, `SAS` (otherwise set to `none`)
+
+
+####################################
+# FILEPATHS                        #
+####################################
+
+# - the chromosome number can be given as a wildcard by specifying {chromosome} in the filepath
+# - the superpopulation can be given as a wildcard by specifying {superpopulation} in the filepath
+filepaths:
+  vcf_input_raw: data/inputs/raw/1KGPhase3.chr{chromosome}.vcf.gz
+  vcf_input_processed_prefix: data/inputs/processed/1KGPhase3.chr{chromosome}.hapmap
+  vcf_input_processed: data/inputs/processed/1KGPhase3.chr{chromosome}.hapmap.recode.vcf
+  variant_list: data/external/variant_lists/hapmap_variant_list_chr{chromosome}.txt
+  genetic_mapfile: data/inputs/raw/genetic_maps/chr{chromosome}.interpolated_genetic_map
+  genetic_distfile: data/inputs/processed/1KGPhase3.chr{chromosome}.hapmap.distfile
+  hap1_matrix: data/inputs/processed/1KGPhase3.chr{chromosome}.hapmap.h1
+  hap2_matrix: data/inputs/processed/1KGPhase3.chr{chromosome}.hapmap.h2
+  vcf_metadata: data/inputs/processed/1KGPhase3.chr{chromosome}.metadata
+  popfile_raw: data/inputs/raw/1KGPhase3.pop.panel
+  popfile_processed: data/inputs/processed/1KGPhase3.pop.panel
+  synthetic_data_prefix: data/outputs/test/test{chromosome}
+  evaluation_output: data/outputs/test/evaluation/test{chromosome}
+  optimisation_output: data/outputs/test/optimisation/test{chromosome}
+  reference_dir: data/inputs/reference
+  causal_list: /path/to/the/causal/SNP/list
+  sample_list: /path/to/the/sample/file
+  pheno_reference: /path/to/the/reference/file
+
+
+software_paths:
+    plink: software/plink
+    plink2: software/plink2
+    king: software/king
+    vcftools: vcftools
+    mapthin: software/mapthin
+
+
+####################################
+# GENOTYPE DATA                    #
+####################################
+
+#   You can heavily customise population structure/admixture of the synthetic data
 #   by creating a list of custom population groups with the following parameters:
 #
 #   `id`:          a name for your custom population group, e.g. `example1`
@@ -18,11 +60,11 @@ pipelines:
 #                  genotypes with AFR ancestry, you could write
 #                   
 #                   - id: EUR_pop
-#                     numsamples: 100
+#                     nsamples: 100
 #                     populations:
 #                       - EUR: 100
 #                   - id: AFR_pop
-#                     numsamples: 200
+#                     nsamples: 200
 #                     populations:
 #                       - AFR: 100
 #
@@ -30,7 +72,7 @@ pipelines:
 #                 EUR ancestry and 50% AFR ancestry, you could write
 #                 
 #                   - id: admix_pop
-#                     numsamples: 100
+#                     nsamples: 100
 #                     populations:
 #                       - EUR: 50
 #                       - AFR: 50
@@ -39,21 +81,22 @@ pipelines:
 #                but you cannot mix superpopulations and populations within the same custom population group
 #                (see a list of codes at the bottom of this document)
 genotype_data:
+  filetype: plink # specify either `plink` or `vcf` - note that `plink` means bed/bim/fam format
+  batchsize: 1000 # batchsize is only needed for `plink` output - batchsize value will be ignored for `vcf`
   samples:
-    use_default: false
+    use_default: true
     custom:
       - id: examplepop1
-        numsamples: 1000
+        nsamples: 1000
         populations: 
           - EUR: 100
       - id: examplepop2
-        numsamples: 500
+        nsamples: 500
         populations:
           - GBR: 30
           - IBS: 70
     default:
-      nsamples: 10000
-      superpopulation: all # specify `all` or give a specific superpopulation, e.g. `EUR`
+      nsamples: 1000 # code will use superpopulation specified by global variable
   # recombination rate (default values were determined by our optimisation procedure)
   rho:
     AFR: 0.001 # default 0.001
@@ -69,13 +112,28 @@ genotype_data:
     EUR: 2000 # default 2000
     SAS: 2000 # default 2000
 
-# TODO replace default parameter values after running likelihood free inference
+# TODO replace default parameter values after running likelihood free inference optimisation
 
-# configuration for phenotype data generation
-# TODO
+####################################
+# PHENOTYPE DATA                   #
+####################################
 
-# configuration for synthetic data evaluation
-# - specify which metrics you want to use by setting the value to true
+phenotype_data:
+  heritability: 0.5,0.6
+  prevalence: 0.1,0.2
+  a: -0.4 
+  b: -0.5
+  c: 0.5
+  n_component: 3
+  comp_weight: 1,2,4
+  pop_covar: 1,1,1,1 
+  polygenicity: 0.05 
+
+####################################
+# EVALUATION                       #
+####################################
+
+# Specify which metrics you want to use by setting the value to true
 evaluation:
   metrics:
     aats:     true  # nearest neighbour adversarial accuracy
@@ -84,6 +142,44 @@ evaluation:
     maf:      true  # minor allele frequency divergences
     pca:      true  # principal components analysis
 
+
+####################################
+# OPTIMISATION                     #
+####################################
+
+# configuration for likelihood free inference optimisation procedure
+# note that this code uses a single superpopulation and ignores custom population structures
+optimisation:
+  # prior distributions - specify lower/upper bounds for uniform priors
+  priors:
+    rho:
+      uniform_lower: 0
+      uniform_upper: 0.1
+    Ne:
+      uniform_lower: 1000
+      uniform_upper: 50000
+  # inference type - simulation-based rejection ABC or emulation-based rejection ABC
+  simulation_rejection_ABC:
+    run: true
+    n_particles: 500
+    threshold: 0.05
+    max_iter: 10
+    write_progress: true
+  emulation_rejection_ABC:
+    run: false
+    n_particles: 500
+    threshold: 0.05
+    n_design_points: 50
+    max_iter: 10000
+    write_progress: true
+  # choice of summary statistic/s
+  summary_statistics:
+    ld_decay: true
+    kinship: false
+
+####################################
+# ADDITIONAL INFORMATION           #
+####################################
 
 # superpopulation code list:
 #

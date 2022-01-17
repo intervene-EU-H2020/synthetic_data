@@ -1,1 +1,0 @@
-Configuration files with specifications for synthetic data generation
