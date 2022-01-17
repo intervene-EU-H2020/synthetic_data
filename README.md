@@ -2,24 +2,24 @@
 
 Software program for generating large and realistic genotype+phenotype datasets. 
 
-Insert image giving overview of pipeline here
+TODO Insert image giving overview of pipeline here
 
 ## Quickstart
 
 1. Setup Docker container ...
-2. Create a synthetic dataset by running
-
-```
-julia run_program.jl --config config.yml --genotype --phenotype
-```
+2. TODO
 
 ## Detailed usage
 
 ### Training data
 
+TODO update for containerized version of the program
+
 By default, the code uses the publicly available 1000 Genomes dataset as the training dataset. This data is downloaded with the container so you can proceed directly to the next steps for creating synthetic datasets. However, if you would like to use your own training datasets, you will need to follow the instructions for [preprocessing training data](preprocessing/README.md).
 
 ### Creating synthetic datasets 
+
+TODO replace with instructions for running containerized version of the program
 
 The code implements several different pipelines, which can be run separately or together:
 - Preprocessing of training data
@@ -44,6 +44,10 @@ For example, if you wanted to create a synthetic genotype dataset and evaluate t
 ```
 julia run_program.jl --config config.yml --genotype --evaluation
 ```
+
+### Configuration file
+
+TODO
 
 
 ## Code contributors

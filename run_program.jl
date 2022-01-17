@@ -4,6 +4,7 @@ include("utils/parameter_parsing.jl")
 include("preprocessing/preprocessing.jl")
 include("optimisation/abc.jl")
 include("algorithms/genotype/genotype_algorithm.jl")
+include("algorithms/phenotype/phenotype_algorithm.jl")
 include("evaluation/evaluation.jl")
 
 """Executes the program, according to which pipelines and configuration options are specified in the input
@@ -31,10 +32,7 @@ function run_program(pipelines, options)
 
     if pipelines["phenotype"]
         @info "Generating synthetic phenotype data"
-        # TODO - create phenotype using Zhiyu's program
-        # create Parfile using inputs from config.yml 
-        # convert genotype data to .traw format using plink --recode A-transpose
-        # run the tool for simulating phenotypes
+        create_synthetic_phenotype(options)
     end
 
     if pipelines["evaluation"]

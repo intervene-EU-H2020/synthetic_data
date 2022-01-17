@@ -30,6 +30,10 @@ filepaths:
   evaluation_output: data/outputs/test/evaluation/test{chromosome}
   optimisation_output: data/outputs/test/optimisation/test{chromosome}
   reference_dir: data/inputs/reference
+  causal_list: /path/to/the/causal/SNP/list
+  sample_list: /path/to/the/sample/file
+  pheno_reference: /path/to/the/reference/file
+
 
 software_paths:
     plink: software/plink
@@ -77,7 +81,7 @@ software_paths:
 #                but you cannot mix superpopulations and populations within the same custom population group
 #                (see a list of codes at the bottom of this document)
 genotype_data:
-  filetype: "plink" # specify either `plink` or `vcf` - note that `plink` means bed/bim/fam format
+  filetype: plink # specify either `plink` or `vcf` - note that `plink` means bed/bim/fam format
   batchsize: 1000 # batchsize is only needed for `plink` output - batchsize value will be ignored for `vcf`
   samples:
     use_default: true
@@ -114,7 +118,16 @@ genotype_data:
 # PHENOTYPE DATA                   #
 ####################################
 
-# TODO
+phenotype_data:
+  heritability: 0.5,0.6
+  prevalence: 0.1,0.2
+  a: -0.4 
+  b: -0.5
+  c: 0.5
+  n_component: 3
+  comp_weight: 1,2,4
+  pop_covar: 1,1,1,1 
+  polygenicity: 0.05 
 
 ####################################
 # EVALUATION                       #
