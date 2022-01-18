@@ -150,7 +150,9 @@ void ExtractParam() {
 	double SumProb, tmp;
 
 	nItem = nTrait * nPop;
-	det = 0.0;
+	statusPop = 1;
+	statusTrait = 1;
+	status = 1;
 
 	// Pop(row) * Trait(col) genetic effect propotion matrix, flatten
 	p = tmpGenoEffProp;
@@ -195,7 +197,7 @@ void ExtractParam() {
     		}
     	}
     	else {
-    		printf("Wrong dimension for input flatten heritability matrix!\n");
+    		printf("Wrong dimension for input flatten covariate prop matrix!\n");
     		exit(0);
     	}
 	}
@@ -363,13 +365,11 @@ void ExtractParam() {
 void MakeCovMat() {
 	int i, j, m, n, nRow, nCol;
 	double tmp; 
-	int signum;
-	mu = gsl_vector_calloc(nItem);
-	Sigma = gsl_matrix_calloc(nItem, nItem);
+
+	gsl_matrix * Sigma = gsl_matrix_calloc(nItem, nItem);
 	for (i = 0; i < nTrait; i++) {
 		for (j = 0; j < nPop; j++){
 			nRow = nPop * i + j;
-			gsl_vector_set(mu, nRow, 0.0);
 			for (m = 0; m < nTrait; m++) {
 				for (n = 0; n < nPop; n++){
 					nCol = nPop * m + n;
@@ -379,19 +379,50 @@ void MakeCovMat() {
 			}
 		}
 	}
+	status = gsl_linalg_cholesky_decomp1(Sigma);
 
-	gsl_matrix *tmpSig = gsl_matrix_alloc(nItem, nItem);
-	gsl_permutation *perm = gsl_permutation_alloc(nItem);
-	gsl_matrix_memcpy(tmpSig, Sigma);
-	gsl_linalg_LU_decomp(tmpSig, perm, &signum);
-	det = gsl_linalg_LU_det(tmpSig, signum);
-	if (det > 0) {
+	gsl_matrix * SigmaPop = gsl_matrix_calloc(nPop, nPop);
+	for (i = 0; i < nPop; i++) {
+		for (j = 0; j < nPop; j++)
+			gsl_matrix_set(SigmaPop, i, j, PopCorr[i][j]);
+	}
+	gsl_permutation *permPop = gsl_permutation_alloc(nPop);
+	statusPop = gsl_linalg_cholesky_decomp1(SigmaPop);
+
+	gsl_matrix * SigmaTrait = gsl_matrix_calloc(nTrait, nTrait);
+	for (m = 0; m < nTrait; m++) {
+		for (n = 0; n < nTrait; n++)
+			gsl_matrix_set(SigmaTrait, m, n, TraitCorr[m][n]);
+	}
+	statusTrait = gsl_linalg_cholesky_decomp1(SigmaTrait);
+
+	if (!status) {
+		printf("Overall correlation matrix is positive definite, ok!\n");
+		mu = gsl_vector_calloc(nItem);
+		gsl_vector_set_zero(mu);
 		L = gsl_matrix_calloc(nItem, nItem);
 		gsl_matrix_memcpy(L, Sigma);
-		gsl_linalg_cholesky_decomp1(L);
+	}
+	else if (statusPop==GSL_EDOM && !statusTrait) {
+		printf("Population correlation matrix is not positive definite. Assuming all population corr = 1.0.\n");
+		mu = gsl_vector_calloc(nTrait);
+		gsl_vector_set_zero(mu);
+		L = gsl_matrix_calloc(nTrait, nTrait);
+		gsl_matrix_memcpy(L, SigmaTrait);
+	}
+	else if (statusTrait==GSL_EDOM && !statusPop) {
+		printf("Trait correlation matrix is not positive definite. Assuming all trait corr = 1.0.\n");
+		mu = gsl_vector_calloc(nPop);
+		gsl_vector_set_zero(mu);
+		L = gsl_matrix_calloc(nPop, nPop);
+		gsl_matrix_memcpy(L, SigmaPop);
+	}
+	else if (statusPop==GSL_EDOM && statusTrait==GSL_EDOM) {
+		printf("Both correlation matrices are not positive definite. Assuming all corr = 1.0.\n");
 	}
 	else {
-		printf("Cov Matrix not positive definite. Assuming all corr = 1.0.\n");
+		// If not possible to satisfy both, always try to meet the trait correlation.
+		printf("Both correlation matrices are positive definite, but overall correlation matrix is not. Assuming pop corr = 1.0.\n");
 	}
 }
 
@@ -566,7 +597,7 @@ void BaseBetaGen(double sigma) {
 	int i, j;
 	memset(BaseBeta, 0.0, sizeof(double)*nMaxPop*nMaxTrait);
 
-	if (det > 0.0) {
+	if (!status) {
 		gsl_vector * tmpBeta = gsl_vector_calloc(nPop*nTrait);
 		gsl_ran_multivariate_gaussian(r, mu, L, tmpBeta);
 		for (i = 0; i < nTrait; i++) {
@@ -574,14 +605,32 @@ void BaseBetaGen(double sigma) {
 				BaseBeta[j][i] = gsl_vector_get(tmpBeta, nPop*i+j) * sigma;
 		}
 	}
+	else if (!statusTrait) {
+		gsl_vector * tmpBeta = gsl_vector_calloc(nTrait);
+		gsl_ran_multivariate_gaussian(r, mu, L, tmpBeta);
+		for (i = 0; i < nTrait; i++) {
+			for (j = 0; j < nPop; j++) {
+				BaseBeta[j][i] = gsl_vector_get(tmpBeta, i) * sigma;
+			}
+		}
+	}
+	else if (!statusPop) {
+		gsl_vector * tmpBeta = gsl_vector_calloc(nPop);
+		gsl_ran_multivariate_gaussian(r, mu, L, tmpBeta);
+		for (i = 0; i < nPop; i++) {
+			for (j = 0; j < nTrait; j++) {
+				BaseBeta[i][j] = gsl_vector_get(tmpBeta, i) * sigma;
+			}
+		}
+	}
 	else {
 		double tmp;
 		tmp = gsl_ran_gaussian(r, 1.0);
-		for (i = 0; i < nTrait; i++) {
-			for (j = 0; j < nPop; j++)
-				BaseBeta[j][i] = tmp * sigma;
+		for (i = 0; i < nPop; i++) {
+			for (j = 0; j < nTrait; j++)
+				BaseBeta[i][j] = tmp * sigma;
 		}
-	}
+	}	
 }
 
 
