@@ -328,7 +328,8 @@ void ExtractParam() {
     	}
 	}
 
-	MakeCovMat();
+	if (nItem > 1)
+		MakeCovMat();
 
 	p = tmpWeight;
     i = 0; //weights counter
@@ -381,7 +382,7 @@ void MakeCovMat() {
 	}
 	status = gsl_linalg_cholesky_decomp1(Sigma);
 
-	gsl_matrix * SigmaPop = gsl_matrix_calloc(nPop, nPop);
+	SigmaPop = gsl_matrix_calloc(nPop, nPop);
 	for (i = 0; i < nPop; i++) {
 		for (j = 0; j < nPop; j++)
 			gsl_matrix_set(SigmaPop, i, j, PopCorr[i][j]);
@@ -389,7 +390,7 @@ void MakeCovMat() {
 	gsl_permutation *permPop = gsl_permutation_alloc(nPop);
 	statusPop = gsl_linalg_cholesky_decomp1(SigmaPop);
 
-	gsl_matrix * SigmaTrait = gsl_matrix_calloc(nTrait, nTrait);
+	SigmaTrait = gsl_matrix_calloc(nTrait, nTrait);
 	for (m = 0; m < nTrait; m++) {
 		for (n = 0; n < nTrait; n++)
 			gsl_matrix_set(SigmaTrait, m, n, TraitCorr[m][n]);
@@ -423,6 +424,10 @@ void MakeCovMat() {
 	else {
 		// If not possible to satisfy both, always try to meet the trait correlation.
 		printf("Both correlation matrices are positive definite, but overall correlation matrix is not. Assuming pop corr = 1.0.\n");
+		mu = gsl_vector_calloc(nTrait);
+		gsl_vector_set_zero(mu);
+		L = gsl_matrix_calloc(nTrait, nTrait);
+		gsl_matrix_memcpy(L, SigmaTrait);
 	}
 }
 
@@ -651,14 +656,32 @@ void GetCovarEff() {
 
 
 void GetEnvEff() {
-	int k, popIndex;
+	int i, j, k;
 	long int l;
+	gsl_matrix * tmpEnvEff = gsl_matrix_calloc(nTrait, nSample);
 	for (l = 0; l < nSample; l++) {
-		BaseBetaGen(1.0);
-		for (k = 0; k < nTrait; k++) {
-			popIndex = PopIndicator[l];
-			EnvEff[k][l] = BaseBeta[popIndex][k];
+		for (k = 0; k < nTrait; k++)
+			gsl_matrix_set(tmpEnvEff, k, l, gsl_ran_gaussian(r, 1.0));
+	}
+
+	if (!statusTrait) {
+		gsl_matrix * tmpCorrEnvEff = gsl_matrix_calloc(nTrait, nSample);
+		gsl_matrix * tmpL = gsl_matrix_calloc(nTrait, nTrait);
+		gsl_matrix_set_zero(tmpL);
+		for (i = 0; i < nTrait; i++) {
+			for (j = 0; j <= i; j++)
+				gsl_matrix_set(tmpL, i, j, gsl_matrix_get(SigmaTrait, i, j));
 		}
+		gsl_blas_dgemm(CblasNoTrans, CblasNoTrans, 1.0, tmpL, tmpEnvEff, 0.0, tmpCorrEnvEff);
+		gsl_matrix_memcpy(tmpEnvEff, tmpCorrEnvEff);
+	}
+	else if (statusTrait && nTrait > 1) {
+		printf("Trait correlation matrix is not positive definite, assuming enveromental effect independent.\n");
+	}
+
+	for (l = 0; l < nSample; l++) {
+		for (k = 0; k < nTrait; k++)
+			EnvEff[k][l] = gsl_matrix_get(tmpEnvEff, k, l);
 	}
 }
 
@@ -714,7 +737,7 @@ long int FindSNPinRef(char SNP[50], int chr) {
 
 double GetMAF(int popIndex) {
 	double freq;
-	freq = gsl_stats_mean(PopMatTmp[popIndex], 1, nSamplePerPop[popIndex])/2.0;
+	freq = gsl_stats_mean(PopMatTmp[popIndex][0], 1, nSamplePerPop[popIndex])/2.0;
 	freq = (freq > 0.5) ? (1-freq) : freq;
 	return(freq);
 }
