@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <gsl/gsl_errno.h>
 #include <gsl/gsl_statistics_double.h>
 #include <gsl/gsl_rng.h>
 #include <gsl/gsl_cdf.h>
@@ -11,6 +12,10 @@
 #include <gsl/gsl_linalg.h>
 
 // DOES NOT deal with nan in Geno input! need to encode with something before used as input
+
+int status;
+int statusPop;
+int statusTrait;
 
 // Defined parameters
 #define nMaxCausal 500000
@@ -79,11 +84,8 @@ double Pleio[nMaxTrait];
 double TraitCorr[nMaxTrait][nMaxTrait]; // Only support positive genetic correlation now
 double PopCorr[nMaxPop][nMaxPop];
 
-gsl_matrix * Sigma;
 gsl_matrix * L;
 gsl_vector * mu;
-
-double det;
 
 double VarGeno[nMaxPop][nMaxTrait];
 double VarCovar[nMaxPop][nMaxTrait];
