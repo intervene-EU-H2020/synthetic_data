@@ -3,6 +3,7 @@
 
 int main(int argc, char const *argv[])
 {
+	gsl_set_error_handler_off();
 	const gsl_rng_type * T;
 	gsl_rng_env_setup();
     gsl_rng_default_seed = atoi(argv[2]);
