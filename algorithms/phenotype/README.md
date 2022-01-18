@@ -2,6 +2,9 @@
 
 _"Working code" for phenotype generation, subject to further updates._
 
+_2022.01.18 Changed non positive definite matrices handling a bit, but the input (PopulationCorr, TraitCorr) are still tricky for users._
+_Hmm.._
+
 Dependents: gsl, blas
 
 To compile, run 
@@ -16,19 +19,18 @@ To use, run
 where ```Parfile``` is a parameter file in plain text that looks like below: 
 ```
 nPopulation 2
-nTrait 3
-PropotionGeno 0.2,0.7,0.8,0.2,0.7,0.8
-PropotionCovar 0.0,0.0,0.0,0.0,0.0,0.0
-Prevalence 0.1,0.2
-a -0.4 
+nTrait 2
+a -0.4
 b -0.5
 c 0.5
 nComponent 3
-CompWeight 1,5,10
+PropotionGeno 0.5,0.7,0.8,0.2
+PropotionCovar 0.0,0.0,0.0,0.0
+Polygenicity 0.1,0.08
+Pleiotropy 1,0.5
+TraitCorr 1,-0.7,-0.7,1
 PopulationCorr 1,0.25,0.25,1
-TraitCorr 1,-0.7,0.5,-0.7,1,0.4,0.5,0.4,1
-Polygenicity 0.1,0.2,0.05
-Pleiotropy 1,0.9,0.3
+CompWeight 1,5,10
 CausalList /path/to/the/causal/SNP/list
 SampleList /path/to/the/sample/file
 Reference /path/to/the/reference/file
