@@ -374,7 +374,8 @@ void MakeCovMat() {
 			for (m = 0; m < nTrait; m++) {
 				for (n = 0; n < nPop; n++){
 					nCol = nPop * m + n;
-					tmp = ((m==i) ? PopCorr[j][n] : ((n==j) ? TraitCorr[i][m] : 0.0));
+					// tmp = ((m==i) ? PopCorr[j][n] : ((n==j) ? TraitCorr[i][m] : 0.0));
+					tmp = PopCorr[j][n] * TraitCorr[i][m];
 					gsl_matrix_set(Sigma, nRow, nCol, tmp);
 				}
 			}
