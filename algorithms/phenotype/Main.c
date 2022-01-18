@@ -116,13 +116,13 @@ int main(int argc, char const *argv[])
 				    tok = strtok_r(p, " ,\t", &p); // ALT Allele
 				    j = 0;
 				    memset(PopSampleCt, 0, sizeof(long int) * nMaxPop);
-				    memset(PopMatTmp, 0, sizeof(double) * nMaxPop * nMaxInd);
+				    memset(PopMatTmp, 0, sizeof(double) * nMaxPop * nMaxInd * 3);
 				    memset(GenoMat, 0, sizeof(double) * nMaxInd);
 				    while ((tok = strtok_r(p, " ,\t", &p))) {
 				    	GenoMat[j] = atof(tok);
 				    	PopIndex = PopIndicator[j++];
 				    	tmpPopCt = PopSampleCt[PopIndex];
-				    	PopMatTmp[PopIndex][tmpPopCt] = atof(tok);
+				    	PopMatTmp[PopIndex][0][tmpPopCt] = atof(tok);
 				    	PopSampleCt[PopIndex]++;
 				    }
 				    AnalyzeSNP(CHR, SNP);
@@ -134,43 +134,32 @@ int main(int argc, char const *argv[])
 		printf("Input genomat: %ld SNPs; Using in total %ld causal SNPs.\n", i, k);
 	}	
 
-	if (nCovar) 
+	if (nCovar) {
+		printf("Getting Cov Effect...\n");
 		GetCovarEff();
+		printf("done.\n");
+	}
+
+	printf("Getting Env Effect...\n");
 	GetEnvEff();
+	printf("done.\n");
 
 	for (k = 0; k < nTrait; k++) {
 		memset(PopSampleCt, 0, sizeof(long int) * nMaxPop);
-		memset(PopMatTmp, 0, sizeof(double) * nMaxPop * nMaxInd);
+		memset(PopMatTmp, 0, sizeof(double) * nMaxPop * nMaxInd * 3);
 		for (i = 0; i < nSample; i++) {
 	    	PopIndex = PopIndicator[i];
 	    	tmpPopCt = PopSampleCt[PopIndex];
-	    	PopMatTmp[PopIndex][tmpPopCt] = GenoEff[k][i];
+	    	PopMatTmp[PopIndex][0][tmpPopCt] = GenoEff[k][i];
+	    	PopMatTmp[PopIndex][1][tmpPopCt] = CovarEff[k][i];
+	    	PopMatTmp[PopIndex][2][tmpPopCt] = EnvEff[k][i];
 	    	PopSampleCt[PopIndex]++;
     	}
-	    for (n = 0; n < nPop; n++)
-	    	VarGeno[n][k] = gsl_stats_variance(PopMatTmp[n], 1, PopSampleCt[n]);
-
-	    memset(PopSampleCt, 0, sizeof(long int) * nMaxPop);
-		memset(PopMatTmp, 0, sizeof(double) * nMaxPop * nMaxInd);
-		for (i = 0; i < nSample; i++) {
-	    	PopIndex = PopIndicator[i];
-	    	tmpPopCt = PopSampleCt[PopIndex];
-	    	PopMatTmp[PopIndex][tmpPopCt] = CovarEff[k][i];
-	    	PopSampleCt[PopIndex]++;
-    	}
-	    for (n = 0; n < nPop; n++)
-	    	VarCovar[n][k] = gsl_stats_variance(PopMatTmp[n], 1, PopSampleCt[n]);
-
-	    memset(PopSampleCt, 0, sizeof(long int) * nMaxPop);
-		memset(PopMatTmp, 0, sizeof(double) * nMaxPop * nMaxInd);
-		for (i = 0; i < nSample; i++) {
-	    	PopIndex = PopIndicator[i];
-	    	tmpPopCt = PopSampleCt[PopIndex];
-	    	PopMatTmp[PopIndex][tmpPopCt] = EnvEff[k][i];
-	    	PopSampleCt[PopIndex]++;
-    	}
-	    for (n = 0; n < nPop; n++)
-	    	VarEnv[n][k] = gsl_stats_variance(PopMatTmp[n], 1, PopSampleCt[n]);
+	    for (n = 0; n < nPop; n++) {
+	    	VarGeno[n][k] = gsl_stats_variance(PopMatTmp[n][0], 1, PopSampleCt[n]);
+	    	VarCovar[n][k] = gsl_stats_variance(PopMatTmp[n][1], 1, PopSampleCt[n]);
+	    	VarEnv[n][k] = gsl_stats_variance(PopMatTmp[n][2], 1, PopSampleCt[n]);
+	    }
 	}
 
 	FILE *OutFilePheno;
@@ -197,7 +186,7 @@ int main(int argc, char const *argv[])
 			GCEweight[n][2] = (isnan(GCEweight[n][2]) ? 0.0 : GCEweight[n][2]);
 		}
 		memset(PopSampleCt, 0, sizeof(long int) * nMaxPop);
-		memset(PopMatTmp, 0, sizeof(double) * nMaxPop * nMaxInd);
+		memset(PopMatTmp, 0, sizeof(double) * nMaxPop * nMaxInd * 3);
 		for (i = 0; i < nSample; i++) {
 			PopIndex = PopIndicator[i];
 			GenoEff[k][i] *= GCEweight[PopIndex][0];
@@ -208,17 +197,17 @@ int main(int argc, char const *argv[])
 				fprintf(OutFilePheno, "%s\t%lf\t%lf\t%lf\t%lf\n", SampleList[i], GenoEff[k][i], CovarEff[k][i], EnvEff[k][i], PhenoSim[k][0][i]);
 			else {
 				tmpPopCt = PopSampleCt[PopIndex];
-		    	PopMatTmp[PopIndex][tmpPopCt] = PhenoSim[k][0][i];
+		    	PopMatTmp[PopIndex][0][tmpPopCt] = PhenoSim[k][0][i];
 		    	PopSampleCt[PopIndex]++;
 			}
 		}
 
 		if (BinaryFlag) {
 			for (n = 0; n < nPop; n++) {
-				tmpPheMean = gsl_stats_mean(PopMatTmp[n], 1, PopSampleCt[n]);
-				tmpPheVar = gsl_stats_variance(PopMatTmp[n], 1, PopSampleCt[n]);
+				tmpPheMean = gsl_stats_mean(PopMatTmp[n][0], 1, PopSampleCt[n]);
+				tmpPheVar = gsl_stats_variance(PopMatTmp[n][0], 1, PopSampleCt[n]);
 				tmpPheCutoff[n] = gsl_cdf_gaussian_Qinv(Prev[n][k], sqrt(tmpPheVar)) + tmpPheMean;
-				printf("Trait %ld, Population %ld: Phe Mean = %lf, Var = %lf, Diagnosis Cutoff = %lf\n", k, n, tmpPheMean, tmpPheVar, tmpPheCutoff[n]);
+				printf("Trait %ld, Population %ld: Phe Mean = %lf, Var = %lf, Diagnosis Cutoff = %lf\n", k+1, n+1, tmpPheMean, tmpPheVar, tmpPheCutoff[n]);
 			}
 			for (i = 0; i < nSample; i++) {
 				PopIndex = PopIndicator[i];
