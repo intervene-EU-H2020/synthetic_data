@@ -53,7 +53,7 @@ double * ProbComp;
 double * wComp;
 
 // GenoMat: nPop x nIndPerPop 
-double PopMatTmp[nMaxPop][nMaxInd];
+double PopMatTmp[nMaxPop][3][nMaxInd];
 double GenoMat[nMaxInd];
 double CovarMat[nMaxCovar][nMaxInd];
 int PopIndicator[nMaxInd];
@@ -84,6 +84,8 @@ double Pleio[nMaxTrait];
 double TraitCorr[nMaxTrait][nMaxTrait]; // Only support positive genetic correlation now
 double PopCorr[nMaxPop][nMaxPop];
 
+gsl_matrix * SigmaTrait;
+gsl_matrix * SigmaPop;
 gsl_matrix * L;
 gsl_vector * mu;
 
