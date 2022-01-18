@@ -21,7 +21,7 @@ where ```Parfile``` is a parameter file in plain text that looks like below:
 nPopulation 2
 nTrait 2
 a -0.4
-b -0.5
+b -1
 c 0.5
 nComponent 3
 PropotionGeno 0.5,0.7,0.8,0.2
@@ -53,7 +53,7 @@ Currently the parameters are as below
 
 ```Prevalence``` is disease prevalence in _each population, each trait_. Flatten nPop * nTrait matrix, entries separated by comma. If prevalence is specified, output will include a column for binary case/control statues.
 
-```a```, ```b```, ```c``` have -0.4, -0.5 and 0.5 as their suggested values.
+```a```, ```b```, ```c``` have -0.4, -1 and 0.5 as their suggested values.
 
 ```nComponent``` and ```CompWeight``` are number of guassian mixture components and their weights.
 
