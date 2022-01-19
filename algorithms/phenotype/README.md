@@ -5,6 +5,8 @@ _"Working code" for phenotype generation, subject to further updates._
 _2022.01.18 Changed non positive definite matrices handling a bit, but the input (PopulationCorr, TraitCorr) are still tricky for users._
 _Hmm.._
 
+_2022.01.19 Made a little faster (hopefully?)._
+
 Dependents: gsl, blas
 
 To compile, run 
