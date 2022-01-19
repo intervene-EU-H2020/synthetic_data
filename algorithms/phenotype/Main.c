@@ -95,6 +95,7 @@ int main(int argc, char const *argv[])
 	    	printf("Sample size in genotype file does not match population file, nSample = %ld, j = %ld.\n", nSample, j);
 	    	exit(0);
 	    }
+	    BaseBetaGen();
 		while (fgets(buffer, sizeof(buffer), InFileGeno) != NULL) {
 			p = buffer;
 			tok = strtok_r(p, " ,\t", &p); //CHR
