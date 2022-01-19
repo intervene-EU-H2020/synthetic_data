@@ -330,6 +330,10 @@ void ExtractParam() {
 
 	if (nItem > 1)
 		MakeCovMat();
+	else
+		nValidItem = 1;
+
+	GenoBeta = gsl_matrix_calloc(nValidItem, nMaxBetaGen);
 
 	p = tmpWeight;
     i = 0; //weights counter
@@ -374,7 +378,6 @@ void MakeCovMat() {
 			for (m = 0; m < nTrait; m++) {
 				for (n = 0; n < nPop; n++){
 					nCol = nPop * m + n;
-					// tmp = ((m==i) ? PopCorr[j][n] : ((n==j) ? TraitCorr[i][m] : 0.0));
 					tmp = PopCorr[j][n] * TraitCorr[i][m];
 					gsl_matrix_set(Sigma, nRow, nCol, tmp);
 				}
@@ -400,36 +403,35 @@ void MakeCovMat() {
 
 	if (!status) {
 		printf("Overall correlation matrix is positive definite, ok!\n");
-		mu = gsl_vector_calloc(nItem);
-		gsl_vector_set_zero(mu);
-		L = gsl_matrix_calloc(nItem, nItem);
+		nValidItem = nItem;
+		L = gsl_matrix_calloc(nValidItem, nValidItem);
 		gsl_matrix_memcpy(L, Sigma);
 	}
-	else if (statusPop==GSL_EDOM && !statusTrait) {
+	else if (statusPop && !statusTrait) {
 		printf("Population correlation matrix is not positive definite. Assuming all population corr = 1.0.\n");
-		mu = gsl_vector_calloc(nTrait);
-		gsl_vector_set_zero(mu);
-		L = gsl_matrix_calloc(nTrait, nTrait);
+		nValidItem = nTrait;
+		L = gsl_matrix_calloc(nValidItem, nValidItem);
 		gsl_matrix_memcpy(L, SigmaTrait);
 	}
-	else if (statusTrait==GSL_EDOM && !statusPop) {
+	else if (statusTrait && !statusPop) {
 		printf("Trait correlation matrix is not positive definite. Assuming all trait corr = 1.0.\n");
-		mu = gsl_vector_calloc(nPop);
-		gsl_vector_set_zero(mu);
-		L = gsl_matrix_calloc(nPop, nPop);
+		nValidItem = nPop;
+		L = gsl_matrix_calloc(nValidItem, nValidItem);
 		gsl_matrix_memcpy(L, SigmaPop);
 	}
-	else if (statusPop==GSL_EDOM && statusTrait==GSL_EDOM) {
-		printf("Both correlation matrices are not positive definite. Assuming all corr = 1.0.\n");
+	else if (statusPop && statusTrait) {
+		printf("Neither correlation matrix is positive definite. Assuming all corr = 1.0.\n");
+		nValidItem = 1;
 	}
 	else {
 		// If not possible to satisfy both, always try to meet the trait correlation.
 		printf("Both correlation matrices are positive definite, but overall correlation matrix is not. Assuming pop corr = 1.0.\n");
-		mu = gsl_vector_calloc(nTrait);
-		gsl_vector_set_zero(mu);
+		nValidItem = nTrait;
 		L = gsl_matrix_calloc(nTrait, nTrait);
 		gsl_matrix_memcpy(L, SigmaTrait);
 	}
+	mu = gsl_vector_calloc(nValidItem);
+	gsl_vector_set_zero(mu);
 }
 
 
@@ -599,45 +601,66 @@ void ReadRef() {
 }
 
 
-void BaseBetaGen(double sigma) {
+void BaseBetaGen() {
+	int i, j;
+	nBetaIndex = 0;
+	gsl_matrix_set_zero(GenoBeta);
+	for (i = 0; i < nValidItem; i++) {
+		for (j = 0; j < nMaxBetaGen; j++)
+			gsl_matrix_set(GenoBeta, i, j, gsl_ran_gaussian(r, 1.0));
+	}
+
+	if (nValidItem > 1) {
+		gsl_matrix * tmpCorrGenoBeta = gsl_matrix_calloc(nValidItem, nMaxBetaGen);
+		gsl_matrix * tmpL = gsl_matrix_calloc(nValidItem, nValidItem);
+		gsl_matrix_set_zero(tmpL);
+		for (i = 0; i < nValidItem; i++) {
+			for (j = 0; j <= i; j++) {
+				gsl_matrix_set(tmpL, i, j, gsl_matrix_get(L, i, j));
+			}
+		}
+		gsl_blas_dgemm(CblasNoTrans, CblasNoTrans, 1.0, tmpL, GenoBeta, 0.0, tmpCorrGenoBeta);
+		gsl_matrix_memcpy(GenoBeta, tmpCorrGenoBeta);
+	}
+}
+
+
+
+void BaseBetaGet(double sigma) {
 	int i, j;
 	memset(BaseBeta, 0.0, sizeof(double)*nMaxPop*nMaxTrait);
 
 	if (!status) {
-		gsl_vector * tmpBeta = gsl_vector_calloc(nPop*nTrait);
-		gsl_ran_multivariate_gaussian(r, mu, L, tmpBeta);
 		for (i = 0; i < nTrait; i++) {
 			for (j = 0; j < nPop; j++)
-				BaseBeta[j][i] = gsl_vector_get(tmpBeta, nPop*i+j) * sigma;
+				BaseBeta[j][i] = gsl_matrix_get(GenoBeta, nPop*i+j, nBetaIndex) * sigma;
 		}
 	}
 	else if (!statusTrait) {
-		gsl_vector * tmpBeta = gsl_vector_calloc(nTrait);
-		gsl_ran_multivariate_gaussian(r, mu, L, tmpBeta);
 		for (i = 0; i < nTrait; i++) {
 			for (j = 0; j < nPop; j++) {
-				BaseBeta[j][i] = gsl_vector_get(tmpBeta, i) * sigma;
+				BaseBeta[j][i] = gsl_matrix_get(GenoBeta, i, nBetaIndex) * sigma;
 			}
 		}
 	}
 	else if (!statusPop) {
-		gsl_vector * tmpBeta = gsl_vector_calloc(nPop);
-		gsl_ran_multivariate_gaussian(r, mu, L, tmpBeta);
 		for (i = 0; i < nPop; i++) {
 			for (j = 0; j < nTrait; j++) {
-				BaseBeta[i][j] = gsl_vector_get(tmpBeta, i) * sigma;
+				BaseBeta[i][j] = gsl_matrix_get(GenoBeta, i, nBetaIndex) * sigma;
 			}
 		}
 	}
 	else {
-		double tmp;
-		tmp = gsl_ran_gaussian(r, 1.0);
 		for (i = 0; i < nPop; i++) {
 			for (j = 0; j < nTrait; j++)
-				BaseBeta[i][j] = tmp * sigma;
+				BaseBeta[i][j] = gsl_matrix_get(GenoBeta, 0, nBetaIndex) * sigma;
 		}
-	}	
+	}
+	nBetaIndex++;
+	if (nBetaIndex == nMaxBetaGen) 
+		BaseBetaGen();
 }
+
 
 
 void GetCovarEff() {
@@ -645,7 +668,7 @@ void GetCovarEff() {
 	long int l;
 	// memset(CovarBeta, 0.0, sizeof(double)*nMaxPop*nMaxTrait);
 	for (k = 0; k < nCovar; k++) {
-		BaseBetaGen(1.0);
+		BaseBetaGet(1.0);
 		for (i = 0; i < nTrait; i++) {
 			for (l = 0; l < nSample; l++) {
 				popIndex = PopIndicator[i];
@@ -799,7 +822,7 @@ void AnalyzeSNP(int chr, char SNP[50]) {
 			}
 		}
     }
-    BaseBetaGen(wComp[k]);
+    BaseBetaGet(wComp[k]);
 	for (k = 0; k < nTrait; k++) {
 		if (CausalFlag[k]) {
 			memset(tmpBeta, '\0', sizeof tmpBeta);
