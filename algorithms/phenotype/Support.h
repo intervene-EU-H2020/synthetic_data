@@ -24,7 +24,7 @@ int statusTrait;
 #define nMaxInd 100000
 #define nPCAsnp 10000
 #define nMaxCovar 10
-#define thres 1e-6
+#define nMaxBetaGen 10000
 
 gsl_rng * r;
 
@@ -84,6 +84,7 @@ double Pleio[nMaxTrait];
 double TraitCorr[nMaxTrait][nMaxTrait]; // Only support positive genetic correlation now
 double PopCorr[nMaxPop][nMaxPop];
 
+gsl_matrix * GenoBeta;
 gsl_matrix * SigmaTrait;
 gsl_matrix * SigmaPop;
 gsl_matrix * L;
@@ -93,8 +94,8 @@ double VarGeno[nMaxPop][nMaxTrait];
 double VarCovar[nMaxPop][nMaxTrait];
 double VarEnv[nMaxPop][nMaxTrait];
 double GCEweight[nMaxPop][3];
-long int nCausal[nMaxTrait], nSample;
-int nPop, nTrait, nItem, nCovar;
+long int nCausal[nMaxTrait], nSample, nBetaIndex;
+int nPop, nTrait, nItem, nValidItem, nCovar;
 double a, b, c, prob;
 
 struct SNPinRef {
@@ -124,7 +125,9 @@ void ReadCausal();
 
 void ReadRef();
 
-void BaseBetaGen(double sigma);
+void BaseBetaGen();
+
+void BaseBetaGet(double sigma);
 
 void GetCovarEff();
 
