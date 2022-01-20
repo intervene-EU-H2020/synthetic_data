@@ -21,11 +21,15 @@ struct Filepaths
     evaluation_output::String
     optimisation_output::String
     reference_dir::String
+    phenotype_causal_list::String
+    phenotype_sample_list::String
+    phenotype_reference::String
     vcftools::String
     plink::String
     plink2::String
     king::String
     mapthin::String
+    phenoalg::String
 end
 
 
@@ -92,29 +96,35 @@ end
 
 
 function parse_filepaths(options, chromosome, superpopulation)
-    vcf_input_raw = format_filepath(options["filepaths"]["vcf_input_raw"], chromosome, superpopulation, true)
-    vcf_input_processed_prefix = format_filepath(options["filepaths"]["vcf_input_processed_prefix"], chromosome, superpopulation, true)  
-    vcf_input_processed = format_filepath(options["filepaths"]["vcf_input_processed"], chromosome, superpopulation, true)  
-    variant_list = format_filepath(options["filepaths"]["variant_list"], chromosome, superpopulation, true)
-    genetic_mapfile = format_filepath(options["filepaths"]["genetic_mapfile"], chromosome, superpopulation, true)
-    genetic_distfile = format_filepath(options["filepaths"]["genetic_distfile"], chromosome, superpopulation, true)
-    hap1_matrix_output = format_filepath(options["filepaths"]["hap1_matrix"], chromosome, superpopulation, true)
-    hap2_matrix_output = format_filepath(options["filepaths"]["hap2_matrix"], chromosome, superpopulation, true)
-    metadata_output = format_filepath(options["filepaths"]["vcf_metadata"], chromosome, superpopulation, true)
-    popfile_raw = format_filepath(options["filepaths"]["popfile_raw"], chromosome, superpopulation, false)
-    popfile_processed = format_filepath(options["filepaths"]["popfile_processed"], chromosome, superpopulation, false)
-    synthetic_data_prefix = format_filepath(options["filepaths"]["synthetic_data_prefix"], chromosome, superpopulation, true)
-    evaluation_output = format_filepath(options["filepaths"]["evaluation_output"], chromosome, superpopulation, true)
-    optimisation_output = format_filepath(options["filepaths"]["optimisation_output"], chromosome, superpopulation, true)
-    reference_dir = format_filepath(options["filepaths"]["reference_dir"], chromosome, superpopulation, false)
+    vcf_input_raw = format_filepath(options["filepaths"]["genotype"]["vcf_input_raw"], chromosome, superpopulation, true)
+    vcf_input_processed = format_filepath(options["filepaths"]["genotype"]["vcf_input_processed"], chromosome, superpopulation, true) 
+    vcf_input_processed_prefix = endswith(vcf_input_processed,".recode.vcf") ? chop(vcf_input_processed, tail=11) : chop(vcf_input_processed, tail=4)
+    variant_list = format_filepath(options["filepaths"]["genotype"]["variant_list"], chromosome, superpopulation, true)
+    genetic_mapfile = format_filepath(options["filepaths"]["genotype"]["genetic_mapfile"], chromosome, superpopulation, true)
+    genetic_distfile = format_filepath(options["filepaths"]["genotype"]["genetic_distfile"], chromosome, superpopulation, true)
+    hap1_matrix_output = format_filepath(options["filepaths"]["genotype"]["hap1_matrix"], chromosome, superpopulation, true)
+    hap2_matrix_output = format_filepath(options["filepaths"]["genotype"]["hap2_matrix"], chromosome, superpopulation, true)
+    metadata_output = format_filepath(options["filepaths"]["genotype"]["vcf_metadata"], chromosome, superpopulation, true)
+    popfile_raw = format_filepath(options["filepaths"]["genotype"]["popfile_raw"], chromosome, superpopulation, false)
+    popfile_processed = format_filepath(options["filepaths"]["genotype"]["popfile_processed"], chromosome, superpopulation, false)
 
-    vcftools = format_filepath(options["software_paths"]["vcftools"], chromosome, superpopulation, false)
-    plink = format_filepath(options["software_paths"]["plink"], chromosome, superpopulation, false)
-    plink2 = format_filepath(options["software_paths"]["plink2"], chromosome, superpopulation, false)
-    king = format_filepath(options["software_paths"]["king"], chromosome, superpopulation, false)
-    mapthin = format_filepath(options["software_paths"]["mapthin"], chromosome, superpopulation, false)
+    synthetic_data_prefix = format_filepath(options["filepaths"]["general"]["synthetic_data_prefix"], chromosome, superpopulation, true)
+    evaluation_output = format_filepath(options["filepaths"]["general"]["evaluation_output"], chromosome, superpopulation, true)
+    optimisation_output = format_filepath(options["filepaths"]["general"]["optimisation_output"], chromosome, superpopulation, true)
+    reference_dir = format_filepath(options["filepaths"]["general"]["reference_dir"], chromosome, superpopulation, false)
+    
+    phenotype_causal_list = format_filepath(options["filepaths"]["phenotype"]["causal_list"], chromosome, superpopulation, false)
+    phenotype_sample_list = format_filepath(options["filepaths"]["phenotype"]["sample_list"], chromosome, superpopulation, false)
+    phenotype_reference = format_filepath(options["filepaths"]["phenotype"]["reference"], chromosome, superpopulation, false)
 
-    return Filepaths(vcf_input_raw, vcf_input_processed_prefix, vcf_input_processed, variant_list, genetic_mapfile, genetic_distfile, hap1_matrix_output, hap2_matrix_output, metadata_output, popfile_raw, popfile_processed, synthetic_data_prefix, evaluation_output, optimisation_output, reference_dir, vcftools, plink, plink2, king, mapthin)
+    vcftools = format_filepath(options["filepaths"]["software"]["vcftools"], chromosome, superpopulation, false)
+    plink = format_filepath(options["filepaths"]["software"]["plink"], chromosome, superpopulation, false)
+    plink2 = format_filepath(options["filepaths"]["software"]["plink2"], chromosome, superpopulation, false)
+    king = format_filepath(options["filepaths"]["software"]["king"], chromosome, superpopulation, false)
+    mapthin = format_filepath(options["filepaths"]["software"]["mapthin"], chromosome, superpopulation, false)
+    phenoalg = format_filepath(options["filepaths"]["software"]["phenoalg"], chromosome, superpopulation, false)
+
+    return Filepaths(vcf_input_raw, vcf_input_processed_prefix, vcf_input_processed, variant_list, genetic_mapfile, genetic_distfile, hap1_matrix_output, hap2_matrix_output, metadata_output, popfile_raw, popfile_processed, synthetic_data_prefix, evaluation_output, optimisation_output, reference_dir, phenotype_causal_list, phenotype_sample_list, phenotype_reference, vcftools, plink, plink2, king, mapthin, phenoalg)
 end
 
 
@@ -205,6 +215,14 @@ function get_population_structure(superpopulation, options, poplist)
 end
 
 
+function get_batchsize(nsamples)
+    if nsamples > 10000
+        return 10000
+    else
+        return nsamples
+    end
+end
+
 function parse_genomic_metadata(options, superpopulation, filepaths)
 
     poplist = ["AFR", "AMR", "EAS", "EUR", "SAS"]
@@ -221,7 +239,7 @@ function parse_genomic_metadata(options, superpopulation, filepaths)
     genetic_distances = get_genetic_distances(filepaths.genetic_distfile)
     outfile_type = options["genotype_data"]["filetype"]
     outfile_prefix = filepaths.synthetic_data_prefix
-    batchsize = outfile_type=="plink" ? options["genotype_data"]["batchsize"] : -1
+    batchsize = outfile_type=="plink" ? get_batchsize(nsamples) : -1
     plink = filepaths.plink
 
     nvariants = length(genetic_distances)
