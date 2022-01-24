@@ -33,7 +33,6 @@ filepaths:
     hap2_matrix: data/inputs/processed/1KGPhase3.chr{chromosome}.hapmap.h2
   phenotype:
     causal_list: data/inputs/phenotype/Test.CausalList
-    sample_list: data/inputs/phenotype/Test.Sample
     reference: data/inputs/phenotype/Africa.Annot
   software:
       plink: software/plink
@@ -93,11 +92,13 @@ phenotype_data:
   nComponent: 1
   PropotionGeno: 0.2,0.7,0.8,0.2
   PropotionCovar: 0.0,0.0,0.0,0.0
-  Polygenicity: 0.8,0.8
-  Pleiotropy: 1,1
   TraitCorr: 1,-0.7,-0.7,1
   PopulationCorr: 1,0.25,0.25,1
   CompWeight: 1
+  Causality:
+    UseCausalList: false # if true the algorithm will use the causal_list filepath
+    Polygenicity: 0.8,0.8 # only required if UseCausalList is false
+    Pleiotropy: 1,1 # only required if UseCausalList is false
 
 
 ####################################

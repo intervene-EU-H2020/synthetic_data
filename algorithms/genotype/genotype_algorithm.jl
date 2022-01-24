@@ -82,14 +82,27 @@ function create_synthetic_genotype_for_chromosome(metadata)
     @info "Creating the algorithm mapping table"
     ref_df = create_reference_table(metadata)
 
+    @info "Writing the population file"
+    create_sample_list_file(metadata)
+    
     if metadata.outfile_type == "plink"
-        @info "Writing output to PLINK"
+        @info "Writing genotype output to PLINK"
         write_to_plink(ref_df, metadata.batchsize, metadata)
     elseif metadata.outfile_type == "vcf"
-        @info "Writing output to VCF"
+        @info "Writing genotype output to VCF"
         write_to_vcf(ref_df, metadata)
     else
         throw(error("Config error: outfile_type not supported"))
+    end
+end
+
+
+"""Creates the population list file for synthetic samples
+"""
+function create_sample_list_file(metadata)
+    outfile = metadata.outfile_prefix
+    open(outfile, "w") do io
+        writedlm(io, metadata.population_groups)
     end
 end
 

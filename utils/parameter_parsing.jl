@@ -114,7 +114,7 @@ function parse_filepaths(options, chromosome, superpopulation)
     reference_dir = format_filepath(options["filepaths"]["general"]["reference_dir"], chromosome, superpopulation, false)
     
     phenotype_causal_list = format_filepath(options["filepaths"]["phenotype"]["causal_list"], chromosome, superpopulation, false)
-    phenotype_sample_list = format_filepath(options["filepaths"]["phenotype"]["sample_list"], chromosome, superpopulation, false)
+    phenotype_sample_list = @sprintf("%s.sample", synthetic_data_prefix)
     phenotype_reference = format_filepath(options["filepaths"]["phenotype"]["reference"], chromosome, superpopulation, false)
 
     vcftools = format_filepath(options["filepaths"]["software"]["vcftools"], chromosome, superpopulation, false)
