@@ -7,7 +7,7 @@ using DataFrames
 using MendelPlots
 using Printf
 
-function run_gwas(plink2, syngeno_prefix, synpheno_prefix, trait_idx, covar, outdir)
+function run_gwas_tools(plink2, syngeno_prefix, synpheno_prefix, trait_idx, covar, outdir)
 	@info  "Create plink phenotype file"
 	run(`paste ${syngeno_prefix}.fam < (awk 'NR>1{print $5}' ${synpheno_prefix}.pheno${trait_idx}) | awk '{print $1,$2,$3,$4,$5,$7}' > $syngeno_prefix.phe${trait_idx}`)
 	
@@ -34,4 +34,11 @@ function plot_gwas(gwas_out_prefix, outdir)
 end
 
 
-
+"""Run GWAS for each phenotypic trait and plot results
+"""
+function run_gwas(ntraits, plink2, covar, synt_data_prefix, eval_dir)
+	for trait_idx in 1:ntraits
+		outdir = @sprintf("%s.trait%i", eval_dir, trait_idx)
+		run_gwas_tools(plink2, synt_data_prefix, synt_data_prefix, trait_idx, covar, outdir)
+		plot_gwas(outdir, outdir)
+	end

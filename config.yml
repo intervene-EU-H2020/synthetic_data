@@ -113,6 +113,7 @@ evaluation:
     ld:       true  # linkage disequilibrium
     maf:      true  # minor allele frequency divergences
     pca:      true  # principal components analysis
+    gwas:     true  # run GWAS and generate manhattan and qqplot
 
 
 ####################################

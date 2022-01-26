@@ -7,6 +7,7 @@ include("metrics/eval_kinship.jl")
 include("metrics/eval_ld.jl")
 include("metrics/eval_maf.jl")
 include("metrics/eval_pca.jl")
+include("metrics/eval_gwas.jl")
 
 
 function run_kinship_evaluation(ibsfile_real, ibsfile_synt, ibsfile_cross)
@@ -31,6 +32,11 @@ end
 
 function run_pca_evaluation(real_data_prefix, synt_data_prefix)
     run_pca(real_data_prefix, synt_data_prefix)
+end
+
+
+function run_gwas_evaluation(ntraits, plink2, covar, synt_data_prefix, eval_dir)
+    run_gwas(ntraits, plink2, covar, synt_data_prefix, eval_dir)
 end
 
 
@@ -79,15 +85,14 @@ function run_relatedness_tools(king, reffile_prefix, synfile_prefix, outdir)
 end
 
 
-"""Runs computations using external tools such as PLINK and KING, 
-based on the selection of evaluation metrics
+"""Runs computations using external tools such as PLINK and KING, based on the selection of evaluation metrics
 """
 function run_external_tools(metrics, reffile_prefix, synfile_prefix, filepaths)
     external_files = Dict()
     if metrics["maf"]
         external_files["real_maffile"], external_files["syn_maffile"] = run_maf_tools(filepaths.plink, reffile_prefix, synfile_prefix, filepaths.evaluation_output)
     end
-    if metrics["pca"]
+    if metrics["pca"] || metrics["gwas"]
         external_files["real_pcafile"], external_files["syn_pcafile"] = run_pca_tools(filepaths.plink2, reffile_prefix, synfile_prefix, filepaths.evaluation_output)
     end
     if metrics["kinship"] || metrics["aats"]
@@ -123,6 +128,9 @@ function run_pipeline(options, chromosome, superpopulation)
     end
     if metrics["pca"]
         run_pca_evaluation(external_files["real_pcafile"], external_files["syn_pcafile"])
+    end
+    if metrics["gwas"]
+        run_gwas_evaluation(options["phenotype_data"]["nTrait"], filepaths.plink2, external_files["syn_pcafile"], synfile_prefix, filepaths.evaluation_output)
     end
 end
 

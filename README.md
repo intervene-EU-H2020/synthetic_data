@@ -32,7 +32,7 @@ The global parameters are used by all pipeline components:
 
 ### Filepaths
 
-The `{chromosome}` and `{superpopulation}` wildcards can be specified in the filepath strings (some files actually require this). The program will substitute the corresponding given in the global parameters.
+The `{chromosome}` and `{superpopulation}` wildcards can be specified in the filepath strings (some files actually require this). The program will substitute the corresponding values given in the global parameters.
 
 The filepaths are divided into 4 subsections:
 
