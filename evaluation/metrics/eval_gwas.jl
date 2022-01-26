@@ -1,9 +1,14 @@
+"""
+    Run a fast GWAS and generate manhattan and qqplot
+"""
+
 using CSV
 using DataFrames
 using MendelPlots
 using Printf
 
 function run_gwas(plink2, syngeno_prefix, synpheno_prefix, trait_idx, covar, outdir)
+	
 	run(`paste ${syngeno_prefix}.fam < (awk 'NR>1{print $5}' ${synpheno_prefix}.pheno${trait_idx}) | awk '{print $1,$2,$3,$4,$5,$7}' > $syngeno_prefix.phe${trait_idx}`)
 	run(`$plink --bed ${syngeno_prefix}.bed --bim ${syngeno_prefix}.bim --fam ${syngeno_prefix}.phe${trait_idx} --glm hide-covar --covar ${covar} --ci 0.95 --out ${outdir}`)
 	run(`echo -e "CHR\tBP\tSNP\tA2\tA1\tA1\tTEST\tNMISS\tBETA\tSE\tL95\tU95\tSTAT\tP" > ${outdir}.tmp`)
