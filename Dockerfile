@@ -185,9 +185,9 @@ WORKDIR $SCRIPT_DIR
 COPY . .
 RUN ln -s $DATA_DIR data/
 
-# # Install Julia packages
-# RUN set -eux; \
-# 	julia --project=$SCRIPT_DIR -e "using Pkg; Pkg.instantiate()"
+# Install Julia packages
+RUN set -eux; \
+	julia --project=$SCRIPT_DIR -e "using Pkg; Pkg.instantiate()"
 
 # Install dependencies for phenotype generation
 RUN set -eux; \
