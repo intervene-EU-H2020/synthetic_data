@@ -2,6 +2,11 @@
 
 _"Working code" for phenotype generation, subject to further updates._
 
+_2022.01.18 Changed non positive definite matrices handling a bit, but the input (PopulationCorr, TraitCorr) are still tricky for users._
+_Hmm.._
+
+_2022.01.19 Made a little faster (hopefully?)._
+
 Dependents: gsl, blas
 
 To compile, run 
@@ -15,15 +20,19 @@ To use, run
 ```
 where ```Parfile``` is a parameter file in plain text that looks like below: 
 ```
-Heritability 0.5,0.6
-Prevalence 0.1,0.2
-a -0.4 
-b -0.5
+nPopulation 2
+nTrait 2
+a -0.4
+b -1
 c 0.5
 nComponent 3
-CompWeight 1,2,4
-PopCovar 1,1,1,1 
-Polygenicity 0.05 
+PropotionGeno 0.5,0.7,0.8,0.2
+PropotionCovar 0.0,0.0,0.0,0.0
+Polygenicity 0.1,0.08
+Pleiotropy 1,0.5
+TraitCorr 1,-0.7,-0.7,1
+PopulationCorr 1,0.25,0.25,1
+CompWeight 1,5,10
 CausalList /path/to/the/causal/SNP/list
 SampleList /path/to/the/sample/file
 Reference /path/to/the/reference/file
@@ -36,27 +45,37 @@ _This will be updated to connect with config_
 
 Currently the parameters are as below
 
-```Heritability``` is observed causal SNP heritability in each population, nPOP entries separated by comma.
+```nPopulation``` is the number of populations (nPop), integer.
 
-```Prevalence``` is disease prevalence in each population, nPOP entries separated by comma.
+```nTrait``` is the number of traits (nTrait), integer.
 
-```a```, ```b```, ```c``` have -0.4, -0.5 and 0.5 as their suggested values.
+```PropotionGeno``` is observed causal SNP heritability in _each population, each trait_. Flatten nPop * nTrait matrix, entries separated by comma.
+
+```PropotionCovar``` is observed proportion of variance contributed by the covariate (input in SampleList file) in _each population, each trait_. Flatten nPop * nTrait matrix, entries separated by comma.
+
+```Prevalence``` is disease prevalence in _each population, each trait_. Flatten nPop * nTrait matrix, entries separated by comma. If prevalence is specified, output will include a column for binary case/control statues.
+
+```a```, ```b```, ```c``` have -0.4, -1 and 0.5 as their suggested values.
 
 ```nComponent``` and ```CompWeight``` are number of guassian mixture components and their weights.
 
-```PopCovar``` is flattened correlation matrix for population genetic correlation, nPOP x nPOP entries separated by comma.
+```PopulationCorr``` is flattened correlation matrix for population genetic correlation (symmetric positive definite). nPop x nPop entries separated by comma.
 
-```Polygenicity``` set at 0.05 means around 5% SNPs will be causal.
+```TraitCorr``` is flattened correlation matrix for traits genetic correlation (symmetric positive definite). nTrait x nTrait entries separated by comma.
 
-```CausalList``` is a list of predefined SNPs to be used as causal, overrides ```Polygenicity``` parameter if specified.
+```Pleiotropy``` is nTrait vector of trait's pleiotropy relationship **comparing to trait 1**. i.e. if trait 2 has Pleiotropy = 0.9, it means 90% of causal SNPs in trait 1 are also causal in trait 2. Therefore, first entry of ```Pleiotropy``` vector is always 1. Entries separated by comma.
 
-```SampleList``` is a population code list, in the order of sample listed in the header of input .traw file.
+```Polygenicity``` nTrait vector of trait polygenicity, measured by proportion of total SNPs being causal. e.g. Polygenicity = 0.05 meaning around 5% SNPs will be causal.
+
+```CausalList``` is a list of predefined SNPs to be used as causal, overrides ```Polygenicity``` parameter if specified. Each column contains causal SNPs for one trait, columns separated by comma.
+
+```SampleList``` is a population and covariate (if any) list, in the order of sample listed in the header of input .traw file. Fist column should contain categorical population code for each sample (mandatory); rest of the columns should contains numerical covariates, columns separated by comma. Length of this file must match sample size in .traw file.
 
 ```Reference``` **It also takes a reference file for LD, but it's a little too big for github (~36Mb in .gz). Need to put it somewhere**
 
-```GenoFile``` Input genotype file, in .traw format. Can be generated using ```plink --recode A-transpose``` from other formats.
+```GenoFile``` Input genotype file, in .traw format. Can be generated using ```plink --recode A-transpose``` from other formats. Genotype file includes all chromosomes and samples.
 
-It output two files, ```.pheno``` includes the genetic effect, environmental effect and synthetic phenotype (in liability) for each individual.
+_For each trait_, it outputs two files, ```.pheno``` includes the genetic effect, environmental effect and synthetic phenotype for each individual.
 
 ```.causal``` includes the causal SNPs and their effect sizes in each population.
 

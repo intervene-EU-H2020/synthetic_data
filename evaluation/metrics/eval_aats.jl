@@ -15,11 +15,8 @@ using ProgressMeter
 """
 is_logging(io) = isa(io, Base.TTY) == false || (get(ENV, "CI", nothing) == "true")
 
-function main()
+function run_aats(ibsfile_cross)
     @info "Running AA_TS computations"
-
-    # Load KING results file for cross dataset
-    ibsfile_cross = ARGS[1]
     
     results_dir = dirname(ibsfile_cross)
 
@@ -41,7 +38,7 @@ function main()
             (startswith(id1, "syn") && !startswith(id2, "syn")),
         ibs_cross
     )
-
+    
     n1 = size(df_real, 1)
     n2 = size(df_synt, 1)
     n3 = size(df_cross, 1)
@@ -100,10 +97,3 @@ function main()
     @info @sprintf("    AA_S  = %.4f", AA_S)
     @info @sprintf("    AA_TS = %.4f", AA_TS)
 end
-
-
-if abspath(PROGRAM_FILE) == @__FILE__
-    main()
-end
-
-

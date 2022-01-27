@@ -115,13 +115,8 @@ function summarize_kinship(kinship_values)
 end
 
 
-function main()
+function run_kinship(ibsfile_real, ibsfile_synt, ibsfile_cross)
     @info "Running Kinship evaluations"
-
-    ## Load IBS data
-    ibsfile_real = ARGS[1]
-    ibsfile_synt = ARGS[2]
-    ibsfile_cross = ARGS[3]
 
     results_dir = dirname(ibsfile_synt)
 
@@ -157,9 +152,4 @@ function main()
     @info "Kinship across both datasets"
     summarize_kinship(ibs_cross_filtered.Kinship)
 
-end
-
-
-if abspath(PROGRAM_FILE) == @__FILE__
-    main()
 end

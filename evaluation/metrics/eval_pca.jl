@@ -9,19 +9,8 @@ using LinearAlgebra
 using DelimitedFiles
 
 
-
-
-## File paths
-## Configure file paths
-data_dir = "./../../../data/1000G";
-
-
-
-function main()
+function run_pca(real_data_prefix, synt_data_prefix)
     @info "Running PCA Evaluations"
-
-    real_data_prefix = ARGS[1]
-    synt_data_prefix = ARGS[2]
 
     ## Load Allele counts
     real_acount = CSV.File(real_data_prefix * ".acount", normalizenames=true) |> DataFrame
@@ -55,9 +44,4 @@ function main()
     wgt_align = sum(var_real .* align_val)
 
     @info "Weighted alignment value = $wgt_align    (Ideal is 1.0)"
-end
-
-
-if abspath(PROGRAM_FILE) == @__FILE__
-    main()
 end

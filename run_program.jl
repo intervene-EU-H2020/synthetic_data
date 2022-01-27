@@ -1,37 +1,43 @@
 using ArgParse, YAML
 
+include("utils/parameter_parsing.jl")
+include("preprocessing/preprocessing.jl")
+include("optimisation/abc.jl")
+include("algorithms/genotype/genotype_algorithm.jl")
+include("algorithms/phenotype/phenotype_algorithm.jl")
+include("evaluation/evaluation.jl")
 
 """Executes the program, according to which pipelines and configuration options are specified in the input
 
-Note that any combination of pipelines can be run together, except the optimisation pipeline, which runs immediately (possibly after preprocessing) then exits
+Note that any combination of pipelines can be run together, except the optimisation pipeline, which exits immediately after running
 
 Also note that there is a specific ordering to the pipeline execution
 """
 function run_program(pipelines, options)
     if pipelines["preprocessing"]
-        @info "running the preprocessing pipeline"
-        # TODO
+        @info "Running the preprocessing pipeline"
+        run_preprocessing(options)
     end
 
     if pipelines["optimisation"]
-        @info "optimising model parameter values"
-        # TODO
+        @info "Optimising model parameter values"
+        run_optimisation(options)
         exit(0)
     end
 
     if pipelines["genotype"]
-        @info "generating synthetic genotype data"
-        # TODO
+        @info "Generating synthetic genotype data"
+        create_synthetic_genotype(options)
     end
 
     if pipelines["phenotype"]
-        @info "generating synthetic phenotype data"
-        # TODO
+        @info "Generating synthetic phenotype data"
+        create_synthetic_phenotype(options)
     end
 
     if pipelines["evaluation"]
-        @info "evaluating synthetic data quality"
-        # TODO
+        @info "Evaluating synthetic data quality"
+        run_evaluation(options)
     end
 end
 

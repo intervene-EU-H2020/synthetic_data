@@ -4,13 +4,13 @@ void ReadParam(const char *ParIn) {
 	FILE *ParFile;
 	char *tok; char *p;
 	ParFile = fopen(ParIn,"r");
-	memset(herr, 0.0, sizeof(double) * nMaxPop);
-	memset(prev, 0.0, sizeof(double) * nMaxPop);
+	memset(GenoEffProp, 0.0, sizeof(double) * nMaxPop * nMaxTrait);
+	memset(CovarEffProp, 0.0, sizeof(double) * nMaxPop * nMaxTrait);
 	a = 0;
 	b = 0; 
 	c = 0;
 	nComp = 1;
-	pCausal = 0;
+	memset(pCausal, 0, sizeof(double) * nMaxTrait);
 
 	if (ParFile == NULL) {
 	    printf("Cannot open parameter file.\n");
@@ -21,21 +21,48 @@ void ReadParam(const char *ParIn) {
 			p = buffer;
 			tok = strtok_r(p, " \t", &p);
 	    	if (tok != NULL) {
-	    		if (strcmp(tok, "Heritability") == 0) {
+	    		if (strcmp(tok, "nPopulation") == 0) {
 	    			tok = strtok_r(p, " \t\n", &p);
-	    			strcpy(tmpHerr,tok);
+	    			nPop = atoi(tok);
+	    		}
+	    		else if (strcmp(tok, "nTrait") == 0) {
+	    			tok = strtok_r(p, " \t\n", &p);
+	    			nTrait = atoi(tok);
+	    		}
+	    		// Heritability matrix: flatten nPop * nTrait matrix 
+	    		else if (strcmp(tok, "PropotionGeno") == 0) {
+	    			tok = strtok_r(p, " \t\n", &p);
+	    			strcpy(tmpGenoEffProp,tok);
 				}
+				// Covariate variance ratio matrix: flatten nPop * nTrait matrix 
+				else if (strcmp(tok, "PropotionCovar") == 0) {
+	    			tok = strtok_r(p, " \t\n", &p);
+	    			strcpy(tmpCovarEffProp,tok);
+				}
+				// Prevalence matrix: flatten nPop * nTrait matrix 
 				else if (strcmp(tok, "Prevalence") == 0) {
 	    			tok = strtok_r(p, " \t\n", &p);
 	    			strcpy(tmpPrev,tok);
 	    		}
+	    		// Polygenicity vector: nTrait entries 
 	    		else if (strcmp(tok, "Polygenicity") == 0) {
 	    			tok = strtok_r(p, " \t\n", &p);
-	    			pCausal = atof(tok);
+	    			strcpy(tmpPCausal,tok);
 	    		}
-	    		else if (strcmp(tok, "PopCovar") == 0) {
+	    		// Pleiotropy vector: nTrait entries 
+	    		else if (strcmp(tok, "Pleiotropy") == 0) {
 	    			tok = strtok_r(p, " \t\n", &p);
-	    			strcpy(tmpCov,tok);
+	    			strcpy(tmpPleio,tok);
+	    		}
+	    		// Trait correlation matrix: flattern nTrait * nTrait matrix
+	    		else if (strcmp(tok, "TraitCorr") == 0) {
+	    			tok = strtok_r(p, " \t\n", &p);
+	    			strcpy(tmpTraitCorr,tok);
+	    		}
+	    		// Population correlation matrix: flattern nPop * nPop matrix
+	    		else if (strcmp(tok, "PopulationCorr") == 0) {
+	    			tok = strtok_r(p, " \t\n", &p);
+	    			strcpy(tmpPopCorr,tok);
 	    		}
 	    		else if (strcmp(tok, "a") == 0) {
 	    			tok = strtok_r(p, " \t\n", &p);
@@ -61,6 +88,7 @@ void ReadParam(const char *ParIn) {
 	    			tok = strtok_r(p, " \t\n", &p);
 	    			strcpy(InRef,tok);
 	    		}
+	    		// Sample list: 1st column is string population code, folllowing columns are numeric covariates
 	    		else if (strcmp(tok, "SampleList") == 0) {
 	    			tok = strtok_r(p, " \t\n", &p);
 	    			strcpy(InSample,tok);
@@ -117,87 +145,195 @@ void ReadParam(const char *ParIn) {
 
 void ExtractParam() {
 	char *tok; char *p;
-	long int i, m, n;
-	double SumProb;
+	char tmpBuff[20];
+	long int i, k, m, n;
+	double SumProb, tmp;
 
-	p = tmpHerr;
-    i = 0; //weights counter
+	nItem = nTrait * nPop;
+	statusPop = 1;
+	statusTrait = 1;
+	status = 1;
+
+	// Pop(row) * Trait(col) genetic effect propotion matrix, flatten
+	p = tmpGenoEffProp;
+    i = 0; k = 0;
     while ((tok = strtok_r(p, ",", &p))) {
-    	if (i < nMaxPop) {
-    		if (atof(tok) > 0.0) {
-	    		herr[i] = atof(tok);
+    	if (i < nPop && k < nTrait) {
+    		if (atof(tok) > 0.0 && atof(tok) < 1.0) {
+	    		GenoEffProp[i][k] = atof(tok);
+	    		k += 1;
+	    		if (k == nTrait) {
+	    			i += 1;
+	    			k = 0;
+	    		}
     		}
-    		else
-    			printf("Heritability needs to be positive!");
+    		else {
+    			printf("Genetic effect propotion needs to be between 0.0 and 1.0!");
+    			exit(0);
+    		}
     	}
     	else {
-    		printf("Increase max Population limit!\n");
+    		printf("Wrong dimension for input flatten heritability matrix!\n");
     		exit(0);
     	}
-    	i++;
 	}
-	nPop = i;
+
+	// Pop(row) * Trait(col) covar effect propotion matrix, flatten
+	p = tmpCovarEffProp;
+    i = 0; k = 0;
+    while ((tok = strtok_r(p, ",", &p))) {
+    	if (i < nPop && k < nTrait) {
+    		if (atof(tok) >= 0.0 && atof(tok) <= 1.0) {
+	    		CovarEffProp[i][k] = atof(tok);
+	    		k += 1;
+	    		if (k == nTrait) {
+	    			i += 1;
+	    			k = 0;
+	    		}
+    		}
+    		else {
+    			printf("Covariate effect propotion needs to be between 0.0 and 1.0!");
+    			exit(0);
+    		}
+    	}
+    	else {
+    		printf("Wrong dimension for input flatten covariate prop matrix!\n");
+    		exit(0);
+    	}
+	}
+
+	for (i = 0; i < nPop; i++) {
+		for (k = 0; k < nTrait; k++) {
+			tmp = 1 - GenoEffProp[i][k] - CovarEffProp[i][k];
+			if (tmp < 0.0) {
+				printf("Genetic effect  plus covariate effect propotion needs to be less than 1.0!");
+				exit(0);
+			}
+			else
+				EnvEffProp[i][k] = tmp;
+		}
+	}
 
 	p = tmpPrev;
-    i = 0; //weights counter
+    i = 0; k = 0; tmp = 0;
     while ((tok = strtok_r(p, ",", &p))) {
-    	if (i < nMaxPop) {
-    		if (atof(tok) > 0.0) {
-	    		prev[i] = atof(tok);
+    	if (i < nPop && k < nTrait) {
+    		if (atof(tok) > 0.0 && atof(tok) < 1.0) {
+	    		Prev[i][k] = atof(tok);
+	    		tmp += Prev[i][k];
+	    		k += 1;
+	    		if (k == nTrait) {
+	    			i += 1;
+	    			k = 0;
+	    		}
     		}
-    		else
-    			printf("Prevalence needs to be positive!");
+    		else {
+    			printf("Prevalence needs to be between 0.0 and 1.0!");
+    			exit(0);
+    		}
     	}
     	else {
-    		printf("Increase max Population limit!\n");
+    		printf("Wrong dimension for input flatten prevalence matrix!\n");
     		exit(0);
     	}
-    	i++;
 	}
-	if (i != nPop) {
-		printf("Mismatch population number.\n");
+	BinaryFlag = (tmp ? 1 : 0);
+
+	p = tmpPleio;
+    k = 0;
+    while ((tok = strtok_r(p, ",", &p))) {
+    	if (k < nTrait) {
+    		if (k == 0) {
+    			if (atof(tok) != 1.0)
+					printf("Trait 1 is reference, pleiotropy for trait 1 is set to be 1.0.\n");
+    			Pleio[k] = 1.0;
+				k += 1;
+    		}
+    		else if (atof(tok) >= 0.0 && atof(tok) <= 1.0) {
+	    		Pleio[k] = atof(tok);
+	    		k += 1;
+    		}
+    		else {
+    			printf("Pleiotropy needs to be between 0.0 and 1.0!\n");
+    			exit(0);
+    		}
+    	}
+    	else {
+    		printf("Wrong length for input pleiotropy vector!\n");
+    		exit(0);
+    	}
+	}
+	
+	p = tmpPCausal;
+    k = 0;
+    while ((tok = strtok_r(p, ",", &p))) {
+    	if (k < nTrait) {
+    		pCausal[k] = atof(tok);
+			pCausal[k] = ((k == 0) ? pCausal[k] : (pCausal[k] - pCausal[0]*Pleio[k]));
+			k += 1;
+    		if (pCausal[k] < 0.0 || pCausal[k] > 1.0) {
+    			printf("Given the pleiotropic model, polygenicity needs to be between 0.0 and 1.0!");
+    			exit(0);
+    		}
+    	}
+    	else {
+    		printf("Wrong length for input polygenicity vector!\n");
+    		exit(0);
+    	}
 	}
 
-
-	if (nPop > 1) {
-		mu = gsl_vector_calloc(nPop);
-		for (i = 0; i < nPop; i++)
-			gsl_vector_set(mu, i, 0.0); 
-
-		Sigma = gsl_matrix_calloc(nPop, nPop);
-		p = tmpCov;
-	    m = 0; n = 0;
-	    while ((tok = strtok_r(p, ",", &p))) {
-	    	if (atof(tok) < 0.0) {
-	    		printf("Negative covariance!\n");
+	p = tmpTraitCorr;
+	m = 0; n = 0;
+	while ((tok = strtok_r(p, ",", &p))) {
+		if (m < nTrait && n < nTrait) {
+			if (atof(tok) >= -1.0 && atof(tok) <= 1.0) {
+				TraitCorr[m][n] = atof(tok);
+				n += 1;
+				if (n == nTrait) {
+					m += 1;
+					n = 0;
+				}
+	    	}
+	    	else {
+	    		printf("Trait correlation out of bound!\n");
 	    		exit(0);
 	    	}
-	    	else
-	    		gsl_matrix_set(Sigma, m, n, atof(tok)); 
-	    	n += 1;
-	    	if (n == nPop) {
-	    		m += 1;
-	    		n = 0;
-	    	}
-		}
-		if (m != nPop || n != 0) {
-			printf("Mismatch population number.\n");
-		}
-		int signum; 
-		gsl_matrix *tmpSig = gsl_matrix_alloc(nPop, nPop);
-		gsl_permutation *perm = gsl_permutation_alloc(nPop);
-		gsl_linalg_LU_decomp(tmpSig, perm, &signum);
-		det = gsl_linalg_LU_det(tmpSig, signum);
-		if (det > 0) {
-			L = gsl_matrix_calloc(nPop, nPop);
-			gsl_matrix_memcpy(L, Sigma);
-			gsl_linalg_cholesky_decomp1(Sigma);
-		}
-		else {
-			printf("Cov Matrix not positive definite. Assuming all corrPop = 1.0.\n");
-		}
+	    }
+	    else {
+    		printf("Wrong dimension for input flatten trait correlation matrix!\n");
+    		exit(0);
+    	}
 	}
 
+	p = tmpPopCorr;
+	m = 0; n = 0;
+	while ((tok = strtok_r(p, ",", &p))) {
+		if (m < nPop && n < nPop) {
+			if (atof(tok) >= -1.0 && atof(tok) <= 1.0) {
+				PopCorr[m][n] = atof(tok);
+				n += 1;
+				if (n == nPop) {
+					m += 1;
+					n = 0;
+				}
+	    	}
+	    	else {
+	    		printf("Population correlation out of bound!\n");
+	    		exit(0);
+	    	}
+	    }
+	    else {
+    		printf("Wrong dimension for input flatten population correlation matrix!\n");
+    		exit(0);
+    	}
+	}
+
+	if (nItem > 1)
+		MakeCovMat();
+	else
+		nValidItem = 1;
+
+	GenoBeta = gsl_matrix_calloc(nValidItem, nMaxBetaGen);
 
 	p = tmpWeight;
     i = 0; //weights counter
@@ -230,6 +366,75 @@ void ExtractParam() {
 }
 
 
+// Order of variables: Trait 1 Pop1,2,3 ... Trait 2 Pop 1,2,3 ... Trait 3 ...
+void MakeCovMat() {
+	int i, j, m, n, nRow, nCol;
+	double tmp; 
+
+	gsl_matrix * Sigma = gsl_matrix_calloc(nItem, nItem);
+	for (i = 0; i < nTrait; i++) {
+		for (j = 0; j < nPop; j++){
+			nRow = nPop * i + j;
+			for (m = 0; m < nTrait; m++) {
+				for (n = 0; n < nPop; n++){
+					nCol = nPop * m + n;
+					tmp = PopCorr[j][n] * TraitCorr[i][m];
+					gsl_matrix_set(Sigma, nRow, nCol, tmp);
+				}
+			}
+		}
+	}
+	status = gsl_linalg_cholesky_decomp1(Sigma);
+
+	SigmaPop = gsl_matrix_calloc(nPop, nPop);
+	for (i = 0; i < nPop; i++) {
+		for (j = 0; j < nPop; j++)
+			gsl_matrix_set(SigmaPop, i, j, PopCorr[i][j]);
+	}
+	gsl_permutation *permPop = gsl_permutation_alloc(nPop);
+	statusPop = gsl_linalg_cholesky_decomp1(SigmaPop);
+
+	SigmaTrait = gsl_matrix_calloc(nTrait, nTrait);
+	for (m = 0; m < nTrait; m++) {
+		for (n = 0; n < nTrait; n++)
+			gsl_matrix_set(SigmaTrait, m, n, TraitCorr[m][n]);
+	}
+	statusTrait = gsl_linalg_cholesky_decomp1(SigmaTrait);
+
+	if (!status) {
+		printf("Overall correlation matrix is positive definite, ok!\n");
+		nValidItem = nItem;
+		L = gsl_matrix_calloc(nValidItem, nValidItem);
+		gsl_matrix_memcpy(L, Sigma);
+	}
+	else if (statusPop && !statusTrait) {
+		printf("Population correlation matrix is not positive definite. Assuming all population corr = 1.0.\n");
+		nValidItem = nTrait;
+		L = gsl_matrix_calloc(nValidItem, nValidItem);
+		gsl_matrix_memcpy(L, SigmaTrait);
+	}
+	else if (statusTrait && !statusPop) {
+		printf("Trait correlation matrix is not positive definite. Assuming all trait corr = 1.0.\n");
+		nValidItem = nPop;
+		L = gsl_matrix_calloc(nValidItem, nValidItem);
+		gsl_matrix_memcpy(L, SigmaPop);
+	}
+	else if (statusPop && statusTrait) {
+		printf("Neither correlation matrix is positive definite. Assuming all corr = 1.0.\n");
+		nValidItem = 1;
+	}
+	else {
+		// If not possible to satisfy both, always try to meet the trait correlation.
+		printf("Both correlation matrices are positive definite, but overall correlation matrix is not. Assuming pop corr = 1.0.\n");
+		nValidItem = nTrait;
+		L = gsl_matrix_calloc(nTrait, nTrait);
+		gsl_matrix_memcpy(L, SigmaTrait);
+	}
+	mu = gsl_vector_calloc(nValidItem);
+	gsl_vector_set_zero(mu);
+}
+
+
 int PopIndex(char PopCode[50], int nPopCt) {
 	int i;
 	for (i = 0; i < nPopCt; i++) {
@@ -246,8 +451,9 @@ void ReadPopulation() {
 	char *tok; char *p;
 	char PopCode[50];
 	int nPopCt;
-	long int i;
+	long int i, j;
 	nPopCt = 0;
+	nCovar = 0;
 	memset(nSamplePerPop, 0, sizeof(int) * nMaxPop);
 	
 	FILE *InFileSample;
@@ -271,7 +477,6 @@ void ReadPopulation() {
 				PopIndicator[i] = PopIndex(PopCode, nPopCt);
 				if (PopIndicator[i] == nPopCt) {
 					strcpy(PopList[nPopCt], PopCode);
-					printf("Pop = %s\n", PopCode);
 					nPopCt += 1;
 				}
 			}
@@ -280,7 +485,19 @@ void ReadPopulation() {
 				exit(0);
 			}
 			nSamplePerPop[PopIndicator[i]] += 1;
-			i++;
+
+			j = 0;
+			while ((tok = strtok_r(p, " ,\t\n", &p))) {
+				if (j < nMaxCovar)
+					CovarMat[j++][i] = atof(tok);
+				else
+					printf("Increase max Covariate limit!\n");
+		    }
+		    if (nCovar == 0)
+		    	nCovar = j;
+		    else if (j != nCovar)
+		    	printf("Line %ld does not have %d covariates.\n", i+1, nCovar);
+		    i++;
 		}
 		fclose(InFileSample);
 		nSample = i;
@@ -293,29 +510,33 @@ void ReadPopulation() {
 
 
 void ReadCausal() {
-	long int i;
+	long int i, k;
 	char *tok; char *p;
-
+	char tmpInCausal[1000];
+	char tmpBuff[20];
 	FILE *InFileCausal;
-    InFileCausal = fopen(InCausal, "r");
-    if (InFileCausal == NULL) {
-        printf("Cannot open the Causal SNP list %s.\n", InCausal);
-        exit(0);
-    }
-    else {
-		i = 0; // Line counter
-		while (fgets(buffer, sizeof(buffer), InFileCausal) != NULL) {
-			p = buffer;
-			tok = strtok_r(p, " ,\t\n", &p); // Causal SNP
-			if ( strlen(tok) != 0) {
-			    strcpy(CausalList[i], tok);
-	    	}
-			i++;
+	memset(nCausal, 0, sizeof(int) * nMaxTrait);
+	for (k = 0; k < nTrait; k++) {
+		strcpy(tmpInCausal, InCausal);
+		sprintf(tmpBuff, "%d", (int)k+1);
+	    InFileCausal = fopen(strcat(tmpInCausal, tmpBuff), "r");
+	    if (InFileCausal == NULL) {
+	        printf("Cannot open the Causal SNP list %s.\n", InCausal);
+	        exit(0);
+	    }
+	    else {
+			while (fgets(buffer, sizeof(buffer), InFileCausal) != NULL) {
+				p = buffer;
+				tok = strtok_r(p, " ,\t\n", &p);
+				if ( strlen(tok) != 0) {
+				    strcpy(CausalList[k][nCausal[k]], tok);
+				    nCausal[k] += 1;
+		    	}
+			}
+			printf("Trait %ld: input %ld causal SNPs.\n", k, nCausal[k]);
+			fclose(InFileCausal);
 		}
-		fclose(InFileCausal);
-		printf("Input %ld causal SNPs from list.\n", i);
 	}
-	nCausal = i;
 }
 
 
@@ -376,30 +597,154 @@ void ReadRef() {
 		}
 		fclose(InFileRef);
 		printf("Read reference file, done. %ld SNPs read from reference.\n", i);
-		/*for (i = 0; i < 26; i++)
-			printf("Chr %ld has %ld SNPs.\n", i, SNPct[i]);*/
+	}
+}
+
+
+void BaseBetaGen() {
+	int i, j;
+	nBetaIndex = 0;
+	gsl_matrix_set_zero(GenoBeta);
+	for (i = 0; i < nValidItem; i++) {
+		for (j = 0; j < nMaxBetaGen; j++)
+			gsl_matrix_set(GenoBeta, i, j, gsl_ran_gaussian(r, 1.0));
+	}
+
+	if (nValidItem > 1) {
+		gsl_matrix * tmpCorrGenoBeta = gsl_matrix_calloc(nValidItem, nMaxBetaGen);
+		gsl_matrix * tmpL = gsl_matrix_calloc(nValidItem, nValidItem);
+		gsl_matrix_set_zero(tmpL);
+		for (i = 0; i < nValidItem; i++) {
+			for (j = 0; j <= i; j++) {
+				gsl_matrix_set(tmpL, i, j, gsl_matrix_get(L, i, j));
+			}
+		}
+		gsl_blas_dgemm(CblasNoTrans, CblasNoTrans, 1.0, tmpL, GenoBeta, 0.0, tmpCorrGenoBeta);
+		gsl_matrix_memcpy(GenoBeta, tmpCorrGenoBeta);
+	}
+}
+
+
+
+void BaseBetaGet(double sigma) {
+	int i, j;
+	memset(BaseBeta, 0.0, sizeof(double)*nMaxPop*nMaxTrait);
+
+	if (!status) {
+		for (i = 0; i < nTrait; i++) {
+			for (j = 0; j < nPop; j++)
+				BaseBeta[j][i] = gsl_matrix_get(GenoBeta, nPop*i+j, nBetaIndex) * sigma;
+		}
+	}
+	else if (!statusTrait) {
+		for (i = 0; i < nTrait; i++) {
+			for (j = 0; j < nPop; j++) {
+				BaseBeta[j][i] = gsl_matrix_get(GenoBeta, i, nBetaIndex) * sigma;
+			}
+		}
+	}
+	else if (!statusPop) {
+		for (i = 0; i < nPop; i++) {
+			for (j = 0; j < nTrait; j++) {
+				BaseBeta[i][j] = gsl_matrix_get(GenoBeta, i, nBetaIndex) * sigma;
+			}
+		}
+	}
+	else {
+		for (i = 0; i < nPop; i++) {
+			for (j = 0; j < nTrait; j++)
+				BaseBeta[i][j] = gsl_matrix_get(GenoBeta, 0, nBetaIndex) * sigma;
+		}
+	}
+	nBetaIndex++;
+	if (nBetaIndex == nMaxBetaGen) 
+		BaseBetaGen();
+}
+
+
+
+void GetCovarEff() {
+	int i, j, k, popIndex;
+	long int l;
+	// memset(CovarBeta, 0.0, sizeof(double)*nMaxPop*nMaxTrait);
+	for (k = 0; k < nCovar; k++) {
+		BaseBetaGet(1.0);
+		for (i = 0; i < nTrait; i++) {
+			for (l = 0; l < nSample; l++) {
+				popIndex = PopIndicator[i];
+				CovarEff[i][l] += BaseBeta[popIndex][k] * CovarMat[k][l];
+			}
+		}
+	}
+}
+
+
+void GetEnvEff() {
+	int i, j, k;
+	long int l;
+	gsl_matrix * tmpEnvEff = gsl_matrix_calloc(nTrait, nSample);
+	for (l = 0; l < nSample; l++) {
+		for (k = 0; k < nTrait; k++)
+			gsl_matrix_set(tmpEnvEff, k, l, gsl_ran_gaussian(r, 1.0));
+	}
+
+	if (!statusTrait) {
+		gsl_matrix * tmpCorrEnvEff = gsl_matrix_calloc(nTrait, nSample);
+		gsl_matrix * tmpL = gsl_matrix_calloc(nTrait, nTrait);
+		gsl_matrix_set_zero(tmpL);
+		for (i = 0; i < nTrait; i++) {
+			for (j = 0; j <= i; j++)
+				gsl_matrix_set(tmpL, i, j, gsl_matrix_get(SigmaTrait, i, j));
+		}
+		gsl_blas_dgemm(CblasNoTrans, CblasNoTrans, 1.0, tmpL, tmpEnvEff, 0.0, tmpCorrEnvEff);
+		gsl_matrix_memcpy(tmpEnvEff, tmpCorrEnvEff);
+	}
+	else if (statusTrait && nTrait > 1) {
+		printf("Trait correlation matrix is not positive definite, assuming enveromental effect independent.\n");
+	}
+
+	for (l = 0; l < nSample; l++) {
+		for (k = 0; k < nTrait; k++)
+			EnvEff[k][l] = gsl_matrix_get(tmpEnvEff, k, l);
 	}
 }
 
 
 double IsCausal(char SNP[50]) {
+	memset(CausalFlag, 0, sizeof(int)*nMaxTrait);
+	int i, k, flag;
+	flag = 0;
 	if (PolyFlag) {
 		prob = gsl_rng_uniform(r);
-		if (prob < pCausal) {
-			return(1);
-		}
-		else
-			return(0);
-	}
-	else {
-		int i; 
-		for (i = 0; i < nCausal; i++) {
-			if (strcmp(SNP, CausalList[i]) == 0) {
-				return(1);
+		if (prob < pCausal[0]) {
+			CausalFlag[0] = 1;
+			for (k = 1; k < nTrait; k++) {
+				prob = gsl_rng_uniform(r);
+				CausalFlag[k] = ((prob < Pleio[k]) ? 1 : 0);
 			}
 		}
-		return(0);
+		else {
+			CausalFlag[0] = 0;
+			for (k = 1; k < nTrait; k++) {
+				prob = gsl_rng_uniform(r);
+				CausalFlag[k] = ((prob < pCausal[k]) ? 1 : 0);
+			}
+		}
 	}
+	else {
+		for (k = 0; k < nTrait; k++) {		
+			for (i = 0; i < nCausal[k]; i++) {
+				if (!strcmp(SNP, CausalList[k][i])) {
+					CausalFlag[k] = 1;
+					break;
+				}
+			}
+		}
+	}
+	for (k = 0; k < nTrait; k++)
+		flag += CausalFlag[k];
+	flag = ((flag > 0) ? 1.0 : 0.0);
+	return(flag);
 }
 
 
@@ -407,30 +752,27 @@ long int FindSNPinRef(char SNP[50], int chr) {
 	int i; 
 	for (i = 0; i < SNPct[chr]; i++) {
 		// printf("i = %d, SNP = %s, total SNP on chr = %d\n", i, RefSNP[chr][i].SNP, SNPct[chr]);
-		if (strcmp(SNP, RefSNP[chr][i].SNP) == 0) {
+		if (strcmp(SNP, RefSNP[chr][i].SNP) == 0)
 			return(i);
-		}
 	}
 	return(-1);
 }
 
 
-double GetMAF(int PopIndex) {
+double GetMAF(int popIndex) {
 	double freq;
-	freq = gsl_stats_mean(GenoMat[PopIndex], 1, nSamplePerPop[PopIndex])/2.0;
+	freq = gsl_stats_mean(PopMatTmp[popIndex][0], 1, nSamplePerPop[popIndex])/2.0;
 	freq = (freq > 0.5) ? (1-freq) : freq;
 	return(freq);
 }
 
 
-double GetBeta(double BaseBeta, int PopIndex) {
-	if (CausalMAF[PopIndex] == 0.0) {
+double GetBeta(double BaseBeta, int popIndex) {
+	if (CausalMAF[popIndex] == 0.0)
 		return(0.0);
-	}
-	else if (CausalLDscore == 0.0) {
+	else if (CausalLDscore == 0.0)
 		CausalLDscore = 0.0001; // will run into problem if divide 0; therefore use 0.0001 as minimum
-	}
-	double fMAF = pow(CausalMAF[PopIndex]*(1-CausalMAF[PopIndex]), a);
+	double fMAF = pow(CausalMAF[popIndex]*(1-CausalMAF[popIndex]), a);
 	double fLD = pow(CausalLDscore, b);
 	double fScore = pow(CausalAnnot, c);
 	double sigma2 = fMAF*fLD*fScore;
@@ -440,42 +782,18 @@ double GetBeta(double BaseBeta, int PopIndex) {
 
 void AnalyzeSNP(int chr, char SNP[50]) {
 	double prob;
-	gsl_vector * BaseBeta = gsl_vector_calloc(nPop);
-	long int i, j, k, n, SNPindex;
+	long int i, j, k, n, SNPindex, popIndex, tmpMU;
 	char tmp[50];
 	char tmpMAF[500];
 	char tmpBeta[500];
 	char tmpBaseBeta[500];
-    prob = gsl_rng_uniform(r);
-    if (prob < ProbComp[0]) {
-    	k = 0;
-    }
-    else {
-		for (j = 1; j < nComp; j++) {
-			if ((prob > ProbComp[j-1]) && (prob < ProbComp[j])) {
-				k = j;
-				break;
-			}
-		}
-    }
+	char tmpOutCausal[1000];
+	char tmpBuff[20];
+	FILE *OutFileCausal;
+	memset(CausalBeta, 0.0, sizeof(double)*nMaxPop*nMaxTrait);
+	memset(CausalMAF, 0.0, sizeof(double)*nMaxPop);
 
-    if (nPop == 1)
-    	gsl_vector_set(BaseBeta, 0, gsl_ran_gaussian(r, wComp[k]));
-    else if (det > 0) {
-	    gsl_ran_multivariate_gaussian(r, mu, L, BaseBeta);
-	}
-	else {
-		double tmp = gsl_ran_gaussian(r, wComp[k]);
-		for (i = 0; i < nPop; i++) {
-			gsl_vector_set(BaseBeta, i, tmp);
-		}
-	}
-
-    memset(tmpMAF, '\0', sizeof tmpMAF);
-    memset(tmpBeta, '\0', sizeof tmpBeta);
-    memset(tmpBaseBeta, '\0', sizeof tmpBaseBeta);
-
-    SNPindex = FindSNPinRef(SNP, chr);
+	SNPindex = FindSNPinRef(SNP, chr);
     if (SNPindex == -1) {
 		CausalLDscore = 0.25;
 		CausalAnnot = 1.0;
@@ -484,27 +802,56 @@ void AnalyzeSNP(int chr, char SNP[50]) {
     	CausalLDscore = RefSNP[chr][SNPindex].AfricaLDscore;
     	CausalAnnot = RefSNP[chr][SNPindex].DHS + 1;
     }
+
+    memset(tmpMAF, '\0', sizeof tmpMAF);
     for (n = 0; n < nPop; n++) {
     	CausalMAF[n] = GetMAF(n);
-    	CausalBeta[n] = GetBeta(gsl_vector_get(BaseBeta, n), n);
-    	for (i = 0; i < nSamplePerPop[n]; i++)
-    		GenoEff[n][i] += CausalBeta[n]*GenoMat[n][i];
-
-		sprintf(tmp, "%f,", CausalMAF[n]);
+    	sprintf(tmp, "%f,", CausalMAF[n]);
 		strcat(tmpMAF, tmp);
-		sprintf(tmp, "%f,", CausalBeta[n]);
-		strcat(tmpBeta, tmp);
-		sprintf(tmp, "%f,", gsl_vector_get(BaseBeta, n));
-		strcat(tmpBaseBeta, tmp);
     }
     tmpMAF[strlen(tmpMAF)-1] = '\0';
-    tmpBeta[strlen(tmpBeta)-1] = '\0';
-    tmpBaseBeta[strlen(tmpBaseBeta)-1] = '\0';
-    FILE *OutFileCausal;
-	OutFileCausal = fopen(OutCausal,"a");
-    fprintf(OutFileCausal, "%s\t%s\t%s\t%lf\t%s\n", SNP, tmpBaseBeta, tmpMAF, CausalLDscore, tmpBeta);
-	fclose(OutFileCausal);
+
+    prob = gsl_rng_uniform(r);
+    if (prob < ProbComp[0])
+    	k = 0;
+    else {
+		for (j = 1; j < nComp; j++) {
+			if ((prob > ProbComp[j-1]) && (prob < ProbComp[j])) {
+				k = j;
+				break;
+			}
+		}
+    }
+    BaseBetaGet(wComp[k]);
+	for (k = 0; k < nTrait; k++) {
+		if (CausalFlag[k]) {
+			memset(tmpBeta, '\0', sizeof tmpBeta);
+		    memset(tmpBaseBeta, '\0', sizeof tmpBaseBeta);
+			for (i = 0; i < nPop; i++) {
+				CausalBeta[k][i] = GetBeta(BaseBeta[i][k], i);
+				sprintf(tmp, "%f,", CausalBeta[k][i]);
+				strcat(tmpBeta, tmp);
+				sprintf(tmp, "%f,", BaseBeta[i][k]);
+				strcat(tmpBaseBeta, tmp);
+			}
+			tmpBeta[strlen(tmpBeta)-1] = '\0';
+	    	tmpBaseBeta[strlen(tmpBaseBeta)-1] = '\0';
+	    	strcpy(tmpOutCausal, OutCausal);
+	    	sprintf(tmpBuff, "%d", (int)k+1);
+			OutFileCausal = fopen(strcat(tmpOutCausal, tmpBuff),"a");
+		    fprintf(OutFileCausal, "%s\t%s\t%s\t%lf\t%s\n", SNP, tmpBaseBeta, tmpMAF, CausalLDscore, tmpBeta);
+			fclose(OutFileCausal);
+	    }
+	    else {
+	    	for (i = 0; i < nPop; i++)
+				CausalBeta[k][i] = 0.0;
+	    }
+	}
+
+    for (i = 0; i < nSample; i++) {
+    	popIndex = PopIndicator[i];
+    	for (k = 0; k < nTrait; k++)
+    		GenoEff[k][i] += CausalBeta[k][popIndex]*GenoMat[i];
+    }
 }
-
-
 
