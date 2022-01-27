@@ -1,4 +1,4 @@
 #!/bin/sh
-# Downloads reference datasets
-echo "Download 1000Genomes dataset"
-echo "$DATA_DIR"
+# Downloads reference datasets and external maps
+echo "Downloading data"
+./preprocessing/data_download.sh data/inputs/raw
