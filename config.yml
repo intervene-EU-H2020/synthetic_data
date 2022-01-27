@@ -35,12 +35,12 @@ filepaths:
     causal_list: data/inputs/phenotype/Test.CausalList
     reference: data/inputs/phenotype/Africa.Annot
   software:
-      plink: software/plink
-      plink2: software/plink2
-      king: software/king
+      plink: plink
+      plink2: plink2
+      king: king
       vcftools: vcftools
-      mapthin: software/mapthin
-      phenoalg: software/phenoalg
+      mapthin: mapthin
+      phenoalg: phenoalg
 
 
 ####################################
