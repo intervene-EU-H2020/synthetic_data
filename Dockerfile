@@ -5,7 +5,6 @@ RUN set -eux; \
 	apt-get update; \
 	apt-get install -y --no-install-recommends \
 		ca-certificates \
-# ERROR: no download agent available; install curl, wget, or fetch
 		curl \
 	; \
 	rm -rf /var/lib/apt/lists/*
@@ -92,9 +91,10 @@ ENV PLINK2_PATH "$TOOLS_DIR/plink2"
 ENV KING_PATH "$TOOLS_DIR/king"
 ENV VCFTOOLS_PATH "$TOOLS_DIR/vcftools"
 ENV BCFTOOLS_PATH "$TOOLS_DIR/bcftools"
+ENV MAPTHIN_PATH "$TOOLS_DIR/mapthin"
 
 # Add tools to PATH
-ENV PATH $PLINK_PATH:$PLINK2_PATH:$KING_PATH:$VCFTOOLS_PATH/bin:$BCFTOOLS_PATH/bin:$PATH
+ENV PATH $PLINK_PATH:$PLINK2_PATH:$KING_PATH:$VCFTOOLS_PATH/bin:$BCFTOOLS_PATH/bin:$MAPTHIN_PATH:$PATH
 
 # Setup compression tools
 RUN set -eux; \
@@ -143,6 +143,14 @@ RUN set -eux; \
     make; \
     make install; \
     cd -; \
+# Setup mapthin
+	echo "Setting up mapthin"; \
+	cd "$DOWNLOAD_DIR"; \
+	curl -fL -o mapthin.zip https://www.staff.ncl.ac.uk/richard.howey/mapthin/mapthin-v1.11-linux-x86_64.zip; \
+	unzip mapthin.zip; \
+	mkdir $MAPTHIN_PATH; \
+	mv mapthin-v1.11-linux-x86_64/* $MAPTHIN_PATH; \
+	chmod +x $MAPTHIN_PATH/mapthin; \
 # Debug
     # ls -la $TOOLS_DIR; \
     # ls -la $PLINK_PATH; \
@@ -151,13 +159,15 @@ RUN set -eux; \
     # ls -la $BCFTOOLS_PATH; \
     # ls -ls $BCFTOOLS_PATH/bin; \
     # ls -ls $BCFTOOLS_PATH/libexec; \
+	# ls -la $MAPTHIN_PATH; \
     \
 # Test
-    plink --version; \
-    plink2 --version; \
-    which king; \
-    vcftools --version; \
-    bcftools --version; \
+    # plink --version; \
+    # plink2 --version; \
+    # which king; \
+    # vcftools --version; \
+    # bcftools --version; \
+	# mapthin; \
 # Clean up
     rm -rf $DOWNLOAD_DIR
 
@@ -173,10 +183,26 @@ RUN echo "cat banner.txt\n" >> ~/.bashrc
 # Copy source files
 WORKDIR $SCRIPT_DIR
 COPY . .
+RUN ln -s $DATA_DIR data/
 
-# Install Julia packages
+# # Install Julia packages
+# RUN set -eux; \
+# 	julia --project=$SCRIPT_DIR -e "using Pkg; Pkg.instantiate()"
+
+# Install dependencies for phenotype generation
 RUN set -eux; \
-	julia --project=$SCRIPT_DIR -e "using Pkg; Pkg.instantiate()"
+    apt-get update; \
+	apt-get install -y --no-install-recommends \
+        libgsl-dev \
+        libblas-dev liblapack-dev
+
+# Build phenotype generation binary
+ENV PHENO_BIN_PATH "$TOOLS_DIR/phenotype"
+RUN mkdir -p $PHENO_BIN_PATH
+ENV PATH $PHENO_BIN_PATH:$PATH
+RUN set -eux; \
+    cd algorithms/phenotype; \
+	gcc Main.c Support.c -o $PHENO_BIN_PATH/phenoalg -L. -lm -lgsl -fPIC -lblas
 
 # Setup path for commands
 ENV PATH "$SCRIPT_DIR/commands":$PATH
