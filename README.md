@@ -11,10 +11,10 @@ Software program for generating large and realistic genotype+phenotype datasets.
 
 The software program implements a pipeline for generating synthetic genotype+phenotype datasets, with the following capabilities:
 
-- Data pre-processing: Code for pre-processing the inputs needed for synthetic data generation. This takes a while to run, so we provide the option of using a set of inputs that are already pre-processed.
-- Genotype and phenotype generation: Algorithms for generating synthetic datasets - see our paper for a detailed description of the methodology. The genotype dataset is generated first, which is then used to generate the corresponding phenotypes. Users can choose from the PLINK (bed/bim/fam) or VCF output formats.
-- Evaluation: Quantitative metrics and visualisations for evaluating synthetic data quality. This code can be run after a synthetic dataset is generated.
-- Optimisation: Likelihood-free inference techniques for selecting the optimal algorithm parameters. Users generating synthetic datasets will not need to run this, as we've already set the optimal values as the default in the configuration.
+- **Data pre-processing**: Code for pre-processing the inputs needed for synthetic data generation. This takes a while to run, so we provide the option of using a set of inputs that are already pre-processed.
+- **Genotype and phenotype generation**: Algorithms for generating synthetic datasets - see our paper for a detailed description of the methodology. The genotype dataset is generated first, which is then used to generate the corresponding phenotypes. Users can choose from the PLINK (bed/bim/fam) or VCF output formats.
+- **Evaluation**: Quantitative metrics and visualisations for evaluating synthetic data quality. This code can be run after a synthetic dataset is generated.
+- **Optimisation**: Likelihood-free inference techniques for selecting the optimal algorithm parameters. Users generating synthetic datasets will not need to run this, as we've already set the optimal values as the default in the configuration.
 
 ## Detailed configuration
 
@@ -71,7 +71,6 @@ Filepaths that are used for generating phenotypes:
 | Parameter name | Possible values | Description |
 | --- | --- | --- |
 | `causal_list` | String | See phenotype algorithm [documentation](algorithms/phenotype/README.md) |
-| `sample_list` | String | See phenotype algorithm [documentation](algorithms/phenotype/README.md) |
 | `reference_list` | String | See phenotype algorithm [documentation](algorithms/phenotype/README.md) |
 
 #### Software filepaths
@@ -159,6 +158,7 @@ Specify which evaluation metrics to use:
 | `ld` | true/false | Linkage disequilibirum |
 | `maf` | true/false | Minor allele frequency divergences |
 | `pca` | true/false | Principal components analysis (population structure) |
+| `gwas` | true/false | Run GWAS and generate manhattan and qqplot (note that this requires both genotype and phenotype synthetic data) |
 
 Note that some metrics can be slow for large datasets (e.g. `aats`, `kinship`).
 

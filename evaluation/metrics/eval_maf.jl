@@ -69,7 +69,7 @@ function run_maf(real_maf_file, synt_maf_file)
 
     ## Scatter plot
     outfile = joinpath(dirname(synt_maf_file), "results-maf-scatter.png")
-    fig = plot(size=(400, 400))
+    fig = Plots.plot(size=(400, 400))
     @df maf_data[(maf_data.MAF_REAL .> 0) .& (maf_data.MAF_SYNT .> 0), :]  scatter!(fig,
             :MAF_REAL, :MAF_SYNT,
             label=nothing, 

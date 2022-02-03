@@ -108,12 +108,12 @@ phenotype_data:
 # Set to true if you want the script to calculate the metric
 evaluation:
   metrics:
-    aats:     true  # nearest neighbour adversarial accuracy
-    kinship:  true  # kinship relatedness
-    ld:       true  # linkage disequilibrium
-    maf:      true  # minor allele frequency divergences
-    pca:      true  # principal components analysis
-    gwas:     true  # run GWAS and generate manhattan and qqplot
+    aats:     false  # nearest neighbour adversarial accuracy
+    kinship:  false # kinship relatedness
+    ld:       false # linkage disequilibrium
+    maf:      false # minor allele frequency divergences
+    pca:      false # principal components analysis
+    gwas:     true # run GWAS and generate manhattan and qqplot
 
 
 ####################################

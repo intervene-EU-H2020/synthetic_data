@@ -86,6 +86,14 @@ function main()
                      "evaluation" => parsed_args["evaluation"],
                      "optimisation" => parsed_args["optimisation"])
 
+    outdirs = [join(split(options["filepaths"]["general"][x],"/")[1:end-1],"/") for x in ["synthetic_data_prefix", "evaluation_output", "optimisation_output"]]
+    @info "Creating output directories"
+    for outdir in outdirs
+        if !isdir(outdir)
+            mkdir(outdir)
+        end
+    end
+
     println("Running pipelines:")
     for (arg,val) in pipelines
         println("  $arg  =>  $val")

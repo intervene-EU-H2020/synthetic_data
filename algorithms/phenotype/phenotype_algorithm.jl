@@ -54,6 +54,7 @@ function create_synthetic_phenotype_for_chromosome(filepaths, options, seed)
     parfile = create_parfile(options["phenotype_data"], filepaths)
     phenoalg = filepaths.phenoalg
     run(`$phenoalg $parfile $seed`)
+    rm(@sprintf("%s.traw", filepaths.synthetic_data_prefix))
 end
 
 
