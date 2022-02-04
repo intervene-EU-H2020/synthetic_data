@@ -4,7 +4,7 @@
 
 global_parameters:
   random_seed: 123
-  chromosome: 1 # "all" or a number from 1 to 22
+  chromosome: all # "all" or a number from 1 to 22
   superpopulation: EUR # "none" or a specific superpopulation (AFR, AMR, EAS, EUR, SAS)
 
 
@@ -16,31 +16,29 @@ global_parameters:
 # - the superpopulation can be given as a wildcard by specifying {superpopulation} in the filepath
 filepaths:
   general:
-    synthetic_data_prefix: data/outputs/test/test{chromosome}
-    evaluation_output: data/outputs/test/evaluation/test{chromosome}
-    optimisation_output: data/outputs/test/optimisation/test{chromosome}
-    reference_dir: data/inputs/reference
+    output_dir: data/outputs/test
+    output_prefix: test{chromosome}
   genotype:
     vcf_input_raw: data/inputs/raw/1KGPhase3.chr{chromosome}.vcf.gz
-    vcf_input_processed: data/inputs/processed/1KGPhase3.chr{chromosome}.hapmap.recode.vcf
-    vcf_metadata: data/inputs/processed/1KGPhase3.chr{chromosome}.metadata
+    vcf_input_processed: data/inputs/processed/genotype/1KGPhase3.chr{chromosome}.hapmap.recode.vcf
+    vcf_metadata: data/inputs/processed/genotype/1KGPhase3.chr{chromosome}.metadata
     popfile_raw: data/inputs/raw/1KGPhase3.pop.panel  
-    popfile_processed: data/inputs/processed/1KGPhase3.pop.panel
-    variant_list: data/external/variant_lists/hapmap_variant_list_chr{chromosome}.txt
+    popfile_processed: data/inputs/processed/genotype/1KGPhase3.pop.panel
+    variant_list: data/inputs/processed/genotype/variant_lists/hapmap_variant_list_chr{chromosome}.txt
     genetic_mapfile: data/inputs/raw/genetic_maps/chr{chromosome}.interpolated_genetic_map
-    genetic_distfile: data/inputs/processed/1KGPhase3.chr{chromosome}.hapmap.distfile
-    hap1_matrix: data/inputs/processed/1KGPhase3.chr{chromosome}.hapmap.h1
-    hap2_matrix: data/inputs/processed/1KGPhase3.chr{chromosome}.hapmap.h2
+    genetic_distfile: data/inputs/processed/genotype/1KGPhase3.chr{chromosome}.hapmap.distfile
+    hap1_matrix: data/inputs/processed/genotype/1KGPhase3.chr{chromosome}.hapmap.h1
+    hap2_matrix: data/inputs/processed/genotype/1KGPhase3.chr{chromosome}.hapmap.h2
   phenotype:
-    causal_list: data/inputs/phenotype/Test.CausalList
-    reference: data/inputs/phenotype/Africa.Annot
+    causal_list: data/inputs/processed/phenotype/Test.CausalList
+    reference: data/inputs/processed/phenotype/Africa.Annot
   software:
-      plink: plink
-      plink2: plink2
-      king: king
-      vcftools: vcftools
-      mapthin: mapthin
-      phenoalg: phenoalg
+    plink: software/plink
+    plink2: software/plink2
+    king: software/king
+    vcftools: software/vcftools
+    mapthin: software/mapthin
+    phenoalg: software/phenoalg
 
 
 ####################################

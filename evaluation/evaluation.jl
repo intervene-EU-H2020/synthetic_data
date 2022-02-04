@@ -130,7 +130,7 @@ function run_pipeline(options, chromosome, superpopulation)
         run_pca_evaluation(external_files["real_pcafile"], external_files["syn_pcafile"])
     end
     if metrics["gwas"]
-        run_gwas_evaluation(options["phenotype_data"]["nTrait"], filepaths.plink2, external_files["syn_pcafile"], synfile_prefix, filepaths.evaluation_output)
+        run_gwas_evaluation(options["phenotype_data"]["nTrait"], filepaths.plink2, @sprintf("%s.eigenvec", external_files["syn_pcafile"]), synfile_prefix, filepaths.evaluation_output)
     end
 end
 

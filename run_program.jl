@@ -86,8 +86,9 @@ function main()
                      "evaluation" => parsed_args["evaluation"],
                      "optimisation" => parsed_args["optimisation"])
 
-    outdirs = [join(split(options["filepaths"]["general"][x],"/")[1:end-1],"/") for x in ["synthetic_data_prefix", "evaluation_output", "optimisation_output"]]
     @info "Creating output directories"
+    outdirs = [@sprintf("%s/%s", options["filepaths"]["general"]["output_dir"], x) for x in ["evaluation", "optimisation", "reference"]]
+    push!(outdirs, options["filepaths"]["general"]["output_dir"])
     for outdir in outdirs
         if !isdir(outdir)
             mkdir(outdir)

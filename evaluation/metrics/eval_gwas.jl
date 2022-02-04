@@ -7,28 +7,28 @@ using DataFrames
 using MendelPlots
 using Printf
 
-
 function run_gwas_tools(plink2, syngeno_prefix, synpheno_prefix, trait_idx, covar, outdir)
-	# TODO still giving run errors, see e.g. https://docs.julialang.org/en/v1/manual/running-external-programs/
-	syngeno_prefix_fam = @sprintf("%s.fam", syngeno_prefix)
+	@info  "Create plink phenotype file"
+	fam = CSV.File(syngeno_prefix * ".fam", normalizenames=true, header = 0) |> DataFrame
+	pheno = CSV.File(synpheno_prefix * ".pheno" * string(trait_idx), normalizenames=true) |> DataFrame
+	fam[!,"Sample"] = string.(fam[:,1], "_",fam[:,2])
+
+	PhenoFam = leftjoin(fam, pheno, on = :Sample)
+	PhenoFam = PhenoFam[:, ["Column1","Column2","Column3","Column4","Column5","Phenotype"]]
+	CSV.write(syngeno_prefix * ".phe" * string(trait_idx), DataFrame(PhenoFam), delim = "\t", header = false)
+
+	@info  "GWAS using plink 2"
 	syngeno_prefix_bed = @sprintf("%s.bed", syngeno_prefix)
 	syngeno_prefix_bim = @sprintf("%s.bim", syngeno_prefix)
-	synpheno_prefix_pheno_trait_idx = @sprintf("%s.pheno%i", synpheno_prefix, trait_idx)
 	syngeno_prefix_phe_trait_idx = @sprintf("%s.phe%i", syngeno_prefix, trait_idx)
-	outdir_tmp = @sprintf("%s.tmp", outdir)
-	outdur_gwas = @sprintf("%s.PHENO1.glm.linear", outdir)
-	outdir_sumstat = @sprintf("%s.sumstat", outdir)
-
-	@info  "Create plink phenotype file"
-	run(`paste $syngeno_prefix_fam \< \(awk 'NR\>1\{print $5\}' $synpheno_prefix_pheno_trait_idx\) \| awk '\{print $1,$2,$3,$4,$5,$7\}' \> $syngeno_prefix_phe_trait_idx`)
-	
-	@info  "GWAS using plink 2"
 	run(`$plink2 --bed $syngeno_prefix_bed --bim $syngeno_prefix_bim --fam $syngeno_prefix_phe_trait_idx --glm hide-covar --covar $covar --ci 0.95 --out $outdir`)
-	
+
 	@info  "Create summary statistics"
-	run(`echo -e "CHR\tBP\tSNP\tA2\tA1\tA1\tTEST\tNMISS\tBETA\tSE\tL95\tU95\tSTAT\tP" \> $outdir_tmp`)
-	run(pipeline(`awk 'NR\>1\{print $0\}' $outdur_gwas`, `grep -v NA`, `sed 's/ /\t/g' \>\> $outdir_tmp`))
-	run(`cut -f 1-5,7- $outdir_tmp \> $outdir_sumstat \&\& rm $outdir_tmp`)
+	GWASout = CSV.File( outdir * ".PHENO1.glm.linear", normalizenames=true) |> DataFrame
+	rename!(GWASout,[:CHR, :BP, :SNP, :A2, :A1, :A1_dup, :TEST, :NMISS, :BETA, :SE, :L95, :U95, :STAT, :P])
+	select!(GWASout, Not(:A1_dup))
+
+	CSV.write(outdir * ".sumstat", DataFrame(GWASout), delim = "\t")
 end
 
 

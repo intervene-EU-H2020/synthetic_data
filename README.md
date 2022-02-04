@@ -42,10 +42,8 @@ Filepaths that are used by multiple pipeline components:
 
 | Parameter name | Possible values | Description |
 | --- | --- | --- |
-| `synthetic_data_prefix` | String value | Prefix for synthetic data outputs |
-| `evaluation_output` | String value | Prefix for evaluation outputs |
-| `optimisation_output` | String value | Prefix for optimisation outputs |
-| `reference_dir` | String value | Prefix for reference datasets that are created by the evaluation and optimisation scripts |
+| `output_dir` | String value | Directory for synthetic data outputs, e.g.  "data/outputs/test" |
+| `output_prefix` | String value | Prefix for synthetic data outputs, e.g. "test{chromosome}" |
 
 #### Genotype filepaths
 
