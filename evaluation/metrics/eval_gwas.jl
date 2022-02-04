@@ -7,6 +7,7 @@ using DataFrames
 using MendelPlots
 using Printf
 
+
 function run_gwas_tools(plink2, syngeno_prefix, synpheno_prefix, trait_idx, covar, outdir)
 	@info  "Create plink phenotype file"
 	fam = CSV.File(syngeno_prefix * ".fam", normalizenames=true, header = 0) |> DataFrame
@@ -16,7 +17,7 @@ function run_gwas_tools(plink2, syngeno_prefix, synpheno_prefix, trait_idx, cova
 	PhenoFam = leftjoin(fam, pheno, on = :Sample)
 	PhenoFam = PhenoFam[:, ["Column1","Column2","Column3","Column4","Column5","Phenotype"]]
 	CSV.write(syngeno_prefix * ".phe" * string(trait_idx), DataFrame(PhenoFam), delim = "\t", header = false)
-
+	
 	@info  "GWAS using plink 2"
 	syngeno_prefix_bed = @sprintf("%s.bed", syngeno_prefix)
 	syngeno_prefix_bim = @sprintf("%s.bim", syngeno_prefix)
@@ -25,7 +26,7 @@ function run_gwas_tools(plink2, syngeno_prefix, synpheno_prefix, trait_idx, cova
 
 	@info  "Create summary statistics"
 	GWASout = CSV.File( outdir * ".PHENO1.glm.linear", normalizenames=true) |> DataFrame
-	rename!(GWASout,[:CHR, :BP, :SNP, :A2, :A1, :A1_dup, :TEST, :NMISS, :BETA, :SE, :L95, :U95, :STAT, :P])
+	rename!(GWASout,[:CHR, :BP, :SNP, :A2, :A1, :A1_dup, :TEST, :NMISS, :BETA, :SE, :L95, :U95, :STAT, :P, :ERRCODE])
 	select!(GWASout, Not(:A1_dup))
 
 	CSV.write(outdir * ".sumstat", DataFrame(GWASout), delim = "\t")
