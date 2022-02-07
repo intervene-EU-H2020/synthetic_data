@@ -21,7 +21,7 @@ function plot_kinship_ibs(ibs_real, ibs_synt, results_dir)
     df_real = @view ibs_real[idx_real, :]
     df_synt = @view ibs_synt[idx_synt, :]
 
-    plt = plot(layout=(1, 3), size=(3*400, 400), 
+    plt = Plots.plot(layout=(1, 3), size=(3*400, 400), 
             left_margin = [5mm 0mm], bottom_margin = 10mm)
 
     @df df_real scatter!( plt, subplot=1,
@@ -65,7 +65,7 @@ end
 
 function plot_kin_density(ibs_real, ibs_synt, ibs_cross_filtered, results_dir)
     @info "Plotting relatedness metrics density"
-    plt = plot(layout=(3, 1), size=(800, 3*450))
+    plt = Plots.plot(layout=(3, 1), size=(800, 3*450))
 
     density!(plt, subplot=1, ibs_real[!, :Kinship], label="Real data")
     density!(plt, subplot=1, ibs_synt[!, :Kinship], label="Synthetic data")

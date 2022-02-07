@@ -108,10 +108,10 @@ function parse_filepaths(options, chromosome, superpopulation)
     popfile_raw = format_filepath(options["filepaths"]["genotype"]["popfile_raw"], chromosome, superpopulation, false)
     popfile_processed = format_filepath(options["filepaths"]["genotype"]["popfile_processed"], chromosome, superpopulation, false)
 
-    synthetic_data_prefix = format_filepath(options["filepaths"]["general"]["synthetic_data_prefix"], chromosome, superpopulation, true)
-    evaluation_output = format_filepath(options["filepaths"]["general"]["evaluation_output"], chromosome, superpopulation, true)
-    optimisation_output = format_filepath(options["filepaths"]["general"]["optimisation_output"], chromosome, superpopulation, true)
-    reference_dir = format_filepath(options["filepaths"]["general"]["reference_dir"], chromosome, superpopulation, false)
+    synthetic_data_prefix = format_filepath(string(options["filepaths"]["general"]["output_dir"],"/",options["filepaths"]["general"]["output_prefix"]), chromosome, superpopulation, true)
+    evaluation_output = format_filepath(string(options["filepaths"]["general"]["output_dir"],"/evaluation/",options["filepaths"]["general"]["output_prefix"]), chromosome, superpopulation, true)
+    optimisation_output = format_filepath(string(options["filepaths"]["general"]["output_dir"],"/optimisation/",options["filepaths"]["general"]["output_prefix"]), chromosome, superpopulation, true)
+    reference_dir = format_filepath(string(options["filepaths"]["general"]["output_dir"],"/reference"), chromosome, superpopulation, false)
     
     phenotype_causal_list = format_filepath(options["filepaths"]["phenotype"]["causal_list"], chromosome, superpopulation, false)
     phenotype_sample_list = @sprintf("%s.sample", synthetic_data_prefix)
@@ -190,6 +190,7 @@ function get_population_structure(superpopulation, options, poplist)
         @info "Using default population structure"
         nsamples = options["genotype_data"]["samples"]["default"]["nsamples"]
         if superpopulation == "none"
+            # TODO does this create list of length nsamples*2?
             population_groups = repeat(poplist, Int(ceil(nsamples/length(poplist))))[1:nsamples]
             for pop in poplist
                 population_weights[pop] = Dict(pop=>100/length(poplist))

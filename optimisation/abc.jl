@@ -101,7 +101,7 @@ end
 """Save results from ABC procedure
 """
 function save_results(abc_result, output_prefix, simulation_type)
-    plot_ref = plot(abc_result)
+    plot_ref = Plots.plot(abc_result)
     savefig(plot_ref, @sprintf("%s_%s.png", output_prefix, simulation_type))
     
     Nes = abc_result.population[:,1]

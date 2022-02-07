@@ -37,7 +37,7 @@ function run_ld(real_data_prefix, synt_data_prefix, eval_dir, plink_path)
     ld_synt = readdlm(ld_synt_file * ".ld", '\t', Float64, '\n')
 
     # Plot the results
-    fig = plot(layout=(1, 2), size=(2*900, 2*450))
+    fig = Plots.plot(layout=(1, 2), size=(2*900, 2*450))
     heatmap!(fig, subplot=1, ld_real, 
         clims=(0.0, 1.0), border=:none, yflip=true,
         title="Real data", aspect_ratio=:equal)

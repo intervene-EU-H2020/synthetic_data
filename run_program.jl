@@ -86,6 +86,15 @@ function main()
                      "evaluation" => parsed_args["evaluation"],
                      "optimisation" => parsed_args["optimisation"])
 
+    @info "Creating output directories"
+    outdirs = [@sprintf("%s/%s", options["filepaths"]["general"]["output_dir"], x) for x in ["evaluation", "optimisation", "reference"]]
+    push!(outdirs, options["filepaths"]["general"]["output_dir"])
+    for outdir in outdirs
+        if !isdir(outdir)
+            mkdir(outdir)
+        end
+    end
+
     println("Running pipelines:")
     for (arg,val) in pipelines
         println("  $arg  =>  $val")

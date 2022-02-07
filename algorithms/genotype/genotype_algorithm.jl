@@ -100,9 +100,9 @@ end
 """Creates the population list file for synthetic samples
 """
 function create_sample_list_file(metadata)
-    outfile = metadata.outfile_prefix
+    outfile = @sprintf("%s.sample", metadata.outfile_prefix)
     open(outfile, "w") do io
-        writedlm(io, metadata.population_groups)
+        writedlm(io, metadata.population_groups[1:2:end])
     end
 end
 
