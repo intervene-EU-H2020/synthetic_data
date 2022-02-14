@@ -7,17 +7,29 @@ using DataFrames
 using MendelPlots
 using Printf
 
+
 function run_gwas_tools(plink2, syngeno_prefix, synpheno_prefix, trait_idx, covar, outdir)
 	@info  "Create plink phenotype file"
-	run(`paste ${syngeno_prefix}.fam < (awk 'NR>1{print $5}' ${synpheno_prefix}.pheno${trait_idx}) | awk '{print $1,$2,$3,$4,$5,$7}' > $syngeno_prefix.phe${trait_idx}`)
+	fam = CSV.File(syngeno_prefix * ".fam", normalizenames=true, header = 0) |> DataFrame
+	pheno = CSV.File(synpheno_prefix * ".pheno" * string(trait_idx), normalizenames=true) |> DataFrame
+	fam[!,"Sample"] = string.(fam[:,1], "_",fam[:,2])
+
+	PhenoFam = leftjoin(fam, pheno, on = :Sample)
+	PhenoFam = PhenoFam[:, ["Column1","Column2","Column3","Column4","Column5","Phenotype"]]
+	CSV.write(syngeno_prefix * ".phe" * string(trait_idx), DataFrame(PhenoFam), delim = "\t", header = false)
 	
 	@info  "GWAS using plink 2"
-	run(`$plink --bed ${syngeno_prefix}.bed --bim ${syngeno_prefix}.bim --fam ${syngeno_prefix}.phe${trait_idx} --glm hide-covar --covar ${covar} --ci 0.95 --out ${outdir}`)
-	
+	syngeno_prefix_bed = @sprintf("%s.bed", syngeno_prefix)
+	syngeno_prefix_bim = @sprintf("%s.bim", syngeno_prefix)
+	syngeno_prefix_phe_trait_idx = @sprintf("%s.phe%i", syngeno_prefix, trait_idx)
+	run(`$plink2 --bed $syngeno_prefix_bed --bim $syngeno_prefix_bim --fam $syngeno_prefix_phe_trait_idx --glm hide-covar --covar $covar --ci 0.95 --out $outdir`)
+
 	@info  "Create summary statistics"
-	run(`echo -e "CHR\tBP\tSNP\tA2\tA1\tA1\tTEST\tNMISS\tBETA\tSE\tL95\tU95\tSTAT\tP" > ${outdir}.tmp`)
-	run(`awk 'NR>1{print $0}' ${outdir}.PHENO1.glm.linear | grep -v NA | sed 's/ /\t/g' >> ${outdir}.tmp`)
-	run(`cut -f 1-5,7- ${outdir}.tmp > ${outdir}.sumstat && rm ${outdir}.tmp`)
+	GWASout = CSV.File( outdir * ".PHENO1.glm.linear", normalizenames=true) |> DataFrame
+	rename!(GWASout,[:CHR, :BP, :SNP, :A2, :A1, :A1_dup, :TEST, :NMISS, :BETA, :SE, :L95, :U95, :STAT, :P, :ERRCODE])
+	select!(GWASout, Not(:A1_dup))
+
+	CSV.write(outdir * ".sumstat", DataFrame(GWASout), delim = "\t")
 end
 
 
@@ -42,3 +54,4 @@ function run_gwas(ntraits, plink2, covar, synt_data_prefix, eval_dir)
 		run_gwas_tools(plink2, synt_data_prefix, synt_data_prefix, trait_idx, covar, outdir)
 		plot_gwas(outdir, outdir)
 	end
+end
