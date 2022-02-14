@@ -1,7 +1,7 @@
 #!/bin/bash
 # Downloads reference datasets and external maps
 echo "=== Fetching data ==="
-
+CURR_DIR=`pwd`
 ### Fetch raw data
 # ./preprocessing/data_download.sh data/inputs/raw
 
@@ -22,6 +22,8 @@ curl -sfL -o preprocessed.txt $URL_DATA_BUCKET
 # mv files.txt preprocessed.txt
 
 # xargs -n 1 curl -vO < preprocessed.txt
+mkdir -p inputs/processed
+cd inputs/processed
 while IFS= read -r fileurl
 do
   echo ""
@@ -30,3 +32,5 @@ do
 done < preprocessed.txt
 
 echo "Fetching of preprocessed data completed. You can continue with 'generate' command."
+
+cd $CURR_DIR
