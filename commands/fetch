@@ -1,4 +1,32 @@
-#!/bin/sh
+#!/bin/bash
 # Downloads reference datasets and external maps
-echo "Downloading data"
-./preprocessing/data_download.sh data/inputs/raw
+echo "=== Fetching data ==="
+
+### Fetch raw data
+# ./preprocessing/data_download.sh data/inputs/raw
+
+
+### Fetch preprocessed data from CSC bucket
+URL_DATA_BUCKET="https://a3s.fi/swift/v1/AUTH_c520b8e7583e49069dbfb13cf078c683/INTERVENE_WP3_reference_datasets_public/"
+
+cd $DATA_DIR
+curl -sfL -o preprocessed.txt $URL_DATA_BUCKET
+
+#Clean URL
+# FIXED_URL=${URL_DATA_BUCKET//\//\\/}
+# sed -i -e 's/^/'"${FIXED_URL}"'/' preprocessed.txt
+
+# Download preprocessed files
+# head -n 6 preprocessed.txt > files.txt
+# rm preprocessed.txt
+# mv files.txt preprocessed.txt
+
+# xargs -n 1 curl -vO < preprocessed.txt
+while IFS= read -r fileurl
+do
+  echo ""
+  echo "==> Downloading ${fileurl##*\/}"
+  curl -O "${URL_DATA_BUCKET}${fileurl}"
+done < preprocessed.txt
+
+echo "Fetching of preprocessed data completed. You can continue with 'generate' command."
