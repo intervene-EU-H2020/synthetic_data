@@ -187,7 +187,8 @@ RUN ln -s $DATA_DIR data/
 
 # Install Julia packages
 RUN set -eux; \
-	julia --project=$SCRIPT_DIR -e "using Pkg; Pkg.instantiate()"
+	julia --project=$SCRIPT_DIR -e \
+	"using Pkg; Pkg.instantiate(); using Conda; Conda.add(\"bed-reader\")"
 
 # Install dependencies for phenotype generation
 RUN set -eux; \
