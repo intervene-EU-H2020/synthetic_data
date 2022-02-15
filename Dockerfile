@@ -183,7 +183,7 @@ RUN echo "cat banner.txt\n" >> ~/.bashrc
 # Copy source files
 WORKDIR $SCRIPT_DIR
 COPY . .
-# RUN ln -s $DATA_DIR data/
+RUN ln -s $DATA_DIR .
 
 # Install Julia packages
 RUN set -eux; \
