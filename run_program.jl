@@ -91,7 +91,7 @@ function main()
     push!(outdirs, options["filepaths"]["general"]["output_dir"])
     for outdir in outdirs
         if !isdir(outdir)
-            mkdir(outdir)
+            mkpath(outdir)
         end
     end
 
