@@ -94,7 +94,10 @@ function main()
             mkpath(outdir)
         end
     end
-
+    
+    # set random seed for reproducibility
+    Random.seed!(options["global_parameters"]["random_seed"])
+    
     println("Running pipelines:")
     for (arg,val) in pipelines
         println("  $arg  =>  $val")

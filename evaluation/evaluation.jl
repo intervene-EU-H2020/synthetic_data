@@ -3,8 +3,9 @@
 
 include("../utils/reference_data.jl")
 include("metrics/eval_aats.jl")
-include("metrics/eval_kinship.jl")
-include("metrics/eval_ld.jl")
+include("metrics/eval_kinship_detail.jl")
+include("metrics/eval_ld_corr.jl")
+include("metrics/eval_ld_decay.jl")
 include("metrics/eval_maf.jl")
 include("metrics/eval_pca.jl")
 include("metrics/eval_gwas.jl")
@@ -20,8 +21,13 @@ function run_aats_evaluation(ibsfile_cross)
 end
 
 
-function run_ld_evaluation(real_data_prefix, synt_data_prefix, eval_dir, plink_path)
-    run_ld(real_data_prefix, synt_data_prefix, eval_dir, plink_path)
+function run_ld_corr_evaluation(real_data_prefix, synt_data_prefix, eval_dir, plink_path)
+    run_ld_corr(real_data_prefix, synt_data_prefix, eval_dir, plink_path)
+end
+
+
+function run_ld_decay_evaluation(synt_data_prefix, real_data_prefix, plink_path, mapthin_path, eval_dir, bp_to_cm_map)
+    run_ld_decay(synt_data_prefix, real_data_prefix, plink_path, mapthin_path, eval_dir, bp_to_cm_map)
 end
 
 
@@ -120,8 +126,12 @@ function run_pipeline(options, chromosome, superpopulation)
     if metrics["kinship"]
         run_kinship_evaluation(external_files["real_ibsfile"], external_files["syn_ibsfile"], external_files["cross_ibsfile"])
     end
-    if metrics["ld"]
-        run_ld_evaluation(reffile_prefix, synfile_prefix, filepaths.evaluation_output, filepaths.plink)
+    if metrics["ld_corr"]
+        run_ld_corr_evaluation(reffile_prefix, synfile_prefix, filepaths.evaluation_output, filepaths.plink)
+    end
+    if metrics["ld_decay"]
+        bp_to_cm_map = create_bp_cm_ref(filepaths.genetic_distfile)
+        run_ld_decay_evaluation(synfile_prefix, reffile_prefix, filepaths.plink, filepaths.mapthin, filepaths.evaluation_output, bp_to_cm_map)
     end
     if metrics["maf"]
         run_maf_evaluation(external_files["real_maffile"],  external_files["syn_maffile"])

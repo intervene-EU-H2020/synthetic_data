@@ -5,7 +5,7 @@ using Plots
 default(show=false) # to plot headless
 ENV["GKSwstype"] = "100"
 
-function run_ld(real_data_prefix, synt_data_prefix, eval_dir, plink_path)
+function run_ld_corr(real_data_prefix, synt_data_prefix, eval_dir, plink_path)
     ids_path = @sprintf("%s.ld.extract", eval_dir)
 
     @info "Loading IDs"

@@ -36,6 +36,24 @@ function update_variant_position(cur_pos, L, genetic_distances, nvariants)
 end
 
 
+"""Generates mutations in the synthetic haplotype by selecting SNP positions
+"""
+function get_mutations(N, Ne, μ, hap, nvariants)
+    # sample number of mutations, based on coalescence time
+    coal_T = sample_T(N, Ne)
+    M_dist = Poisson(coal_T * μ)
+    M = rand(M_dist)
+    while M >= nvariants
+        M = rand(M_dist)
+    end
+    # choose positions at random 
+    # TODO could do this non-randomly using allele age
+    variants = sample(1:nvariants, M, replace=false)
+    mut_df = DataFrame(H=repeat([hap], length(variants)), P=variants)
+    return mut_df
+end
+
+
 """Creates reference table for synthetic genotype construction
 
 Each row of the reference table represents a segment to be copied
@@ -53,6 +71,7 @@ Note that the start and end variant positions are included in the segment
 """
 function create_reference_table(metadata)
     ref_df = DataFrame(H=Int[], I=String[], S=Int[], E=Int[], P=String[], Q=String[])
+    mut_df = DataFrame(H=Int[], P=Int[])
     @showprogress for hap in 1:(2*metadata.nsamples)
         happop = metadata.population_groups[hap]
         pos = 1
@@ -71,8 +90,11 @@ function create_reference_table(metadata)
             ref_df = push!(ref_df, [hap, seghap, start_pos, end_pos, happop, segpop])
             pos = end_pos+1
         end
+        # sample mutations
+        mutpop = sample(collect(keys(metadata.population_weights[happop])), Weights(collect(values(metadata.population_weights[happop]))))
+        mut_df = vcat(mut_df, get_mutations(metadata.population_Ns[mutpop], metadata.population_Nes[mutpop], metadata.population_mus[mutpop], hap, metadata.nvariants))
     end
-    return ref_df
+    return ref_df, mut_df
 end
 
 
@@ -80,17 +102,17 @@ end
 """
 function create_synthetic_genotype_for_chromosome(metadata)
     @info "Creating the algorithm mapping table"
-    ref_df = create_reference_table(metadata)
-
+    ref_df, mut_df = create_reference_table(metadata)
+    
     @info "Writing the population file"
     create_sample_list_file(metadata)
     
     if metadata.outfile_type == "plink"
         @info "Writing genotype output to PLINK"
-        write_to_plink(ref_df, metadata.batchsize, metadata)
+        write_to_plink(ref_df, mut_df, metadata.batchsize, metadata)
     elseif metadata.outfile_type == "vcf"
         @info "Writing genotype output to VCF"
-        write_to_vcf(ref_df, metadata)
+        write_to_vcf(ref_df, mut_df, metadata)
     else
         throw(error("Config error: outfile_type not supported"))
     end

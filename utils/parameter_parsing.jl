@@ -48,6 +48,7 @@ mutable struct GenomicMetadata
     population_Ns::Dict # {pop : N}
     population_Nes::Dict # {pop : Ne}
     population_rhos::Dict # {pop : rho}
+    population_mus::Dict # {pop: mu}
     genetic_distances::Vector # [list of genetic distances (in centimorgans) at each variant position]
     outfile_type::String
     outfile_prefix::String
@@ -116,7 +117,7 @@ function parse_filepaths(options, chromosome, superpopulation)
     phenotype_causal_list = format_filepath(options["filepaths"]["phenotype"]["causal_list"], chromosome, superpopulation, false)
     phenotype_sample_list = @sprintf("%s.sample", synthetic_data_prefix)
     phenotype_reference = format_filepath(options["filepaths"]["phenotype"]["reference"], chromosome, superpopulation, false)
-
+    
     vcftools = format_filepath(options["filepaths"]["software"]["vcftools"], chromosome, superpopulation, false)
     plink = format_filepath(options["filepaths"]["software"]["plink"], chromosome, superpopulation, false)
     plink2 = format_filepath(options["filepaths"]["software"]["plink2"], chromosome, superpopulation, false)
@@ -160,7 +161,7 @@ end
 function get_population_sizes(haplotypes, poplist)
     population_sizes = Dict{String, Integer}()
     for pop ∈ poplist
-        population_sizes[pop] = haskey(haplotypes, pop) ? length(haplotypes) : 0
+        population_sizes[pop] = haskey(haplotypes, pop) ? length(haplotypes[pop]) : 0
     end
     return population_sizes
 end
@@ -224,10 +225,11 @@ function get_batchsize(nsamples)
     end
 end
 
+
 function parse_genomic_metadata(options, superpopulation, filepaths)
 
     poplist = ["AFR", "AMR", "EAS", "EUR", "SAS"]
-
+    
     nsamples, population_groups, population_weights =  get_population_structure(superpopulation, options, poplist)
     H1 = open_hapfile(filepaths.hap1_matrix_output)
     H2 = open_hapfile(filepaths.hap2_matrix_output)
@@ -237,6 +239,7 @@ function parse_genomic_metadata(options, superpopulation, filepaths)
     population_N = get_population_sizes(haplotypes, poplist) 
     population_Nes = Dict(pop=>options["genotype_data"]["Ne"][pop] for pop in poplist)
     population_rhos = Dict(pop=>options["genotype_data"]["rho"][pop] for pop in poplist)
+    population_mus = Dict(pop=>options["genotype_data"]["mu"][pop] for pop in poplist)
     genetic_distances = get_genetic_distances(filepaths.genetic_distfile)
     outfile_type = options["genotype_data"]["filetype"]
     outfile_prefix = filepaths.synthetic_data_prefix
@@ -245,5 +248,5 @@ function parse_genomic_metadata(options, superpopulation, filepaths)
 
     nvariants = length(genetic_distances)
 
-    return GenomicMetadata(nsamples, nvariants, H1, H2, fixed_fields, haplotypes, index_map, population_groups, population_weights, population_N, population_Nes, population_rhos, genetic_distances, outfile_type, outfile_prefix, batchsize, plink)
+    return GenomicMetadata(nsamples, nvariants, H1, H2, fixed_fields, haplotypes, index_map, population_groups, population_weights, population_N, population_Nes, population_rhos, population_mus, genetic_distances, outfile_type, outfile_prefix, batchsize, plink)
 end
