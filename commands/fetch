@@ -10,7 +10,7 @@ CURR_DIR=`pwd`
 URL_DATA_BUCKET="https://a3s.fi/swift/v1/AUTH_c520b8e7583e49069dbfb13cf078c683/INTERVENE_WP3_reference_datasets_public/"
 
 cd $DATA_DIR
-curl -sfL -o preprocessed.txt $URL_DATA_BUCKET
+curl -sfL -o $DATA_DIR/preprocessed.txt $URL_DATA_BUCKET
 
 #Clean URL
 # FIXED_URL=${URL_DATA_BUCKET//\//\\/}
@@ -22,14 +22,15 @@ curl -sfL -o preprocessed.txt $URL_DATA_BUCKET
 # mv files.txt preprocessed.txt
 
 # xargs -n 1 curl -vO < preprocessed.txt
-mkdir -p inputs/processed
-cd inputs/processed
+PROC_DIR=$DATA_DIR/inputs/processed
+mkdir -p $PROC_DIR
+cd $PROC_DIR
 while IFS= read -r fileurl
 do
   echo ""
   echo "==> Downloading ${fileurl##*\/}"
   curl -O "${URL_DATA_BUCKET}${fileurl}"
-done < preprocessed.txt
+done < $DATA_DIR/preprocessed.txt
 
 echo "Fetching of preprocessed data completed. You can continue with 'generate' command."
 
