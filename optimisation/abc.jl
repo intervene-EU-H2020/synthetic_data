@@ -3,7 +3,8 @@
 
 using GpABC
 
-include("summary_stats.jl")
+include("../evaluation/metrics/eval_ld_decay.jl")
+include("../evaluation/metrics/eval_kinship_quick.jl")
 include("../utils/reference_data.jl")
 include("../algorithms/genotype/genotype_algorithm.jl")
 
@@ -28,15 +29,17 @@ end
 Simulator function for the optimisation pipeline 
 
 Arguments
-- var_params::Vector{Float64}: list of the form [Ne_s, rho_s]
+- var_params::Vector{Float64}: list of the form [Ne_s, rho_s, mu_s]
 """
 function simulator_function(var_params::AbstractArray{Float64,1})
     Ne_s = var_params[1]
     rho_s = var_params[2]
-
+    mu_s = var_params[3]
+    
     # simulate a synthetic dataset with these parameter values and calculate the summary statistic
     genomic_metadata.population_Nes[abc_metadata.superpopulation] = trunc(Int, Ne_s)
     genomic_metadata.population_rhos[abc_metadata.superpopulation] = rho_s
+    genomic_metadata.population_mus[abc_metadata.superpopulation] = mu_s
     create_synthetic_genotype_for_chromosome(genomic_metadata) 
     sumstat = calculate_summary_statistic(abc_metadata.out_prefix, abc_metadata.nsamples_syn, abc_metadata.ref_prefix)
     
@@ -49,7 +52,6 @@ end
 Set use_cross=true if calculating kinship for the reference dataset (because the is only one dataset)
 """
 function calculate_summary_statistic(syn_prefix, nsamples_syn, ref_prefix, cross_prefix=NaN, nsamples_cross=NaN, use_cross=false)
-    sumstat = NaN
     if "ld_decay" ∈ abc_metadata.statistics
         sumstat = LD_decay(syn_prefix, abc_metadata.plink, abc_metadata.mapthin, syn_prefix, abc_metadata.bp_to_cm_map)
     end
@@ -59,11 +61,11 @@ function calculate_summary_statistic(syn_prefix, nsamples_syn, ref_prefix, cross
         else
             sumstat_kin = kinship_cross(syn_prefix, nsamples_syn, ref_prefix, abc_metadata.king, syn_prefix)
         end
-
-        if isnan(sumstat)
-            sumstat = sumstat_kin
-        else
+        
+        if "ld_decay" ∈ abc_metadata.statistics
             sumstat = vcat(sumstat, sumstat_kin)
+        else
+            sumstat = sumstat_kin
         end
     end
     return sumstat
@@ -78,7 +80,9 @@ function get_priors(options)
     Ne_upper = options["optimisation"]["priors"]["Ne"]["uniform_upper"]
     rho_lower = options["optimisation"]["priors"]["rho"]["uniform_lower"]
     rho_upper = options["optimisation"]["priors"]["rho"]["uniform_upper"]
-    return [Uniform(Ne_lower, Ne_upper), Uniform(rho_lower, rho_upper)] 
+    mu_lower = options["optimisation"]["priors"]["mu"]["uniform_lower"]
+    mu_upper = options["optimisation"]["priors"]["mu"]["uniform_upper"]
+    return [Uniform(Ne_lower, Ne_upper), Uniform(rho_lower, rho_upper), Uniform(mu_lower, mu_upper)] 
 end
 
 
@@ -106,36 +110,10 @@ function save_results(abc_result, output_prefix, simulation_type)
     
     Nes = abc_result.population[:,1]
     rhos = abc_result.population[:,2]
+    mus = abc_result.population[:,3]
     ds = abc_result.distances
-    df = DataFrame(Ne=Nes, ρ=rhos, d=ds)
+    df = DataFrame(Ne=Nes, ρ=rhos, μ=mus, d=ds)
     CSV.write(@sprintf("%s_%s.csv", output_prefix, simulation_type), df)
-end
-
-
-"""Splits the reference dataset into 2 datasets for calculating cross relatedness
-"""
-function create_cross_datasets(ref_prefix, plink)
-    # make the cross dataset
-    fam_df = DataFrame(CSV.File(@sprintf("%s.fam", ref_prefix), header=["FID","IID","F","M","S","P"]))
-    fam_df.R = rand(size(fam_df)[1])
-    sort!(fam_df, [:R])
-    fam_df = fam_df[:, [:FID, :IID]]
-    fam_file1 = @sprintf("%s_1.txt", ref_prefix)
-    fam_file2 = @sprintf("%s_2.txt", ref_prefix)
-    threshold = Int(ceil(size(fam_df)[1]/2))
-    fam1_df = fam_df[1:threshold,:]
-    fam2_df = fam_df[threshold+1:size(fam_df)[1],:]
-    CSV.write(fam_file1, fam1_df, delim="\t")
-    CSV.write(fam_file2, fam2_df, delim="\t")
-    
-    cross1_prefix = @sprintf("%s_1", ref_prefix)
-    cross2_prefix = @sprintf("%s_2", ref_prefix)
-    nsamples_cross1 = length(fam1_df)
-
-    run(`$plink --bfile $ref_prefix --keep $fam_file1 --make-bed --out $cross1_prefix`)
-    run(`$plink --bfile $ref_prefix --keep $fam_file2 -make-bed --out $cross2_prefix`)
-    
-    return cross1_prefix, cross2_prefix, nsamples_cross1
 end
 
 
@@ -156,17 +134,11 @@ end
 """Create the struct containing metadata for the ABC procedure
 """
 function get_abc_metadata(options, superpopulation, filepaths)
-    # create a mapping to convert bp to cm distances
-    bp_to_cm_df = CSV.read(filepaths.genetic_distfile, DataFrame)
-    bp_to_cm_df.BP = [parse(Int64,split(x,":")[2]) for x in bp_to_cm_df.Variant]
-    bp_to_cm_map = Dict(zip(bp_to_cm_df.BP,bp_to_cm_df.Distance))
-
+    bp_to_cm_map = create_bp_cm_ref(filepaths.genetic_distfile)
     statistics = [k for k in ["ld_decay", "kinship"] if options["optimisation"]["summary_statistics"][k]]
-
     ref_prefix, nsamples_ref = create_reference_dataset(filepaths.vcf_input_processed, filepaths.popfile_processed, genomic_metadata.population_weights, filepaths.plink, filepaths.reference_dir)
     out_prefix = filepaths.optimisation_output
     nsamples_syn = options["genotype_data"]["samples"]["default"]["nsamples"]
-
     return ABCMetadata(statistics, ref_prefix, out_prefix, superpopulation, nsamples_ref, nsamples_syn, bp_to_cm_map, filepaths.plink, filepaths.king, filepaths.mapthin)
 end
 
@@ -185,7 +157,7 @@ function run_abc_for_superpopulation(options, filepaths, superpopulation)
 
     @info "Computing summary statistics for reference data"
     sumstat_reference = get_reference_statistics(abc_metadata.ref_prefix, abc_metadata.nsamples_ref)
-
+    
     @info "Running optimisation pipeline"
     t = @elapsed begin
         if options["optimisation"]["simulation_rejection_ABC"]["run"]

@@ -1,11 +1,14 @@
-# Synthetic data generator for genotypes and phenotypes
+# Synthetic data generation and evaluation
 
-Software program for generating large and realistic genotype+phenotype datasets. 
+Efficient and customisable software program for generating large-scale, diverse and realistic datasets of genomes and phenotypes. 
+
+The program is available as a container (compatible with both [Docker](https://www.docker.com/) and [Singularity](https://sylabs.io/guides/3.5/user-guide/introduction.html)), which manages all the software dependencies so that you can easily generate data on your device or computing cluster.
 
 ![diagram illustrating the software pipeline](diagram.png)
 
 ## Quickstart
 
+TODO add instructions here
 
 ## Overview
 
@@ -16,9 +19,38 @@ The software program implements a pipeline for generating synthetic genotype+phe
 - **Evaluation**: Quantitative metrics and visualisations for evaluating synthetic data quality. This code can be run after a synthetic dataset is generated.
 - **Optimisation**: Likelihood-free inference techniques for selecting the optimal algorithm parameters. Users generating synthetic datasets will not need to run this, as we've already set the optimal values as the default in the configuration.
 
-## Detailed configuration
 
-Synthetic datasets can be generated with the default configuration. Detailed guidance is provided here for users who want to customize their synthetic datasets by modifying the `config.yml` file.
+## Evaluation pipeline
+
+### Running evaluation for other datasets
+
+The evaluation pipeline can be used for any dataset in PLINK (bed/bim/fam) format:
+
+1. Ensure that your dataset is in PLINK (bed/bim/fam) format
+1. Update the `config.yml` file
+    1. Set `filepaths` > `general` > `output_dir` to the output directory containing your dataset
+    1. Set `filepaths` > `general` > `prefix` to the name of your dataset (i.e. without the .bed/.bim/.fam suffixes) 
+    1. Under `evaluation` > `metrics`, set `true` for metrics you want to compute (and `false` otherwise)
+1. Run the `validate` command. This runs the evaluation pipeline and stores the output in the same directory as the dataset 
+
+### Adding new evaluation modules
+
+The evaluation pipeline is a set of modules, that can easily be extended. Each module has a separate Julia script in the `evaluation/metrics` directory.
+
+To add a new module:
+
+1. Create a script `eval_xxx.jl` where `xxx` is the name of the metric. Add your code to this file
+1. Add your module to the `evaluation` > `metrics` section of the `config.yml` file
+1. Connect your new module to the `evaluation.jl` script:
+    1. Add an `include` statement for your module at the top of the file
+    1. Create a function `run_xxx_evaluation` and add logic for executing your module
+    1. Add a conditional statement to the `run_pipeline` function for executing the `run_xxx_evaluation` function if the relevant flag is given in the `config.yml` file
+    1. Optionally, you can add logic for running external tools (i.e. to reduce redundancy if multiple modules use the same tools)
+
+
+## Customising the config.yml file
+
+Synthetic datasets can be generated with the default configuration. Detailed guidance is provided here for users who would like to customize their synthetic datasets by modifying the `config.yml` file.
 
 ### Global parameters
 
@@ -146,6 +178,8 @@ See [here](algorithms/genotype/poplist.md) for a list of population codes.
 See the [documentation](algorithms/phenotype/README.md) about the inputs for the phenotype algorithm.
 
 ### Evaluation
+
+Note that the evaluation pipeline runs on PLINK (bed/bim/fam) formatted genotype output.
 
 Specify which evaluation metrics to use:
 

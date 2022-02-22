@@ -14,8 +14,8 @@
             "juliaEnv": "${command:activeJuliaEnvironment}",
             "args": [
                 // options for likelihood-free inference
-                "--config", "config.yml",
-                "--genotype", "--phenotype" ,"--evaluation"
+                "--config", "config.yml", 
+                "--evaluation"
               ]
         }
     ]

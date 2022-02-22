@@ -16,13 +16,13 @@ global_parameters:
 # - the superpopulation can be given as a wildcard by specifying {superpopulation} in the filepath
 filepaths:
   general:
-    output_dir: data/outputs/test
-    output_prefix: test{chromosome}
+    output_dir: data/outputs/sim1kg
+    output_prefix: sim1kg{chromosome}
   genotype:
     vcf_input_raw: data/inputs/raw/1KGPhase3.chr{chromosome}.vcf.gz
     vcf_input_processed: data/inputs/processed/1KGPhase3.chr{chromosome}.hapmap.recode.vcf
     vcf_metadata: data/inputs/processed/1KGPhase3.chr{chromosome}.metadata
-    popfile_raw: data/inputs/raw/1KGPhase3.pop.panel  
+    popfile_raw: data/inputs/raw/1KGPhase3.pop.panel
     popfile_processed: data/inputs/processed/1KGPhase3.pop.panel
     variant_list: data/inputs/processed/hapmap_variant_list_chr{chromosome}.txt
     genetic_mapfile: data/inputs/raw/genetic_maps/chr{chromosome}.interpolated_genetic_map
@@ -51,7 +51,7 @@ genotype_data:
     use_default: true # setting this to true will ignore the custom settings
     custom:
       - id: examplepop1
-        nsamples: 1000
+        nsamples: 100
         populations: 
           - EUR: 100
       - id: examplepop2
@@ -63,18 +63,25 @@ genotype_data:
       nsamples: 1000 # only used if not using custom samples
   # recombination rate (default values determined by optimisation procedure)
   rho:
-    AFR: 0.001 # default 0.001
-    AMR: 0.001 # default 0.001
-    EAS: 0.001 # default 0.001
-    EUR: 0.001 # default 0.001
-    SAS: 0.001 # default 0.001
+    AFR: 0.01
+    AMR: 0.01
+    EAS: 0.01
+    EUR: 0.01
+    SAS: 0.01
   # mean of effective population size (default values determined by optimisation procedure)
   Ne:
-    AFR: 2000 # default 2000
-    AMR: 2000 # default 2000
-    EAS: 2000 # default 2000
-    EUR: 2000 # default 2000
-    SAS: 2000 # default 2000
+    AFR: 2000
+    AMR: 2000
+    EAS: 2000
+    EUR: 2000
+    SAS: 2000
+  # mutation rate (default values determined by optimisation procedure)
+  mu:
+    AFR: 0.1
+    AMR: 0.1
+    EAS: 0.1
+    EUR: 0.1
+    SAS: 0.1
 
 
 ####################################
@@ -106,12 +113,13 @@ phenotype_data:
 # Set to true if you want the script to calculate the metric
 evaluation:
   metrics:
-    aats:     false  # nearest neighbour adversarial accuracy
-    kinship:  false # kinship relatedness
-    ld:       false # linkage disequilibrium
-    maf:      false # minor allele frequency divergences
-    pca:      false # principal components analysis
-    gwas:     true # run GWAS and generate manhattan and qqplot
+    aats: true  # nearest neighbour adversarial accuracy
+    kinship: true # relatedness, including kinship density and IBS plots
+    ld_corr: true # linkage disequilibrium (LD) correlation matrix
+    ld_decay: true # linkage disequilibrium (LD) decay plot (and distance)
+    maf: true # minor allele frequency divergences
+    pca: true # principal components analysis
+    gwas: true # run GWAS and generate manhattan and qqplot
 
 
 ####################################
@@ -128,6 +136,9 @@ optimisation:
     Ne:
       uniform_lower: 1000
       uniform_upper: 50000
+    mu:
+      uniform_lower: 0
+      uniform_upper: 10
   # inference type - simulation-based rejection ABC or emulation-based rejection ABC
   simulation_rejection_ABC:
     run: true
@@ -145,4 +156,4 @@ optimisation:
   # choice of summary statistic/s
   summary_statistics:
     ld_decay: true
-    kinship: false
+    kinship: true
