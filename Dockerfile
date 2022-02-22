@@ -178,6 +178,8 @@ ENV SCRIPT_DIR "/opt/intervene/scripts"
 ENV DATA_DIR "/data"
 ENV JULIA_PROJECT $SCRIPT_DIR
 RUN mkdir -p $DATA_DIR
+# ENV JULIA_DEPOT_PATH "/opt/intervene/.julia/"
+# RUN mkdir -p $JULIA_DEPOT_PATH
 RUN echo "cat banner.txt\n" >> ~/.bashrc
 
 # Copy source files
