@@ -1,0 +1,3 @@
+#!/bin/bash
+julia --project=$SCRIPT_DIR -e \
+	"using Pkg; Pkg.instantiate(); using Conda; Conda.add(\"bed-reader\")"
