@@ -4,7 +4,7 @@ The pre-processing scripts prepare the training data for generating synthetic da
 
 ## Standard pre-processing (default) 
 
-Use this option if you want to jump straight into generating synthetic datasets without having to run pre-processing yourself. The Docker container automatically downloads data that we've already pre-processed for use in the synthetic data algorithm. Based on the 1000 Genomes dataset, the data has been filtered to retain only the HapMap variants. Please note that synthetic datasets contain the same set of variants as the pre-processed training dataset.
+Use this option if you want to jump straight into generating synthetic datasets without having to run pre-processing yourself. Using the `fetch` command, the container downloads data that we've already pre-processed for use in the synthetic data algorithm. Based on the 1000 Genomes dataset, the data has been filtered to retain only the HapMap variants. Please note that synthetic datasets contain the same set of variants as the pre-processed training dataset.
 
 ### How this data was created
 

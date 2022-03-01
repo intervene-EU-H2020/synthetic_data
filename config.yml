@@ -16,8 +16,8 @@ global_parameters:
 # - the superpopulation can be given as a wildcard by specifying {superpopulation} in the filepath
 filepaths:
   general:
-    output_dir: data/outputs/sim1kg
-    output_prefix: sim1kg{chromosome}
+    output_dir: data/outputs/test
+    output_prefix: test{chromosome}
   genotype:
     vcf_input_raw: data/inputs/raw/1KGPhase3.chr{chromosome}.vcf.gz
     vcf_input_processed: data/inputs/processed/1KGPhase3.chr{chromosome}.hapmap.recode.vcf
