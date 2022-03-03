@@ -115,7 +115,7 @@ RUN set -eux; \
     unzip $DOWNLOAD_DIR/plink1.zip -d "$PLINK_PATH"; \
 # Setup Plink2
     echo "Setting up Plink 2.0"; \
-    curl -fL -o $DOWNLOAD_DIR/plink2.zip "http://s3.amazonaws.com/plink2-assets/alpha2/plink2_linux_avx2.zip"; \
+    curl -fL -o $DOWNLOAD_DIR/plink2.zip "https://s3.amazonaws.com/plink2-assets/plink2_linux_avx2_20220302.zip"; \
     unzip $DOWNLOAD_DIR/plink2.zip -d "$PLINK2_PATH"; \
 # Setup KING
     echo "Setting up KING"; \
@@ -146,7 +146,7 @@ RUN set -eux; \
 # Setup mapthin
 	echo "Setting up mapthin"; \
 	cd "$DOWNLOAD_DIR"; \
-	curl -fL -o mapthin.zip https://www.staff.ncl.ac.uk/richard.howey/mapthin/mapthin-v1.11-linux-x86_64.zip; \
+	curl --insecure -fL -o mapthin.zip https://www.staff.ncl.ac.uk/richard.howey/mapthin/mapthin-v1.11-linux-x86_64.zip; \
 	unzip mapthin.zip; \
 	mkdir $MAPTHIN_PATH; \
 	mv mapthin-v1.11-linux-x86_64/* $MAPTHIN_PATH; \
