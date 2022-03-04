@@ -4,9 +4,9 @@ using CSV, DataFrames
 needed for evaluation and optimisation pipelines,
 i.e. using a subset of ancestries from the original data
 """
-function create_reference_dataset(vcfpath, poppanel, population_weights, plink, outdir)
+function create_reference_dataset(vcfpath, poppanel, population_weights, plink, outdir, chromosome)
     @info "Creating reference dataset"
-    outfile = @sprintf("%s/reference", outdir)
+    outfile = @sprintf("%s/reference%s", outdir)
     keeplist, nsamples = create_keepfile(poppanel, population_weights, outdir)
     # convert vcf to plink, keeping only the ancestries used in data generation
     run(`$plink --vcf $vcfpath --keep $keeplist --make-bed --out $outfile`)
@@ -63,6 +63,7 @@ function create_keepfile(poppanel, population_weights, outdir)
     poppanel_df = CSV.File(poppanel, normalizenames=true, select=["FamilyID", "SampleID", "Superpopulation"]) |> DataFrame
     keep_samples = filter(row -> row.Superpopulation ∈ poplist, poppanel_df)
     keep_samples = keep_samples[!, [:FamilyID, :SampleID]]
+    keep_samples.FamilyID = keep_samples.SampleID # it seems the --keep command doesn't work if these columns aren't identical
     keepfile = @sprintf("%s/keep.txt", outdir)
     CSV.write(keepfile, keep_samples, header=false, delim="\t")
     nsamples = nrow(keep_samples)

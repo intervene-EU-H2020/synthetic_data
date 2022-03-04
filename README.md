@@ -57,7 +57,10 @@ Note that at the moment if you want to generate data for multiple chromosomes in
 
 n=$SLURM_ARRAY_TASK_ID
 
-singularity exec --bind data/:/data/ intervene-v0.0.9.sif generate --config data/config$n.yaml
+# generate genotype data for  22 chromosomes in parallel
+# the phenotype program combines this into one file then generates the phenotype
+singularity exec --bind data/:/data/ intervene-v0.0.9.sif generate_geno --config data/config$n.yaml
+singularity exec --bind data/:/data/ intervene-v0.0.9.sif generate_pheno --config data/config.yaml
 ```
 
 

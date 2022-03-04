@@ -114,7 +114,7 @@ function run_pipeline(options, chromosome, superpopulation)
     filepaths = parse_filepaths(options, chromosome, superpopulation)
     genomic_metadata = parse_genomic_metadata(options, superpopulation, filepaths)
 
-    reffile_prefix, nsamples_ref = create_reference_dataset(filepaths.vcf_input_processed, filepaths.popfile_processed, genomic_metadata.population_weights, filepaths.plink, filepaths.reference_dir)
+    reffile_prefix, nsamples_ref = create_reference_dataset(filepaths.vcf_input_processed, filepaths.popfile_processed, genomic_metadata.population_weights, filepaths.plink, filepaths.reference_dir, chromosome)
     synfile_prefix = filepaths.synthetic_data_prefix
 
     metrics = options["evaluation"]["metrics"]
