@@ -6,7 +6,7 @@ i.e. using a subset of ancestries from the original data
 """
 function create_reference_dataset(vcfpath, poppanel, population_weights, plink, outdir, chromosome)
     @info "Creating reference dataset"
-    outfile = @sprintf("%s/reference%s", outdir)
+    outfile = @sprintf("%s/reference%s", outdir, chromosome)
     keeplist, nsamples = create_keepfile(poppanel, population_weights, outdir)
     # convert vcf to plink, keeping only the ancestries used in data generation
     run(`$plink --vcf $vcfpath --keep $keeplist --make-bed --out $outfile`)

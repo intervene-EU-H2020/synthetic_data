@@ -191,16 +191,18 @@ function get_population_structure(superpopulation, options, poplist)
         @info "Using default population structure"
         nsamples = options["genotype_data"]["samples"]["default"]["nsamples"]
         if superpopulation == "none"
-            # TODO does this create list of length nsamples*2?
-            population_groups = repeat(poplist, Int(ceil(nsamples/length(poplist))))[1:nsamples]
+            # use 5 superpopulations in equal ratio
+            population_groups = repeat(repeat(poplist,inner=2), Int(ceil(nsamples/length(poplist))))[1:nsamples*2]
             for pop in poplist
-                population_weights[pop] = Dict(pop=>100/length(poplist))
+                population_weights[pop] = Dict(pop=>100)
             end
         else
+            # use a single population group, specified in the config
             population_groups = vcat(population_groups, repeat([superpopulation],nsamples*2))
             population_weights[superpopulation] = Dict(superpopulation=>100)
         end
     else
+        # use custom population structure, specified in the config
         custom_populations = options["genotype_data"]["samples"]["custom"]
         for pop in custom_populations
             population_groups = vcat(population_groups, repeat([pop["id"]],pop["nsamples"]*2))
@@ -212,6 +214,10 @@ function get_population_structure(superpopulation, options, poplist)
     end
     
     nsamples = Int(length(population_groups)/2)
+
+    print(nsamples)
+    print(length(population_groups))
+    print(population_weights)
     
     return nsamples, population_groups, population_weights    
 end
