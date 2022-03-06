@@ -4,8 +4,17 @@ algorithm from the Julia pipeline
 
 using DelimitedFiles
 
-function convert_genotype_data(syndata, plink)
-    run(`$plink --bfile $syndata --recode A-transpose --out $syndata`)
+function convert_genotype_data(syndata, plink, combine, synth_paths, traw_prefix)
+    if combine
+        # combine all chromosomes into one .traw file
+        mergefile = @sprintf("%s_merge.txt", syndata)
+        open(mergefile, "w") do io
+            writedlm(io, synth_paths)
+        end
+        run(`$plink --bfile $syndata --merge-list $mergefile --recode A-transpose --out $traw_prefix`)
+    else
+        run(`$plink --bfile $syndata --recode A-transpose --out $traw_prefix`)
+    end
 end
 
 
@@ -13,7 +22,7 @@ end
 1. Directly specify a list of causal SNPs; or
 2. Specify the polygenicity and pleiotropy parameters 
 """
-function create_parfile(phenotype_options, filepaths)
+function create_parfile(phenotype_options, filepaths, traw_prefix, combine)
     lines = []
     push!(lines, @sprintf("nPopulation %s", phenotype_options["nPopulation"]))
     push!(lines, @sprintf("nTrait %s", phenotype_options["nTrait"]))
@@ -31,15 +40,22 @@ function create_parfile(phenotype_options, filepaths)
         push!(lines, @sprintf("Polygenicity %s", phenotype_options["Causality"]["Polygenicity"]))
         push!(lines, @sprintf("Pleiotropy %s", phenotype_options["Causality"]["Pleiotropy"]))
     end
+
+    # if merging all chromosomes, need to give the pheno file a different name
+    if combine
+        file_prefix = traw_prefix
+    else
+        file_prefix = filepaths.synthetic_data_prefix
+    end
     
     push!(lines, @sprintf("TraitCorr %s", phenotype_options["TraitCorr"]))
     push!(lines, @sprintf("PopulationCorr %s", phenotype_options["PopulationCorr"]))
     push!(lines, @sprintf("Reference %s", filepaths.phenotype_reference))
-    push!(lines, @sprintf("GenoFile %s", filepaths.synthetic_data_prefix))
-    push!(lines, @sprintf("Output %s", filepaths.synthetic_data_prefix))
+    push!(lines, @sprintf("GenoFile %s", file_prefix))
+    push!(lines, @sprintf("Output %s", file_prefix))
     push!(lines, @sprintf("CompWeight %s", phenotype_options["CompWeight"]))
-
-    parfile = @sprintf("%s.parfile", filepaths.synthetic_data_prefix)
+    
+    parfile = @sprintf("%s.parfile", file_prefix)
 
     open(parfile, "w") do io
         writedlm(io, lines)
@@ -49,12 +65,14 @@ function create_parfile(phenotype_options, filepaths)
 end
 
 
-function create_synthetic_phenotype_for_chromosome(filepaths, options, seed)
-    convert_genotype_data(filepaths.synthetic_data_prefix, filepaths.plink)
-    parfile = create_parfile(options["phenotype_data"], filepaths)
+function synthetic_pheno(filepaths, options, seed, combine, synth_paths)
+    traw_prefix = filepaths.synthetic_data_traw_prefix
+    traw_file = @sprintf("%s.traw", traw_prefix)
+    convert_genotype_data(filepaths.synthetic_data_prefix, filepaths.plink, combine, synth_paths, traw_prefix)
+    parfile = create_parfile(options["phenotype_data"], filepaths, traw_prefix, combine)
     phenoalg = filepaths.phenoalg
     run(`$phenoalg $parfile $seed`)
-    rm(@sprintf("%s.traw", filepaths.synthetic_data_prefix))
+    rm(traw_file)
 end
 
 
@@ -65,12 +83,18 @@ function create_synthetic_phenotype(options)
 
     # synthetic genotype files are generated chromosome-by-chromosome
     if chromosome == "all"
+        # creating phenotype based on genotype for all chromosomes
+        chromosome_i = 1
+        fp = parse_filepaths(options, chromosome_i, superpopulation)
+        all_synth_paths = []
         for chromosome_i in 1:22
-            fp = parse_filepaths(options, chromosome_i, superpopulation)
-            create_synthetic_phenotype_for_chromosome(fp, options, seed)
+            fp_tmp = parse_filepaths(options, chromosome_i, superpopulation)
+            push!(all_synth_paths, fp_tmp.synthetic_data_prefix)
         end
+        synthetic_pheno(fp, options, seed, true, all_synth_paths)
     else
+        # creating phenotype based on genotype for a single chromosome
         fp = parse_filepaths(options, chromosome, superpopulation)
-        create_synthetic_phenotype_for_chromosome(fp, options, seed)
+        synthetic_pheno(fp, options, seed, false, [])
     end
 end

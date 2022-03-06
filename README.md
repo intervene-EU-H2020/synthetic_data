@@ -57,7 +57,10 @@ Note that at the moment if you want to generate data for multiple chromosomes in
 
 n=$SLURM_ARRAY_TASK_ID
 
-singularity exec --bind data/:/data/ intervene-v0.0.9.sif generate --config data/config$n.yaml
+# generate genotype data for  22 chromosomes in parallel
+# the phenotype program combines this into one file then generates the phenotype
+singularity exec --bind data/:/data/ intervene-v0.0.9.sif generate_geno --config data/config$n.yaml
+singularity exec --bind data/:/data/ intervene-v0.0.9.sif generate_pheno --config data/config.yaml
 ```
 
 
@@ -77,6 +80,9 @@ The software program implements a pipeline for generating synthetic genotype+phe
 
 The evaluation pipeline can be used for any dataset in PLINK (bed/bim/fam) format:
 
+1. Ensure that your dataset is in PLINK (bed/bim/fam) format
+    1. In the `.fam` file, the samples should use the naming convention "syn1", "syn2", ...
+    1. In the `.bim` file, the alleles need to be coded as A,C,G,T (i.e. not numbers)
 1. Update the `config.yml` file
     1. Set `filepaths` > `general` > `output_dir` to the output directory containing your dataset
     1. Set `filepaths` > `general` > `prefix` to the name of your dataset (i.e. without the .bed/.bim/.fam suffixes) 

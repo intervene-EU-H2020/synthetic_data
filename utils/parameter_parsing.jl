@@ -18,6 +18,7 @@ struct Filepaths
     popfile_raw::String
     popfile_processed::String
     synthetic_data_prefix::String
+    synthetic_data_traw_prefix::String
     evaluation_output::String
     optimisation_output::String
     reference_dir::String
@@ -110,6 +111,7 @@ function parse_filepaths(options, chromosome, superpopulation)
     popfile_processed = format_filepath(options["filepaths"]["genotype"]["popfile_processed"], chromosome, superpopulation, false)
 
     synthetic_data_prefix = format_filepath(string(options["filepaths"]["general"]["output_dir"],"/",options["filepaths"]["general"]["output_prefix"]), chromosome, superpopulation, true)
+    synthetic_data_traw_prefix = format_filepath(string(options["filepaths"]["general"]["output_dir"],"/",options["filepaths"]["general"]["output_prefix"]), "", superpopulation, true)
     evaluation_output = format_filepath(string(options["filepaths"]["general"]["output_dir"],"/evaluation/",options["filepaths"]["general"]["output_prefix"]), chromosome, superpopulation, true)
     optimisation_output = format_filepath(string(options["filepaths"]["general"]["output_dir"],"/optimisation/",options["filepaths"]["general"]["output_prefix"]), chromosome, superpopulation, true)
     reference_dir = format_filepath(string(options["filepaths"]["general"]["output_dir"],"/reference"), chromosome, superpopulation, false)
@@ -125,7 +127,7 @@ function parse_filepaths(options, chromosome, superpopulation)
     mapthin = format_filepath(options["filepaths"]["software"]["mapthin"], chromosome, superpopulation, false)
     phenoalg = format_filepath(options["filepaths"]["software"]["phenoalg"], chromosome, superpopulation, false)
 
-    return Filepaths(vcf_input_raw, vcf_input_processed_prefix, vcf_input_processed, variant_list, genetic_mapfile, genetic_distfile, hap1_matrix_output, hap2_matrix_output, metadata_output, popfile_raw, popfile_processed, synthetic_data_prefix, evaluation_output, optimisation_output, reference_dir, phenotype_causal_list, phenotype_sample_list, phenotype_reference, vcftools, plink, plink2, king, mapthin, phenoalg)
+    return Filepaths(vcf_input_raw, vcf_input_processed_prefix, vcf_input_processed, variant_list, genetic_mapfile, genetic_distfile, hap1_matrix_output, hap2_matrix_output, metadata_output, popfile_raw, popfile_processed, synthetic_data_prefix, synthetic_data_traw_prefix, evaluation_output, optimisation_output, reference_dir, phenotype_causal_list, phenotype_sample_list, phenotype_reference, vcftools, plink, plink2, king, mapthin, phenoalg)
 end
 
 
@@ -191,16 +193,18 @@ function get_population_structure(superpopulation, options, poplist)
         @info "Using default population structure"
         nsamples = options["genotype_data"]["samples"]["default"]["nsamples"]
         if superpopulation == "none"
-            # TODO does this create list of length nsamples*2?
-            population_groups = repeat(poplist, Int(ceil(nsamples/length(poplist))))[1:nsamples]
+            # use 5 superpopulations in equal ratio
+            population_groups = repeat(repeat(poplist,inner=2), Int(ceil(nsamples/length(poplist))))[1:nsamples*2]
             for pop in poplist
-                population_weights[pop] = Dict(pop=>100/length(poplist))
+                population_weights[pop] = Dict(pop=>100)
             end
         else
+            # use a single population group, specified in the config
             population_groups = vcat(population_groups, repeat([superpopulation],nsamples*2))
             population_weights[superpopulation] = Dict(superpopulation=>100)
         end
     else
+        # use custom population structure, specified in the config
         custom_populations = options["genotype_data"]["samples"]["custom"]
         for pop in custom_populations
             population_groups = vcat(population_groups, repeat([pop["id"]],pop["nsamples"]*2))
