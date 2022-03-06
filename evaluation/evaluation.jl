@@ -10,7 +10,6 @@ include("metrics/eval_maf.jl")
 include("metrics/eval_pca.jl")
 include("metrics/eval_gwas.jl")
 
-
 function run_kinship_evaluation(ibsfile_real, ibsfile_synt, ibsfile_cross)
     run_kinship(ibsfile_real, ibsfile_synt, ibsfile_cross)
 end
@@ -36,8 +35,10 @@ function run_maf_evaluation(real_maf_file, synt_maf_file)
 end
 
 
-function run_pca_evaluation(real_data_prefix, synt_data_prefix)
-    run_pca(real_data_prefix, synt_data_prefix)
+function run_pca_evaluation(real_data_pca_prefix, synt_data_pca_prefix, real_data_prefix, synt_data_prefix, eval_dir)
+    real_data_pop = string(real_data_prefix, ".sample")
+    synt_data_pop = string(synt_data_prefix, ".sample")
+    run_pca(real_data_pca_prefix, synt_data_pca_prefix, real_data_pop, synt_data_pop, eval_dir)
 end
 
 
@@ -110,14 +111,14 @@ end
 
 """Executes evaluation for the metrics specified in the configuration file
 """
-function run_pipeline(options, chromosome, superpopulation)
-    filepaths = parse_filepaths(options, chromosome, superpopulation)
+function run_pipeline(options, chromosome, superpopulation, metrics)
+    compute_chromosome = chromosome=="all" ? 1 : chromosome
+    filepaths = parse_filepaths(options, compute_chromosome, superpopulation)
     genomic_metadata = parse_genomic_metadata(options, superpopulation, filepaths)
 
-    reffile_prefix, nsamples_ref = create_reference_dataset(filepaths.vcf_input_processed, filepaths.popfile_processed, genomic_metadata.population_weights, filepaths.plink, filepaths.reference_dir, chromosome)
-    synfile_prefix = filepaths.synthetic_data_prefix
+    reffile_prefix, nsamples_ref = create_reference_dataset(filepaths.vcf_input_processed, filepaths.popfile_processed, genomic_metadata.population_weights, filepaths.plink, filepaths.reference_dir, compute_chromosome)
+    synfile_prefix = chromosome=="all" ? filepaths.synthetic_data_traw_prefix : filepaths.synthetic_data_prefix
 
-    metrics = options["evaluation"]["metrics"]
     external_files = run_external_tools(metrics, reffile_prefix, synfile_prefix, filepaths)
 
     if metrics["aats"]
@@ -137,7 +138,7 @@ function run_pipeline(options, chromosome, superpopulation)
         run_maf_evaluation(external_files["real_maffile"],  external_files["syn_maffile"])
     end
     if metrics["pca"]
-        run_pca_evaluation(external_files["real_pcafile"], external_files["syn_pcafile"])
+        run_pca_evaluation(external_files["real_pcafile"], external_files["syn_pcafile"], reffile_prefix, synfile_prefix, filepaths.evaluation_output)
     end
     if metrics["gwas"]
         run_gwas_evaluation(options["phenotype_data"]["nTrait"], filepaths.plink2, @sprintf("%s.eigenvec", external_files["syn_pcafile"]), synfile_prefix, filepaths.evaluation_output)
@@ -156,12 +157,24 @@ the data and then immediately evaluates it using the correct settings.
 function run_evaluation(options)
     chromosome = parse_chromosome(options)
     superpopulation = parse_superpopulation(options)
-    
+
+    metrics = options["evaluation"]["metrics"]
     if chromosome == "all"
+        if metrics["gwas"]
+            # TODO gwas is the only metric implemented for multi-chromosome analysis
+            new_metrics = copy(metrics)
+            for key in keys(new_metrics)
+                new_metrics[key] = false
+            end
+            new_metrics["gwas"] = true
+            run_pipeline(options, chromosome, superpopulation, new_metrics)
+        end
+
         for chromosome_i in 1:22
-            run_pipeline(options, chromosome_i, superpopulation)
+            metrics["gwas"] = false
+            run_pipeline(options, chromosome_i, superpopulation, metrics)
         end
     else
-        run_pipeline(options, chromosome, superpopulation)
+        run_pipeline(options, chromosome, superpopulation, metrics)
     end
 end

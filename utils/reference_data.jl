@@ -1,4 +1,4 @@
-using CSV, DataFrames
+using CSV, DataFrames, DelimitedFiles
 
 """Utility function for creating reference datasets
 needed for evaluation and optimisation pipelines,
@@ -7,7 +7,7 @@ i.e. using a subset of ancestries from the original data
 function create_reference_dataset(vcfpath, poppanel, population_weights, plink, outdir, chromosome)
     @info "Creating reference dataset"
     outfile = @sprintf("%s/reference%s", outdir, chromosome)
-    keeplist, nsamples = create_keepfile(poppanel, population_weights, outdir)
+    keeplist, nsamples = create_keepfile(poppanel, population_weights, outdir, outfile)
     # convert vcf to plink, keeping only the ancestries used in data generation
     run(`$plink --vcf $vcfpath --keep $keeplist --make-bed --out $outfile`)
     return outfile, nsamples
@@ -58,15 +58,22 @@ end
 
 """Create a file specifying which samples to keep in the reference data
 """
-function create_keepfile(poppanel, population_weights, outdir)
+function create_keepfile(poppanel, population_weights, outdir, outfile)
+    # filter relevant populations
     poplist = get_population_list(population_weights)
     poppanel_df = CSV.File(poppanel, normalizenames=true, select=["FamilyID", "SampleID", "Superpopulation"]) |> DataFrame
-    keep_samples = filter(row -> row.Superpopulation ∈ poplist, poppanel_df)
-    keep_samples = keep_samples[!, [:FamilyID, :SampleID]]
+    keep_samples_df = filter(row -> row.Superpopulation ∈ poplist, poppanel_df)
+    # create keep file
+    keep_samples = keep_samples_df[!, [:FamilyID, :SampleID]]
     keep_samples.FamilyID = keep_samples.SampleID # it seems the --keep command doesn't work if these columns aren't identical
     keepfile = @sprintf("%s/keep.txt", outdir)
     CSV.write(keepfile, keep_samples, header=false, delim="\t")
     nsamples = nrow(keep_samples)
+    # create sample file
+    samplefile = @sprintf("%s.sample", outfile)
+    open(samplefile, "w") do io
+        writedlm(io, keep_samples_df.Superpopulation)
+    end
     return keepfile, nsamples
 end
 
