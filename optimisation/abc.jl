@@ -133,10 +133,10 @@ end
 
 """Create the struct containing metadata for the ABC procedure
 """
-function get_abc_metadata(options, superpopulation, filepaths)
+function get_abc_metadata(options, superpopulation, filepaths, chromosome)
     bp_to_cm_map = create_bp_cm_ref(filepaths.genetic_distfile)
     statistics = [k for k in ["ld_decay", "kinship"] if options["optimisation"]["summary_statistics"][k]]
-    ref_prefix, nsamples_ref = create_reference_dataset(filepaths.vcf_input_processed, filepaths.popfile_processed, genomic_metadata.population_weights, filepaths.plink, filepaths.reference_dir)
+    ref_prefix, nsamples_ref = create_reference_dataset(filepaths.vcf_input_processed, filepaths.popfile_processed, genomic_metadata.population_weights, filepaths.plink, filepaths.reference_dir, chromosome)
     out_prefix = filepaths.optimisation_output
     nsamples_syn = options["genotype_data"]["samples"]["default"]["nsamples"]
     return ABCMetadata(statistics, ref_prefix, out_prefix, superpopulation, nsamples_ref, nsamples_syn, bp_to_cm_map, filepaths.plink, filepaths.king, filepaths.mapthin)
@@ -145,7 +145,7 @@ end
 
 """Runs the Approximate Bayesian Computation (ABC) procedure for the specified superpopulation
 """
-function run_abc_for_superpopulation(options, filepaths, superpopulation)
+function run_abc_for_superpopulation(options, filepaths, superpopulation, chromosome)
     @info "Setting up optimisation pipeline"
 
     priors  = get_priors(options)
@@ -153,7 +153,7 @@ function run_abc_for_superpopulation(options, filepaths, superpopulation)
     
     global genomic_metadata = parse_genomic_metadata(options, superpopulation, filepaths)
     genomic_metadata.outfile_prefix = filepaths.optimisation_output
-    global abc_metadata = get_abc_metadata(options, superpopulation, filepaths)
+    global abc_metadata = get_abc_metadata(options, superpopulation, filepaths, chromosome)
 
     @info "Computing summary statistics for reference data"
     sumstat_reference = get_reference_statistics(abc_metadata.ref_prefix, abc_metadata.nsamples_ref)
@@ -184,10 +184,10 @@ function run_optimisation(options)
     if chromosome == "all"
         for chromosome_i in 1:22
             fp = parse_filepaths(options, chromosome_i, superpopulation)
-            run_abc_for_superpopulation(options, fp, superpopulation)
+            run_abc_for_superpopulation(options, fp, superpopulation, chromosome_i)
         end
     else
         fp = parse_filepaths(options, chromosome, superpopulation)
-        run_abc_for_superpopulation(options, fp, superpopulation)
+        run_abc_for_superpopulation(options, fp, superpopulation, chromosome)
     end
 end

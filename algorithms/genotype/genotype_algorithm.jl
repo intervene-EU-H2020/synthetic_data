@@ -87,7 +87,7 @@ function create_reference_table(metadata)
             # update the start and end (variant) positions of the segment
             start_pos = pos
             end_pos = min(update_variant_position(pos, L, metadata.genetic_distances, metadata.nvariants), metadata.nvariants)
-            ref_df = push!(ref_df, [hap, seghap, start_pos, end_pos, happop, segpop])
+            push!(ref_df, [hap, seghap, start_pos, end_pos, happop, segpop])
             pos = end_pos+1
         end
         # sample mutations

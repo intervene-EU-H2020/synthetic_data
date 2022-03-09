@@ -57,9 +57,12 @@ function merge_batch_files(batch_files, outfile, plink)
         end
         rm(mergelist)
     else
-        # no files to merge - rename single batch file
+        # no files to merge - reformat and remove single batch file
         file_prefix = batch_files[1]
         run(`$plink --bfile $file_prefix --make-bed --out $outfile`)
+        rm(string(file_prefix,".bed"))
+        rm(string(file_prefix,".bim"))
+        rm(string(file_prefix,".fam"))
     end
 end
 
