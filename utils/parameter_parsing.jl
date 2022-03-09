@@ -21,6 +21,7 @@ struct Filepaths
     evaluation_output::String
     optimisation_output::String
     reference_dir::String
+    prspipe_dir::String
     phenotype_causal_list::String
     phenotype_sample_list::String
     phenotype_reference::String
@@ -113,6 +114,7 @@ function parse_filepaths(options, chromosome, superpopulation)
     evaluation_output = format_filepath(string(options["filepaths"]["general"]["output_dir"],"/evaluation/",options["filepaths"]["general"]["output_prefix"]), chromosome, superpopulation, true)
     optimisation_output = format_filepath(string(options["filepaths"]["general"]["output_dir"],"/optimisation/",options["filepaths"]["general"]["output_prefix"]), chromosome, superpopulation, true)
     reference_dir = format_filepath(string(options["filepaths"]["general"]["output_dir"],"/reference"), chromosome, superpopulation, false)
+    prspipe_dir = format_filepath(string(options["filepaths"]["general"]["output_dir"],"/prspipe"), chromosome, superpopulation, false)
     
     phenotype_causal_list = format_filepath(options["filepaths"]["phenotype"]["causal_list"], chromosome, superpopulation, false)
     phenotype_sample_list = @sprintf("%s.sample", synthetic_data_prefix)
@@ -125,7 +127,7 @@ function parse_filepaths(options, chromosome, superpopulation)
     mapthin = format_filepath(options["filepaths"]["software"]["mapthin"], chromosome, superpopulation, false)
     phenoalg = format_filepath(options["filepaths"]["software"]["phenoalg"], chromosome, superpopulation, false)
 
-    return Filepaths(vcf_input_raw, vcf_input_processed_prefix, vcf_input_processed, variant_list, genetic_mapfile, genetic_distfile, hap1_matrix_output, hap2_matrix_output, metadata_output, popfile_raw, popfile_processed, synthetic_data_prefix, evaluation_output, optimisation_output, reference_dir, phenotype_causal_list, phenotype_sample_list, phenotype_reference, vcftools, plink, plink2, king, mapthin, phenoalg)
+    return Filepaths(vcf_input_raw, vcf_input_processed_prefix, vcf_input_processed, variant_list, genetic_mapfile, genetic_distfile, hap1_matrix_output, hap2_matrix_output, metadata_output, popfile_raw, popfile_processed, synthetic_data_prefix, synthetic_data_traw_prefix, evaluation_output, optimisation_output, reference_dir, prspipe_dir, phenotype_causal_list, phenotype_sample_list, phenotype_reference, vcftools, plink, plink2, king, mapthin, phenoalg)
 end
 
 
