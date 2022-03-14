@@ -210,7 +210,7 @@ function get_population_structure(superpopulation, options, poplist)
         custom_populations = options["genotype_data"]["samples"]["custom"]
         for pop in custom_populations
             population_groups = vcat(population_groups, repeat([pop["id"]],pop["nsamples"]*2))
-            population_weights[pop["id"]] = merge(pop["populations"]...)
+            population_weights[pop["id"]] = merge([Dict(k => i[k] for k in keys(i)) for i in pop["populations"]]...)
             if sum(values(population_weights[pop["id"]])) != 100
                 throw(error("Config error: population weights do not sum to 100"))
             end
