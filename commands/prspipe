@@ -1,6 +1,0 @@
-#!/bin/sh
-# Preprocess the raw datasets
-CURR_DIR=`pwd`
-cd $SCRIPT_DIR
-julia run_program.jl --prspipe "$@"
-cd $CURR_DIR

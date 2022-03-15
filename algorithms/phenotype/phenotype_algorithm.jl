@@ -13,7 +13,7 @@ function convert_genotype_data(syndata, plink, combine, synth_paths, traw_prefix
         end
         run(`$plink --bfile $syndata --merge-list $mergefile --recode A-transpose --out $traw_prefix`)
     else
-        run(`$plink --bfile $syndata --recode A-transpose --out $traw_prefix`)
+        run(`$plink --bfile $syndata --recode A-transpose --out $syndata`)
     end
 end
 
@@ -67,7 +67,11 @@ end
 
 function synthetic_pheno(filepaths, options, seed, combine, synth_paths)
     traw_prefix = filepaths.synthetic_data_traw_prefix
-    traw_file = @sprintf("%s.traw", traw_prefix)
+    if combine
+        traw_file = @sprintf("%s.traw", traw_prefix)
+    else
+        traw_file = @sprintf("%s.traw", filepaths.synthetic_data_prefix)
+    end
     convert_genotype_data(filepaths.synthetic_data_prefix, filepaths.plink, combine, synth_paths, traw_prefix)
     parfile = create_parfile(options["phenotype_data"], filepaths, traw_prefix, combine)
     phenoalg = filepaths.phenoalg
