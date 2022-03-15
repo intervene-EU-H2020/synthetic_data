@@ -157,3 +157,5 @@ optimisation:
   summary_statistics:
     ld_decay: true
     kinship: true
+  summary_statistics_weight:
+    kinship: 0.01 # used to tune relative importance of ld/kinship metrics in summary statistic
