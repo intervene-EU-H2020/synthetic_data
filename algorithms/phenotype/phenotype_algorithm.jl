@@ -22,7 +22,7 @@ end
 1. Directly specify a list of causal SNPs; or
 2. Specify the polygenicity and pleiotropy parameters 
 """
-function create_parfile(phenotype_options, filepaths, traw_prefix, combine)
+function create_parfile(phenotype_options, filepaths, traw_prefix, out_prefix)
     lines = []
     push!(lines, @sprintf("nPopulation %s", phenotype_options["nPopulation"]))
     push!(lines, @sprintf("nTrait %s", phenotype_options["nTrait"]))
@@ -41,21 +41,15 @@ function create_parfile(phenotype_options, filepaths, traw_prefix, combine)
         push!(lines, @sprintf("Pleiotropy %s", phenotype_options["Causality"]["Pleiotropy"]))
     end
 
-    # if merging all chromosomes, need to give the pheno file a different name
-    if combine
-        file_prefix = traw_prefix
-    else
-        file_prefix = filepaths.synthetic_data_prefix
-    end
     
     push!(lines, @sprintf("TraitCorr %s", phenotype_options["TraitCorr"]))
     push!(lines, @sprintf("PopulationCorr %s", phenotype_options["PopulationCorr"]))
     push!(lines, @sprintf("Reference %s", filepaths.phenotype_reference))
-    push!(lines, @sprintf("GenoFile %s", file_prefix))
-    push!(lines, @sprintf("Output %s", file_prefix))
+    push!(lines, @sprintf("GenoFile %s", traw_prefix))
+    push!(lines, @sprintf("Output %s", out_prefix))
     push!(lines, @sprintf("CompWeight %s", phenotype_options["CompWeight"]))
     
-    parfile = @sprintf("%s.parfile", file_prefix)
+    parfile = @sprintf("%s.parfile", out_prefix)
 
     open(parfile, "w") do io
         writedlm(io, lines)
@@ -66,17 +60,24 @@ end
 
 
 function synthetic_pheno(filepaths, options, seed, combine, synth_paths)
-    traw_prefix = filepaths.synthetic_data_traw_prefix
-    if combine
-        traw_file = @sprintf("%s.traw", traw_prefix)
+    # TODO don't push to main branch - just useful for PRS experiments
+    if options["phenotype_data"]["phenotype"]["traw_prefix"] != "none"
+        # traw file already exists 
+        traw_prefix = options["phenotype_data"]["phenotype"]["traw_prefix"]
+        parfile = create_parfile(options["phenotype_data"], filepaths, traw_prefix, filepaths.synthetic_data_traw_prefix)
     else
-        traw_file = @sprintf("%s.traw", filepaths.synthetic_data_prefix)
+        traw_prefix = filepaths.synthetic_data_traw_prefix
+        convert_genotype_data(filepaths.synthetic_data_prefix, filepaths.plink, combine, synth_paths, traw_prefix)
+        if combine
+            # if merging all chromosomes, need to give the pheno file a different name
+            parfile = create_parfile(options["phenotype_data"], filepaths, traw_prefix, traw_prefix)
+        else
+            parfile = create_parfile(options["phenotype_data"], filepaths, filepaths.synthetic_data_prefix, filepaths.synthetic_data_prefix)
+        end
     end
-    convert_genotype_data(filepaths.synthetic_data_prefix, filepaths.plink, combine, synth_paths, traw_prefix)
-    parfile = create_parfile(options["phenotype_data"], filepaths, traw_prefix, combine)
+    
     phenoalg = filepaths.phenoalg
     run(`$phenoalg $parfile $seed`)
-    rm(traw_file)
 end
 
 
