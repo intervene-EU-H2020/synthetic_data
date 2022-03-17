@@ -4,16 +4,16 @@ algorithm from the Julia pipeline
 
 using DelimitedFiles
 
-function convert_genotype_data(syndata, plink, combine, synth_paths, traw_prefix)
+function convert_genotype_data(syndata, plink, combine, synth_paths, traw_prefix, memory)
     if combine
         # combine all chromosomes into one .traw file
         mergefile = @sprintf("%s_merge.txt", syndata)
         open(mergefile, "w") do io
             writedlm(io, synth_paths)
         end
-        run(`$plink --bfile $syndata --merge-list $mergefile --recode A-transpose --out $traw_prefix`)
+        run(`$plink --bfile $syndata --merge-list $mergefile --recode A-transpose --memory $memory --out $traw_prefix`)
     else
-        run(`$plink --bfile $syndata --recode A-transpose --out $syndata`)
+        run(`$plink --bfile $syndata --recode A-transpose --memory $memory --out $syndata`)
     end
 end
 
@@ -54,20 +54,22 @@ function create_parfile(phenotype_options, filepaths, traw_prefix, out_prefix)
     open(parfile, "w") do io
         writedlm(io, lines)
     end
-
+    
     return parfile
 end
 
 
 function synthetic_pheno(filepaths, options, seed, combine, synth_paths)
     # TODO don't push to main branch - just useful for PRS experiments
-    if options["phenotype_data"]["phenotype"]["traw_prefix"] != "none"
+    if options["filepaths"]["phenotype"]["traw_prefix"] != "none"
         # traw file already exists 
-        traw_prefix = options["phenotype_data"]["phenotype"]["traw_prefix"]
+        traw_prefix = options["filepaths"]["phenotype"]["traw_prefix"]
+        filepaths.phenotype_sample_list = @sprintf("%s.sample", traw_prefix)
         parfile = create_parfile(options["phenotype_data"], filepaths, traw_prefix, filepaths.synthetic_data_traw_prefix)
     else
         traw_prefix = filepaths.synthetic_data_traw_prefix
-        convert_genotype_data(filepaths.synthetic_data_prefix, filepaths.plink, combine, synth_paths, traw_prefix)
+        memory = options["global_parameters"]["memory"]
+        convert_genotype_data(filepaths.synthetic_data_prefix, filepaths.plink, combine, synth_paths, traw_prefix, memory)
         if combine
             # if merging all chromosomes, need to give the pheno file a different name
             parfile = create_parfile(options["phenotype_data"], filepaths, traw_prefix, traw_prefix)

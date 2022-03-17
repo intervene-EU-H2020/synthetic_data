@@ -29,7 +29,7 @@ function LD_decay(plink_file, plink, mapthin, out_prefix, bp_to_cm_map)
     ld_grp = combine(gdf, :R2 => mean)
     ld_grp.dist = Vector(0:interval:maximum(ld_df.dist))
     
-    return [ld_grp.dist ld_grp.R2_mean]
+    return [ld_grp.dist[2:end] ld_grp.R2_mean[2:end]]
 end
 
 

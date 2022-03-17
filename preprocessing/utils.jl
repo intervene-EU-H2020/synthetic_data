@@ -13,7 +13,7 @@ end
 
 """Create a map of basepair distances to centimorgan distances
 """
-# TODO method for converting basepair to centimorgan distances is not accurate - needs to be replaced
+# TODO replace this function with the logic from the new_dist_method.py script (what is actually used to produce latest version of files)
 function get_genetic_distances(datafile, mapfile, output)
     df = CSV.read(mapfile, DataFrame; header=["ID", "POS", "MAP"])
 

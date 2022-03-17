@@ -22,7 +22,6 @@ struct ABCMetadata
     plink::String # plink software path
     king::String # king software path
     mapthin::String # mapthin software path
-    kin_weight::Float64 # weight on kinship summary statistic
 end
 
 
@@ -58,9 +57,9 @@ function calculate_summary_statistic(syn_prefix, nsamples_syn, ref_prefix, cross
     end
     if "kinship" ∈ abc_metadata.statistics
         if use_cross
-            sumstat_kin = kinship_cross(cross_prefix, nsamples_cross, ref_prefix, abc_metadata.king, syn_prefix, abc_metadata.kin_weight)
+            sumstat_kin = kinship_cross(cross_prefix, nsamples_cross, ref_prefix, abc_metadata.king, syn_prefix)
         else
-            sumstat_kin = kinship_cross(syn_prefix, nsamples_syn, ref_prefix, abc_metadata.king, syn_prefix, abc_metadata.kin_weight)
+            sumstat_kin = kinship_cross(syn_prefix, nsamples_syn, ref_prefix, abc_metadata.king, syn_prefix)
         end
         
         if "ld_decay" ∈ abc_metadata.statistics
@@ -140,8 +139,7 @@ function get_abc_metadata(options, superpopulation, filepaths, chromosome)
     ref_prefix, nsamples_ref = create_reference_dataset(filepaths.vcf_input_processed, filepaths.popfile_processed, genomic_metadata.population_weights, filepaths.plink, filepaths.reference_dir, chromosome)
     out_prefix = filepaths.optimisation_output
     nsamples_syn = options["genotype_data"]["samples"]["default"]["nsamples"]
-    kin_weight = options["optimisation"]["summary_statistics_weight"]["kinship"]
-    return ABCMetadata(statistics, ref_prefix, out_prefix, superpopulation, nsamples_ref, nsamples_syn, bp_to_cm_map, filepaths.plink, filepaths.king, filepaths.mapthin, kin_weight)
+    return ABCMetadata(statistics, ref_prefix, out_prefix, superpopulation, nsamples_ref, nsamples_syn, bp_to_cm_map, filepaths.plink, filepaths.king, filepaths.mapthin)
 end
 
 
