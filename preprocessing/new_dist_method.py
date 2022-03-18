@@ -10,4 +10,5 @@ for chr in range(1, 22+1):
     dist_df['Index'] = range(1, len(dist_df)+1)
     dist_df = dist_df[['Index', 'Variant', 'Distance']]
     dist_df['Distance'] = dist_df['Distance'].interpolate()
+    dist_df['Distance'] = dist_df['Distance'].backfill()
     dist_df.to_csv('data/inputs/processed/1KGPhase3.chr{}.hapmap.distfile'.format(chr), index=None)

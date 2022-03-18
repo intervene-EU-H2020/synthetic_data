@@ -5,7 +5,7 @@ using Mmap, Printf
 
 """Struct specifying the filepaths for inputs and outputs
 """
-struct Filepaths
+mutable struct Filepaths
     vcf_input_raw::String
     vcf_input_processed_prefix::String
     vcf_input_processed::String
