@@ -35,6 +35,9 @@ end
 
 function plot_gwas(gwas_out_prefix, outdir)
 	df = CSV.File(gwas_out_prefix * ".sumstat", normalizenames=true) |> DataFrame
+	df = df[df[:,"P"] .!= "NA", :] # drop nan
+	df.P = parse.(Float64, df.P) # convert to float
+
 	qq_out = @sprintf("%s.qq.png", outdir)
 	man_out = @sprintf("%s.man.png", outdir)
 	

@@ -1,0 +1,6 @@
+#!/bin/sh
+# Generate synthetic data
+CURR_DIR=`pwd`
+cd $SCRIPT_DIR
+julia integrations/gwas.jl "$@"
+cd $CURR_DIR
