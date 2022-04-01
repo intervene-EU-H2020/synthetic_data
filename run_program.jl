@@ -1,4 +1,4 @@
-using ArgParse, YAML
+using ArgParse, YAML, Printf
 
 include("utils/parameter_parsing.jl")
 include("preprocessing/preprocessing.jl")
@@ -113,6 +113,7 @@ function main()
         println("  $arg  =>  $val")
     end
 
+    @info @sprintf("Using %s thread/s for computations", Threads.nthreads())    
     run_program(pipelines, options)
     
 end

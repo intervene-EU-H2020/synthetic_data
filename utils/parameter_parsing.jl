@@ -223,9 +223,9 @@ function get_population_structure(superpopulation, options, poplist)
 end
 
 
-function get_batchsize(nsamples)
-    if nsamples > 10000
-        return 10000
+function get_batchsize(nsamples, batchsize)
+    if nsamples > batchsize
+        return batchsize
     else
         return nsamples
     end
@@ -249,7 +249,7 @@ function parse_genomic_metadata(options, superpopulation, filepaths)
     genetic_distances = get_genetic_distances(filepaths.genetic_distfile)
     outfile_type = options["genotype_data"]["filetype"]
     outfile_prefix = filepaths.synthetic_data_prefix
-    batchsize = outfile_type=="plink" ? get_batchsize(nsamples) : -1
+    batchsize = outfile_type=="plink" ? get_batchsize(nsamples, options["global_parameters"]["batchsize"]) : -1
     plink = filepaths.plink
 
     nvariants = length(genetic_distances)
