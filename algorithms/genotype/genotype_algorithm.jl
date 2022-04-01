@@ -70,12 +70,16 @@ The reference table has the following columns:
 Note that the start and end variant positions are included in the segment
 """
 function create_reference_table(metadata)
-    ref_df = DataFrame(H=Int[], I=String[], S=Int[], E=Int[], P=String[], Q=String[])
-    mut_df = DataFrame(H=Int[], P=Int[])
-    @showprogress for hap in 1:(2*metadata.nsamples)
+    total_num_hap = 2*metadata.nsamples
+    # to multi-thread the operation we create a dataframe for each haplotype, then concat these together
+    ref_df_samples = Vector{DataFrame}(undef, total_num_hap)
+    mut_df_samples = Vector{DataFrame}(undef, total_num_hap)
+    p = Progress(total_num_hap)
+    Threads.@threads for hap in 1:(total_num_hap)
         happop = metadata.population_groups[hap]
         pos = 1
         # create segments until all variant positions are filled
+        ref_df_hap = DataFrame(H=Int[], I=String[], S=Int[], E=Int[], P=String[], Q=String[])
         while pos <= metadata.nvariants
             # sample a population group for the segment
             segpop = sample(collect(keys(metadata.population_weights[happop])), Weights(collect(values(metadata.population_weights[happop]))))
@@ -87,13 +91,18 @@ function create_reference_table(metadata)
             # update the start and end (variant) positions of the segment
             start_pos = pos
             end_pos = min(update_variant_position(pos, L, metadata.genetic_distances, metadata.nvariants), metadata.nvariants)
-            push!(ref_df, [hap, seghap, start_pos, end_pos, happop, segpop])
+            push!(ref_df_hap, [hap, seghap, start_pos, end_pos, happop, segpop])
             pos = end_pos+1
         end
+        ref_df_samples[hap] = ref_df_hap
         # sample mutations
         mutpop = sample(collect(keys(metadata.population_weights[happop])), Weights(collect(values(metadata.population_weights[happop]))))
-        mut_df = vcat(mut_df, get_mutations(metadata.population_Ns[mutpop], metadata.population_Nes[mutpop], metadata.population_mus[mutpop], hap, metadata.nvariants))
+        mut_df_samples[hap] = get_mutations(metadata.population_Ns[mutpop], metadata.population_Nes[mutpop], metadata.population_mus[mutpop], hap, metadata.nvariants)
+        next!(p)
     end
+    # concat the arrays of dataframes
+    ref_df = vcat(ref_df_samples...)
+    mut_df = vcat(mut_df_samples...)
     return ref_df, mut_df
 end
 
