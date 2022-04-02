@@ -2,5 +2,5 @@
 # Generate synthetic data
 CURR_DIR=`pwd`
 cd $SCRIPT_DIR
-julia run_program.jl --genotype --phenotype "$@"
+julia integrations/gwas.jl "$@"
 cd $CURR_DIR

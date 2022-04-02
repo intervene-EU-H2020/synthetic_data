@@ -5,7 +5,9 @@
 global_parameters:
   random_seed: 123
   chromosome: 1 # "all" or a number from 1 to 22
-  superpopulation: EUR # "none" or a specific superpopulation (AFR, AMR, EAS, EUR, SAS)
+  superpopulation: none # "none" or a specific superpopulation (AFR, AMR, EAS, EUR, SAS)
+  memory: 8000 # amount of memory available (in MB) for memory-intensive commands
+  batchsize: 10000 # batchsize for writing plink output during genotype generation
 
 
 ####################################
@@ -30,6 +32,7 @@ filepaths:
     hap1_matrix: data/inputs/processed/1KGPhase3.chr{chromosome}.hapmap.h1
     hap2_matrix: data/inputs/processed/1KGPhase3.chr{chromosome}.hapmap.h2
   phenotype:
+    traw_prefix: none # set to none if traw file doesn't already exist and needs to be created from genotype output (assumes .sample file exists with same prefix)
     causal_list: data/inputs/processed/Test.CausalList
     reference: data/inputs/processed/Africa.Annot
   software:
@@ -60,7 +63,7 @@ genotype_data:
           - EUR: 30
           - AFR: 70
     default:
-      nsamples: 1000 # only used if not using custom samples
+      nsamples: 10000 # only used if not using custom samples
   # recombination rate (default values determined by optimisation procedure)
   rho:
     AFR: 0.01
@@ -113,13 +116,13 @@ phenotype_data:
 # Set to true if you want the script to calculate the metric
 evaluation:
   metrics:
-    aats: true  # nearest neighbour adversarial accuracy
-    kinship: true # relatedness, including kinship density and IBS plots
-    ld_corr: true # linkage disequilibrium (LD) correlation matrix
+    aats: false  # nearest neighbour adversarial accuracy
+    kinship: false # relatedness, including kinship density and IBS plots
+    ld_corr: false # linkage disequilibrium (LD) correlation matrix
     ld_decay: true # linkage disequilibrium (LD) decay plot (and distance)
-    maf: true # minor allele frequency divergences
+    maf: false # minor allele frequency divergences
     pca: true # principal components analysis
-    gwas: true # run GWAS and generate manhattan and qqplot
+    gwas: false # run GWAS and generate manhattan and qqplot
 
 
 ####################################
@@ -157,5 +160,3 @@ optimisation:
   summary_statistics:
     ld_decay: true
     kinship: true
-  summary_statistics_weight:
-    kinship: 0.01 # used to tune relative importance of ld/kinship metrics in summary statistic

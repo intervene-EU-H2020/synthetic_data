@@ -71,8 +71,9 @@ end
 """
 function get_genostr(batch_ref_df, batch_mut_df, batchsize, start_haplotype, metadata)
     I_hap = Dict(1=>Array{Int8}(undef, batchsize, metadata.nvariants), 2=>Array{Int8}(undef, batchsize, metadata.nvariants))
-    
-    @showprogress for genotype in 1:batchsize
+
+    p = Progress(batchsize)
+    Threads.@threads for genotype in 1:batchsize
         for hap in [1,2]
             # construct the synthetic haplotypes, using the coordinates from the reference dataframe
             I = Vector{Int8}(undef, metadata.nvariants)
@@ -109,6 +110,7 @@ function get_genostr(batch_ref_df, batch_mut_df, batchsize, start_haplotype, met
 
             I_hap[hap][genotype,:] = I
         end
+        next!(p)
     end
 
     genostr = I_hap[1] + I_hap[2]

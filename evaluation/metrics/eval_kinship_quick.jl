@@ -1,7 +1,7 @@
 """
 Function that implements an efficient relatedness metric for ABC
 """
-function kinship_cross(synfile, nsamples_synfile, reffile, king, out_prefix, weight)
+function kinship_cross(synfile, nsamples_synfile, reffile, king, out_prefix)
     output = @sprintf("%s.cross.king", out_prefix)
     input = @sprintf("%s.bed", synfile)
     cross_input = @sprintf("%s.bed", reffile)
@@ -31,7 +31,7 @@ function kinship_cross(synfile, nsamples_synfile, reffile, king, out_prefix, wei
     second_degree_samples = isfile(kinship_file) ? length(Set(second_degree.ID1))/nsamples_synfile : 0
     total_related_samples = duplicate_samples + first_degree_samples + second_degree_samples
     
-    data = [duplicate_samples, first_degree_samples, second_degree_samples, total_related_samples] * weight
+    data = [duplicate_samples, first_degree_samples, second_degree_samples, total_related_samples]
     
     return [1:length(data) data]
 end
