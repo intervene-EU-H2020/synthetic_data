@@ -2,5 +2,5 @@
 # Preprocess the raw datasets
 CURR_DIR=`pwd`
 cd $SCRIPT_DIR
-julia run_program.jl --preprocessing "$@"
+julia run_program.jl --preprocessing --config "$@"
 cd $CURR_DIR
