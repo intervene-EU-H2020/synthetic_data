@@ -28,12 +28,18 @@ function run_program(pipelines, options)
 
     if pipelines["genotype"]
         @info "Generating synthetic genotype data"
-        create_synthetic_genotype(options)
+        t = @elapsed begin
+            create_synthetic_genotype(options)
+        end
+        @info @sprintf("Genotype generation completed in %s minutes", t/60)
     end
-
+    
     if pipelines["phenotype"]
         @info "Generating synthetic phenotype data"
-        create_synthetic_phenotype(options)
+        t = @elapsed begin
+            create_synthetic_phenotype(options)
+        end
+        @info @sprintf("Phenotype generation completed in %s minutes", t/60)
     end
 
     if pipelines["evaluation"]
