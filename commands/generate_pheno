@@ -2,5 +2,5 @@
 # Generate synthetic data
 CURR_DIR=`pwd`
 cd $SCRIPT_DIR
-julia run_program.jl --phenotype "$@"
+julia run_program.jl --phenotype --config "$@"
 cd $CURR_DIR

@@ -2,5 +2,5 @@
 # Run likelihood-free inference optimisation procedure for genotype
 CURR_DIR=`pwd`
 cd $SCRIPT_DIR
-julia --threads "$1" run_program.jl --optimisation "$2"
+julia --threads "$1" run_program.jl --optimisation --config "$2"
 cd $CURR_DIR

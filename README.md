@@ -29,6 +29,8 @@ singularity exec --bind data/:/data/ intervene-v0.0.9.sif init
 
 ### Generating synthetic data
 
+**TODO these instructions need to be updated - basic command is now `... generate_geno n config.yaml` where n is number of threads and config.yaml is the path to the config file (multi-threading makes the synthetic data generation much faster)**
+
 
 1. The first time using the container, you need to fetch the reference dataset. Run the command to download the reference data:
 ```
