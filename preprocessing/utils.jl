@@ -11,6 +11,59 @@ function extract_variants(vcftools, vcf_input, vcf_output_prefix, vcf_output, va
 end
 
 
+"""Get a list of SNP identifiers in the datafile (basepair position format)
+"""
+function get_snpids(datafile)
+    snpid = String[]
+    for line in eachline(datafile)
+        if !startswith(line, "#")
+            push!(snpid, split(line)[3])
+        end
+    end
+    return snpid
+end
+
+
+"""Create a dataframe with both the position Id and rs id
+"""
+function get_id_df(datafile, rsidfile)
+    rs_df = CSV.read(rsidfile, DataFrame)
+    rename!(rs_df,[:Id,:rsId])
+    snpid = get_snpids(datafile)
+    snp_df = DataFrame(Id=snpid)
+    snp_df = innerjoin(rs_df, snp_df, on=:Id)
+    return snp_df
+end
+
+
+"""Create a map of variant positions to age of mutation
+"""
+function get_mutation_ages(datafile, mapfile, rsidfile, output)
+    # open the mapfile and extract the relevant columns
+    df = CSV.read(mapfile, DataFrame, header=4)
+    select!(df, "VariantID", " AgeMean_Mut", " DataSource")
+    rename!(df, [:rsId,:AgeMean_Mut,:DataSource])
+
+    # merge on variants in preprocessed file
+    snp_df = get_id_df(datafile, rsidfile)
+    df = innerjoin(df, snp_df, on=:rsId)
+
+    # there may be duplicate rows from multiple sources - in this case take the "Combined" estimate, followed by "TGP" or "SGDP" 
+    df = combine(first, groupby(sort(df, :DataSource), :rsId))
+
+    # impute the rest with the mean value
+    final_df = leftjoin(snp_df, select!(df, Not(:Id)), on=:rsId)
+    mean = sum(skipmissing(final_df.AgeMean_Mut))/count(!ismissing, final_df.AgeMean_Mut)
+    replace!(final_df.AgeMean_Mut, missing => mean)
+    replace!(final_df.DataSource, missing => "Imputed")
+    
+    # save to output
+    sort!(final_df, :Id)
+    df = DataFrame(Index = 1:nrow(final_df), Variant = final_df.Id, Age = final_df.AgeMean_Mut)
+    CSV.write(output, df)
+end
+
+
 """Create a map of basepair distances to centimorgan distances
 """
 # TODO replace this function with the logic from the new_dist_method.py script (what is actually used to produce latest version of files)
@@ -26,13 +79,7 @@ function get_genetic_distances(datafile, mapfile, output)
     
     # predict genetic distances in cM for basepair distances given in datefile
     bpdata = Float64[]
-    snpid = String[]
-    for line in eachline(datafile)
-        if !startswith(line, "#")
-            push!(bpdata, parse(Float64,split(line)[2]))
-            push!(snpid, split(line)[3])
-        end
-    end
+    snpid = get_snpids(datafile)
     
     cmpred = fit.param[1] .* bpdata .^ 3 .+ fit.param[2] .* bpdata .^ 2 .+ fit.param[3] .* bpdata .+ fit.param[4]
     if cmpred[1] < 0

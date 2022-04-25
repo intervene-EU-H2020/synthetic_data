@@ -15,10 +15,6 @@ else
 fi
 
 # Create directory for the data
-if [ ! -d ./data ]; then
-    mkdir data
-fi
-
 mkdir -p ${data_dir}
 
 for chr in $(seq 1 22); do

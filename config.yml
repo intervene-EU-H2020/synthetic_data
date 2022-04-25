@@ -4,7 +4,7 @@
 
 global_parameters:
   random_seed: 123
-  chromosome: 1 # "all" or a number from 1 to 22
+  chromosome: 22 # "all" or a number from 1 to 22
   superpopulation: none # "none" or a specific superpopulation (AFR, AMR, EAS, EUR, SAS)
   memory: 8000 # amount of memory available (in MB) for memory-intensive commands
   batchsize: 10000 # batchsize for writing plink output during genotype generation
@@ -18,29 +18,32 @@ global_parameters:
 # - the superpopulation can be given as a wildcard by specifying {superpopulation} in the filepath
 filepaths:
   general:
-    output_dir: data/outputs/test
+    output_dir: data/outputs/test_newmutations_gamma
     output_prefix: test{chromosome}
   genotype:
-    vcf_input_raw: data/inputs/raw/1KGPhase3.chr{chromosome}.vcf.gz
-    vcf_input_processed: data/inputs/processed/1KGPhase3.chr{chromosome}.hapmap.recode.vcf
-    vcf_metadata: data/inputs/processed/1KGPhase3.chr{chromosome}.metadata
-    popfile_raw: data/inputs/raw/1KGPhase3.pop.panel
-    popfile_processed: data/inputs/processed/1KGPhase3.pop.panel
-    variant_list: data/inputs/processed/hapmap_variant_list_chr{chromosome}.txt
-    genetic_mapfile: data/inputs/raw/genetic_maps/chr{chromosome}.interpolated_genetic_map
-    genetic_distfile: data/inputs/processed/1KGPhase3.chr{chromosome}.hapmap.distfile
-    hap1_matrix: data/inputs/processed/1KGPhase3.chr{chromosome}.hapmap.h1
-    hap2_matrix: data/inputs/processed/1KGPhase3.chr{chromosome}.hapmap.h2
+    vcf_input_raw: data/inputs/raw/1KG/1KGPhase3.chr{chromosome}.vcf.gz
+    vcf_input_processed: data/inputs/processed/1KG/1KGPhase3.chr{chromosome}.hapmap.recode.vcf
+    vcf_metadata: data/inputs/processed/1KG/1KGPhase3.chr{chromosome}.metadata
+    popfile_raw: data/inputs/raw/1KG/1KGPhase3.pop.panel
+    popfile_processed: data/inputs/processed/1KG/1KGPhase3.pop.panel
+    variant_list: external/variant_lists/hapmap_variant_list_chr{chromosome}.txt
+    rsid_list: external/variant_lists/rsid_map_list_chr{chromosome}.txt
+    genetic_mapfile: data/inputs/raw/1KG/genetic_maps/chr{chromosome}.interpolated_genetic_map
+    genetic_distfile: data/inputs/processed/1KG/1KGPhase3.chr{chromosome}.hapmap.distfile
+    mutation_mapfile: data/inputs/raw/1KG/mutation_maps/altas.chr{chromosome}.csv
+    mutation_agefile: data/inputs/processed/1KG/1KGPhase3.chr{chromosome}.hapmap.agefile
+    hap1_matrix: data/inputs/processed/1KG/1KGPhase3.chr{chromosome}.hapmap.h1
+    hap2_matrix: data/inputs/processed/1KG/1KGPhase3.chr{chromosome}.hapmap.h2
   phenotype:
     traw_prefix: none # set to none if traw file doesn't already exist and needs to be created from genotype output (assumes .sample file exists with same prefix)
     causal_list: data/inputs/processed/Test.CausalList
     reference: data/inputs/processed/Africa.Annot
   software:
-    plink: plink
-    plink2: plink2
-    king: king
-    vcftools: vcftools
-    mapthin: mapthin
+    plink: software/plink
+    plink2: software/plink2
+    king: software/king
+    vcftools: software/vcftools
+    mapthin: software/mapthin
     phenoalg: phenoalg
 
 
@@ -63,7 +66,7 @@ genotype_data:
           - EUR: 30
           - AFR: 70
     default:
-      nsamples: 10000 # only used if not using custom samples
+      nsamples: 5000 # only used if not using custom samples
   # recombination rate (default values determined by optimisation procedure)
   rho:
     AFR: 0.01
@@ -116,11 +119,11 @@ phenotype_data:
 # Set to true if you want the script to calculate the metric
 evaluation:
   metrics:
-    aats: false  # nearest neighbour adversarial accuracy
-    kinship: false # relatedness, including kinship density and IBS plots
-    ld_corr: false # linkage disequilibrium (LD) correlation matrix
+    aats: true  # nearest neighbour adversarial accuracy
+    kinship: true # relatedness, including kinship density and IBS plots
+    ld_corr: true # linkage disequilibrium (LD) correlation matrix
     ld_decay: true # linkage disequilibrium (LD) decay plot (and distance)
-    maf: false # minor allele frequency divergences
+    maf: true # minor allele frequency divergences
     pca: true # principal components analysis
     gwas: false # run GWAS and generate manhattan and qqplot
 

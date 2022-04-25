@@ -4,21 +4,23 @@ The pre-processing scripts prepare the training data for generating synthetic da
 
 ## Standard pre-processing (default) 
 
-Use this option if you want to jump straight into generating synthetic datasets without having to run pre-processing yourself. Using the `fetch` command, the container downloads data that we've already pre-processed for use in the synthetic data algorithm. Based on the 1000 Genomes dataset, the data has been filtered to retain only the HapMap variants. Please note that synthetic datasets contain the same set of variants as the pre-processed training dataset.
+Use this option if you want to jump straight into generating synthetic datasets without having to run pre-processing yourself. Using the `fetch` command, the container downloads data that we've already pre-processed for use in the synthetic data algorithm. Based on the 1000 Genomes Project and Human Genomic Diversity Project datasets, the data has been filtered to retain only the HapMap3 variants. Please note that synthetic datasets contain the same set of variants as the pre-processed training dataset.
 
 ### How this data was created
 
 Raw datasets are downloaded by running
 ```
-preprocessing/data_download.sh data/inputs/raw
+data="1KG+HGDP" # you can also use just 1KG
+preprocessing/data_download_${data}.sh data/inputs/raw/${data}
 ``` 
-This downloads the data to the `data/inputs/raw` directory.
+This downloads the data to the `data/inputs/raw/${data}` directory, where the `data` is either `1KG` or `1KG+HGDP`
 
 The preprocessing pipeline is run using
 
 ```
 julia run_program.jl --config config.yml --preprocessing
 ```
+
 Note that setting `chromosome` to `all` in the `config.yml` will run the code for each chromosome sequentially. Alternatively you can run the preprocessing pipeline separately for each chromosome on different compute nodes.
 
 ## Custom pre-processing

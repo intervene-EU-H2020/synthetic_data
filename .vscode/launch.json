@@ -15,7 +15,7 @@
             "args": [
                 // options for likelihood-free inference
                 "--config", "config.yml", 
-                "--genotype"
+                "--genotype", "--evaluation"
               ]
         }
     ]

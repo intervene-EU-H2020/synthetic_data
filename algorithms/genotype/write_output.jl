@@ -67,6 +67,21 @@ function merge_batch_files(batch_files, outfile, plink)
 end
 
 
+"""Add mutations by only copying if T < age of mutation
+"""
+function add_mutations(segment, T, mutation_ages, start_idx)
+    new_segment = Vector{Int8}(undef, length(segment))
+    for pos in 1:length(segment)
+        if T < mutation_ages[start_idx+pos-1]
+            new_segment[pos] = segment[pos]
+        else
+            new_segment[pos] = 0
+        end
+    end
+    return new_segment
+end
+
+
 """Construct the data into the format for writing to plink output
 """
 function get_genostr(batch_ref_df, batch_mut_df, batchsize, start_haplotype, metadata)
@@ -83,7 +98,7 @@ function get_genostr(batch_ref_df, batch_mut_df, batchsize, start_haplotype, met
             else
                 true_hap = (start_haplotype + (genotype-1)*2 + 1)
             end
-
+            
             hap_df = batch_ref_df[batch_ref_df.H .== true_hap, :]
             
             I_pos = 1
@@ -91,8 +106,10 @@ function get_genostr(batch_ref_df, batch_mut_df, batchsize, start_haplotype, met
             for row in eachrow(hap_df)
                 if hap == 1
                     segment = metadata.H1[metadata.index_map[row.I], row.S:row.E]
+                    segment = add_mutations(segment, row.T, metadata.mutation_ages, I_pos)
                 else
                     segment = metadata.H2[metadata.index_map[row.I], row.S:row.E]
+                    segment = add_mutations(segment, row.T, metadata.mutation_ages, I_pos)
                 end
                 segment_sums += sum(segment)
                 length_of_segment = length(segment)

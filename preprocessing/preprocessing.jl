@@ -13,6 +13,9 @@ function preprocessing_pipeline(filepaths)
     @info "Creating genetic distance files"
     get_genetic_distances(filepaths.vcf_input_processed, filepaths.genetic_mapfile, filepaths.genetic_distfile)
 
+    @info "Creating mutation age files"
+    get_mutation_ages(filepaths.vcf_input_processed, filepaths.mutation_mapfile, filepaths.rsid_list, filepaths.mutation_agefile)
+    
     @info "Storing haplotype matrices"
     convert_vcf_to_hap(filepaths.vcf_input_processed, filepaths.hap1_matrix_output, filepaths.hap2_matrix_output)
 
