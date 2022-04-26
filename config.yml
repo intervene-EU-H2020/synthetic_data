@@ -21,28 +21,28 @@ filepaths:
     output_dir: data/outputs/test_newmutations_gamma
     output_prefix: test{chromosome}
   genotype:
-    vcf_input_raw: data/inputs/raw/1KG/1KGPhase3.chr{chromosome}.vcf.gz
-    vcf_input_processed: data/inputs/processed/1KG/1KGPhase3.chr{chromosome}.hapmap.recode.vcf
-    vcf_metadata: data/inputs/processed/1KG/1KGPhase3.chr{chromosome}.metadata
-    popfile_raw: data/inputs/raw/1KG/1KGPhase3.pop.panel
-    popfile_processed: data/inputs/processed/1KG/1KGPhase3.pop.panel
+    vcf_input_raw: data/inputs/raw/1KG+HGDP/1KG+HGDP.chr{chromosome}.hapmap.final.vcf
+    vcf_input_processed: data/inputs/processed/1KG+HGDP/1KG+HGDP.chr{chromosome}.hapmap.final.recode.vcf
+    vcf_metadata: data/inputs/processed/1KG+HGDP/1KG+HGDP.chr{chromosome}.metadata
+    popfile_raw: data/inputs/raw/1KG+HGDP/1KG+HGDP.pop.panel
+    popfile_processed: data/inputs/processed/1KG+HGDP/1KG+HGDP.pop.panel
     variant_list: external/variant_lists/hapmap_variant_list_chr{chromosome}.txt
     rsid_list: external/variant_lists/rsid_map_list_chr{chromosome}.txt
-    genetic_mapfile: data/inputs/raw/1KG/genetic_maps/chr{chromosome}.interpolated_genetic_map
-    genetic_distfile: data/inputs/processed/1KG/1KGPhase3.chr{chromosome}.hapmap.distfile
-    mutation_mapfile: data/inputs/raw/1KG/mutation_maps/altas.chr{chromosome}.csv
-    mutation_agefile: data/inputs/processed/1KG/1KGPhase3.chr{chromosome}.hapmap.agefile
-    hap1_matrix: data/inputs/processed/1KG/1KGPhase3.chr{chromosome}.hapmap.h1
-    hap2_matrix: data/inputs/processed/1KG/1KGPhase3.chr{chromosome}.hapmap.h2
+    genetic_mapfile: data/inputs/raw/1KG+HGDP/genetic_maps/chr{chromosome}.interpolated_genetic_map
+    genetic_distfile: data/inputs/processed/1KG+HGDP/1KG+HGDP.chr{chromosome}.hapmap.distfile
+    mutation_mapfile: data/inputs/raw/1KG+HGDP/mutation_maps/altas.chr{chromosome}.csv
+    mutation_agefile: data/inputs/processed/1KG+HGDP/1KG+HGDP.chr{chromosome}.hapmap.agefile
+    hap1_matrix: data/inputs/processed/1KG+HGDP/1KG+HGDP.chr{chromosome}.hapmap.h1
+    hap2_matrix: data/inputs/processed/1KG+HGDP/1KG+HGDP.chr{chromosome}.hapmap.h2
   phenotype:
     traw_prefix: none # set to none if traw file doesn't already exist and needs to be created from genotype output (assumes .sample file exists with same prefix)
-    causal_list: data/inputs/processed/Test.CausalList
-    reference: data/inputs/processed/Africa.Annot
+    causal_list: data/inputs/processed/1KG+HGDP/Test.CausalList
+    reference: data/inputs/processed/1KG+HGDP/Africa.Annot
   software:
     plink: software/plink
     plink2: software/plink2
     king: software/king
-    vcftools: software/vcftools
+    vcftools: vcftools
     mapthin: software/mapthin
     phenoalg: phenoalg
 

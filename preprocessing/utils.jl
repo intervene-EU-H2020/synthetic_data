@@ -1,4 +1,4 @@
-using DelimitedFiles, LsqFit, DataFrames, CSV, Mmap
+using DelimitedFiles, LsqFit, DataFrames, CSV, Mmap, Impute
 
 
 """Using the vcftools software, create a VCF file retaining only the variants in a given list
@@ -58,37 +58,37 @@ function get_mutation_ages(datafile, mapfile, rsidfile, output)
     replace!(final_df.DataSource, missing => "Imputed")
     
     # save to output
-    sort!(final_df, :Id)
-    df = DataFrame(Index = 1:nrow(final_df), Variant = final_df.Id, Age = final_df.AgeMean_Mut)
+    rename!(final_df, :Id => :Variant)
+    final_df = sort_by_variant(final_df)
+    df = DataFrame(Index = 1:nrow(final_df), Variant = final_df.Variant, Age = final_df.AgeMean_Mut)
     CSV.write(output, df)
+end
+
+
+"""Sort dataframe by position in "Variant" field
+"""
+function sort_by_variant(df)
+    get_pos(variant) = [parse(Int64, x[2]) for x in split.(variant, ":")]
+    transform!(df, :Variant => get_pos => :Pos)
+    sort!(df, :Pos)
+    select!(df, Not(:Pos))
+    return df
 end
 
 
 """Create a map of basepair distances to centimorgan distances
 """
-# TODO replace this function with the logic from the new_dist_method.py script (what is actually used to produce latest version of files)
-function get_genetic_distances(datafile, mapfile, output)
-    df = CSV.read(mapfile, DataFrame; header=["ID", "POS", "MAP"])
-
-    xdata = [convert(Float64,x) for x in df.POS]
-    ydata = [convert(Float64,y) for y in df.MAP]
-    
-    poly3(x, p) = p[1] .* xdata .^ 3 .+ p[2] .* xdata .^ 2 .+ p[3] .* xdata .+ p[4]
-    p0 = [1.0, 0.0, 0.0, 0.0]
-    fit = curve_fit(poly3, xdata, ydata, p0)
-    
-    # predict genetic distances in cM for basepair distances given in datefile
-    bpdata = Float64[]
-    snpid = get_snpids(datafile)
-    
-    cmpred = fit.param[1] .* bpdata .^ 3 .+ fit.param[2] .* bpdata .^ 2 .+ fit.param[3] .* bpdata .+ fit.param[4]
-    if cmpred[1] < 0
-        # shift negative values
-        cmpred = cmpred .+ abs(cmpred[1])
-    end
-    
-    df = DataFrame(Index = 1:length(snpid), Variant = snpid, Distance = cmpred)
-    CSV.write(output, df)
+function get_genetic_distances(datafile, mapfile, rsidfile, output)
+    rsid_df = get_id_df(datafile, rsidfile)
+    genetic_df = CSV.read(mapfile, DataFrame; header=["rsId", "pos", "map"])
+    dist_df = leftjoin(rsid_df, genetic_df, on=:rsId)
+    select!(dist_df, "Id", "map")
+    rename!(dist_df, [:Variant,:Distance])
+    dist_df = sort_by_variant(dist_df)
+    # use linear interpolation on missing distances
+    dist_df = Impute.interp(dist_df) |> Impute.locf() |> Impute.nocb()
+    final_df = DataFrame(Index = 1:nrow(dist_df), Variant = dist_df.Variant, Distance = dist_df.Distance)
+    CSV.write(output, final_df)
 end
 
 
@@ -97,7 +97,7 @@ end
 function convert_vcf_to_hap(datafile, hap1_output, hap2_output)
     num_variants = get_number_variants(datafile)
     num_samples = get_number_samples(datafile)
-
+    
     s1 = open(hap1_output, "w+")
     s2 = open(hap2_output, "w+")
     
