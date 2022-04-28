@@ -35,10 +35,10 @@ function run_maf_evaluation(real_maf_file, synt_maf_file)
 end
 
 
-function run_pca_evaluation(real_data_pca_prefix, synt_data_pca_prefix, real_data_prefix, synt_data_prefix, eval_dir)
+function run_pca_evaluation(real_data_pca_prefix, synt_data_pca_prefix, pcaproj_file, real_data_prefix, synt_data_prefix, eval_dir)
     real_data_pop = string(real_data_prefix, ".sample")
     synt_data_pop = string(synt_data_prefix, ".sample")
-    run_pca(real_data_pca_prefix, synt_data_pca_prefix, real_data_pop, synt_data_pop, eval_dir)
+    run_pca(real_data_pca_prefix, synt_data_pca_prefix, pcaproj_file, real_data_pop, synt_data_pop, eval_dir)
 end
 
 
@@ -63,13 +63,19 @@ end
 
 """Computations for PCA using PLINK
 """
-function run_pca_tools(plink2, reffile_prefix, synfile_prefix, outdir)
+function run_pca_tools(plink2, king, reffile_prefix, synfile_prefix, outdir)
     @info "Running external tools for PCA"
     reffile_out = @sprintf("%s.ref.pca", outdir)
     synfile_out = @sprintf("%s.syn.pca", outdir)
     run(`$plink2 --bfile $reffile_prefix --freq counts --pca allele-wts --out $reffile_out`)
     run(`$plink2 --bfile $synfile_prefix --freq counts --pca allele-wts --out $synfile_out`)
-    return reffile_out, synfile_out
+
+    # For PCA projection
+    projfile_prefix = @sprintf("%s_proj", outdir)
+    projfile_out = @sprintf("%spc.txt", projfile_prefix)
+    run(`$king -b $reffile_prefix.bed,$synfile_prefix.bed --pca --projection --prefix $projfile_prefix`)
+
+    return reffile_out, synfile_out, projfile_out
 end
 
 
@@ -100,7 +106,10 @@ function run_external_tools(metrics, reffile_prefix, synfile_prefix, filepaths)
         external_files["real_maffile"], external_files["syn_maffile"] = run_maf_tools(filepaths.plink, reffile_prefix, synfile_prefix, filepaths.evaluation_output)
     end
     if metrics["pca"] || metrics["gwas"]
-        external_files["real_pcafile"], external_files["syn_pcafile"] = run_pca_tools(filepaths.plink2, reffile_prefix, synfile_prefix, filepaths.evaluation_output)
+        external_files["real_pcafile"], external_files["syn_pcafile"], external_files["pcaproj_file"] = run_pca_tools(
+            filepaths.plink2, 
+            filepaths.king,
+            reffile_prefix, synfile_prefix, filepaths.evaluation_output)
     end
     if metrics["kinship"] || metrics["aats"]
         external_files["real_ibsfile"], external_files["syn_ibsfile"], external_files["cross_ibsfile"] = run_relatedness_tools(filepaths.king, reffile_prefix, synfile_prefix, filepaths.evaluation_output)
@@ -138,7 +147,9 @@ function run_pipeline(options, chromosome, superpopulation, metrics)
         run_maf_evaluation(external_files["real_maffile"],  external_files["syn_maffile"])
     end
     if metrics["pca"]
-        run_pca_evaluation(external_files["real_pcafile"], external_files["syn_pcafile"], reffile_prefix, synfile_prefix, filepaths.evaluation_output)
+        run_pca_evaluation(
+            external_files["real_pcafile"], external_files["syn_pcafile"], external_files["pcaproj_file"],
+            reffile_prefix, synfile_prefix, filepaths.evaluation_output)
     end
     if metrics["gwas"]
         run_gwas_evaluation(options["phenotype_data"]["nTrait"], filepaths.plink2, @sprintf("%s.eigenvec", external_files["syn_pcafile"]), synfile_prefix, filepaths.evaluation_output)

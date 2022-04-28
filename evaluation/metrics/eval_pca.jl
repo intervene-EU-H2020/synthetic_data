@@ -88,9 +88,28 @@ function pca_plot(real_data_prefix, synt_data_prefix, real_data_popfile, synt_da
     @info "PCA Visualization saved to $outfile"
 end
 
+"""Function to plot projection of synthetic samples on PCs of real data
+"""
+function plot_pca_proj(pcaproj_file, eval_dir)
+    df = CSV.File(pcaproj_file) |> DataFrame
+    # Split real and synthetics
+    df_real = df[df.AFF .== 1, [:PC1, :PC2]]
+    df_synt = df[df.AFF .== 2, [:PC1, :PC2]]
 
-function run_pca(real_data_prefix_pca, synt_data_prefix_pca, real_data_popfile, synt_data_popfile, eval_dir)
+    # Plot
+    fig = Plots.plot(size=(640, 640))
+    scatter!(fig, df_real.PC1, df_real.PC2, color=:blue, label="Reference")
+    scatter!(fig, df_synt.PC1, df_synt.PC2, color=:red, label="Synthetic")
+
+    outfile = @sprintf("%s.pcaproj.png", eval_dir)
+    savefig(fig, outfile)
+    @info "PCA Projection Visualization saved to $outfile"
+end
+
+
+function run_pca(real_data_prefix_pca, synt_data_prefix_pca, pcaproj_file, real_data_popfile, synt_data_popfile, eval_dir)
     @info "Running PCA Evaluations"
     pca_alignment(real_data_prefix_pca, synt_data_prefix_pca)
     pca_plot(real_data_prefix_pca, synt_data_prefix_pca, real_data_popfile, synt_data_popfile, eval_dir)
+    plot_pca_proj(pcaproj_file, eval_dir)
 end
