@@ -41,10 +41,6 @@ for chr in $(seq 1 22); do
 done
 )
 
-# TODO download population lists
-(cd ${data_dir} && ${dltool} ftp://ftp.1000genomes.ebi.ac.uk/vol1/ftp/data_collections/1000G_2504_high_coverage/20130606_g1k_3202_samples_ped_population.txt)
-mv ${data_dir}/20130606_g1k_3202_samples_ped_population.txt ${data_dir}/1KGPhase3.pop.panel
-
 # Download genetic mapping for bp/cM conversion
 (cd ${data_dir};
 mkdir -p genetic_maps

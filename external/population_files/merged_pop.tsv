@@ -1,7 +1,4 @@
 FamilyID	SampleID	FatherID	MotherID	Sex	Population	Superpopulation
-	NA12546B					
-	NA12830A					
-	NA18874A					
 1341	NA06985	0	0	2.0	CEU	EUR
 NA19027	NA19027	0	0	1.0	LWK	AFR
 NG14	HG02946	0	0	2.0	ESN	AFR

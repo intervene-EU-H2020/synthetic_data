@@ -21,11 +21,11 @@ filepaths:
     output_dir: data/outputs/test_newmutations_gamma
     output_prefix: test{chromosome}
   genotype:
-    vcf_input_raw: data/inputs/raw/1KG+HGDP/1KG+HGDP.chr{chromosome}.hapmap.final.vcf
+    vcf_input_raw: data/inputs/raw/1KG+HGDP/1KG+HGDP.chr{chromosome}.hapmap.final.vcf.gz
     vcf_input_processed: data/inputs/processed/1KG+HGDP/1KG+HGDP.chr{chromosome}.hapmap.final.recode.vcf
     vcf_metadata: data/inputs/processed/1KG+HGDP/1KG+HGDP.chr{chromosome}.metadata
-    popfile_raw: data/inputs/raw/1KG+HGDP/1KG+HGDP.pop.panel
-    popfile_processed: external/population_files/merged_pop.tsv
+    popfile_raw: external/population_files/merged_pop.tsv
+    popfile_processed: data/inputs/processed/1KG+HGDP/merged_pop.tsv
     variant_list: external/variant_lists/hapmap_variant_list_chr{chromosome}.txt
     rsid_list: external/variant_lists/rsid_map_list_chr{chromosome}.txt
     genetic_mapfile: data/inputs/raw/1KG+HGDP/genetic_maps/chr{chromosome}.interpolated_genetic_map
@@ -81,13 +81,6 @@ genotype_data:
     EAS: 2000
     EUR: 2000
     SAS: 2000
-  # mutation rate (default values determined by optimisation procedure)
-  mu:
-    AFR: 0.1
-    AMR: 0.1
-    EAS: 0.1
-    EUR: 0.1
-    SAS: 0.1
 
 
 ####################################
@@ -142,9 +135,6 @@ optimisation:
     Ne:
       uniform_lower: 1000
       uniform_upper: 50000
-    mu:
-      uniform_lower: 0
-      uniform_upper: 10
   # inference type - simulation-based rejection ABC or emulation-based rejection ABC
   simulation_rejection_ABC:
     run: true

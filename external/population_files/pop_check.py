@@ -22,7 +22,7 @@ df = pd.concat([data_1kg, data_hgdp, data_other])
 fp = open("../../data/inputs/processed/1KG+HGDP/1KG+HGDP.chr22.hapmap.final.recode.vcf")
 samples = None
 for i, line in enumerate(fp):
-    if i == 13:
+    if i == 14:
         samples = line.split()[9:]
 
 fp.close()
@@ -34,6 +34,6 @@ mer_df = pd.merge(df, pd.DataFrame({'SampleID':samples}), how='right')
 # pop_map = {'AFR':'Africa', 'Africa (HGDP)':'Africa', 'AMR': 'America', 'America (HGDP)':'America', 'Central South Asia (HGDP)':'Central South Asia', 'CentralAsiaSiberia':'Central Asia Siberia', 'EAS':'East Asia', 'EUR':'Europe', 'East Asia (HGDP)':'East Asia', 'EastAsia':'East Asia', 'Europe (HGDP)':'Europe', 'Middle East (HGDP)':'Middle East', 'Oceania (HGDP)':'Oceania', 'Oceania (SGDP),Oceania (HGDP)':'Oceania', 'SAS':'South Asia', 'SouthAsia':'South Asia', 'WestEurasia':'West Eurasia'}
 # mer_df['Superpopulation'] = mer_df['Superpopulation'].apply(lambda x : pop_map[x] if x in pop_map else x)
 
-#mer_df[mer_df['Superpopulation'].isna()]
+mer_df = mer_df[~mer_df['Superpopulation'].isna()]
 
 mer_df.to_csv('merged_pop.tsv', index=None, sep='\t')

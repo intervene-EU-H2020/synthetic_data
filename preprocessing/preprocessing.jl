@@ -7,10 +7,9 @@ include("utils.jl")
 """Implements the full sequence of pre-processing steps
 """
 function preprocessing_pipeline(filepaths)
-
     @info "Filtering SNPs"
-    # for 1KG+HGDP we've already done this - so just copy the file
-    cp(filepaths.vcf_input_raw, filepaths.vcf_input_processed, force=true)
+    # TODO remove 3 samples with no population from vcf (use samples in poplist)
+    extract_variants(filepaths.vcftools, filepaths.vcf_input_raw, filepaths.vcf_input_processed_prefix, filepaths.vcf_input_processed, filepaths.variant_list)
     
     @info "Creating genetic distance files"
     get_genetic_distances(filepaths.vcf_input_processed, filepaths.genetic_mapfile, filepaths.rsid_list, filepaths.genetic_distfile)
@@ -23,7 +22,7 @@ function preprocessing_pipeline(filepaths)
 
     @info "Storing metadata files"
     convert_vcf_to_meta(filepaths.vcf_input_processed, filepaths.metadata_output)
-    # TODO the popfile was not given for 1KG+HGDP
+    
     cp(filepaths.popfile_raw, filepaths.popfile_processed, force=true)
 end
 

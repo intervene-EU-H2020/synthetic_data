@@ -8,6 +8,7 @@ function extract_variants(vcftools, vcf_input, vcf_output_prefix, vcf_output, va
     run(vcf_cmd)
     
     @assert isfile(vcf_output) "Error occurred with creation of VCF file"
+    @assert length(variant_list)==get_number_variants(vcf_output) "Number of SNPs in VCF is not equal to length of variant list"
 end
 
 
@@ -17,7 +18,7 @@ function get_snpids(datafile)
     snpid = String[]
     for line in eachline(datafile)
         if !startswith(line, "#")
-            push!(snpid, join(split(line)[[1,2,4,5]],":")[4:end])
+            push!(snpid, split(line)[3])
         end
     end
     return snpid
@@ -32,7 +33,7 @@ function get_id_df(datafile, rsidfile)
     snpid = get_snpids(datafile)
     snp_df = DataFrame(Id=snpid)
     snp_df = innerjoin(rs_df, snp_df, on=:Id)
-    @assert nrow(snp_df)==get_number_variants(datafile) # check all variants have a matching rsid
+    @assert nrow(snp_df)==get_number_variants(datafile) "Not all variants have a matching RSid" 
     return snp_df
 end
 

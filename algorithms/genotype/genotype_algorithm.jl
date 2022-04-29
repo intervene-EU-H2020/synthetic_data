@@ -6,11 +6,6 @@ include("write_output.jl")
 
 """Sample effective population size
 """
-# function sample_T(N, Ne)
-#     T_dist = Exponential(Ne/N)
-#     T = rand(T_dist)
-#     return T
-# end
 function sample_T(N, Ne)
     T_dist = Gamma(2, Ne/N)
     T = rand(T_dist)
@@ -41,24 +36,6 @@ function update_variant_position(cur_pos, L, genetic_distances, nvariants)
 end
 
 
-"""Generates mutations in the synthetic haplotype by selecting SNP positions
-"""
-function get_mutations(N, Ne, μ, hap, nvariants)
-    # sample number of mutations, based on coalescence time
-    coal_T = sample_T(N, Ne)
-    M_dist = Poisson(coal_T * μ)
-    M = rand(M_dist)
-    while M >= nvariants
-        M = rand(M_dist)
-    end
-    # choose positions at random 
-    # TODO could do this non-randomly using allele age
-    variants = sample(1:nvariants, M, replace=false)
-    mut_df = DataFrame(H=repeat([hap], length(variants)), P=variants)
-    return mut_df
-end
-
-
 """Creates reference table for synthetic genotype construction
 
 Each row of the reference table represents a segment to be copied
@@ -79,7 +56,6 @@ function create_reference_table(metadata)
     total_num_hap = 2*metadata.nsamples
     # to multi-thread the operation we create a dataframe for each haplotype, then concat these together
     ref_df_samples = Vector{DataFrame}(undef, total_num_hap)
-    mut_df_samples = Vector{DataFrame}(undef, total_num_hap)
     p = Progress(total_num_hap)
     Threads.@threads for hap in 1:(total_num_hap)
         happop = metadata.population_groups[hap]
@@ -101,15 +77,11 @@ function create_reference_table(metadata)
             pos = end_pos+1
         end
         ref_df_samples[hap] = ref_df_hap
-        # sample mutations
-        mutpop = sample(collect(keys(metadata.population_weights[happop])), Weights(collect(values(metadata.population_weights[happop]))))
-        mut_df_samples[hap] = get_mutations(metadata.population_Ns[mutpop], metadata.population_Nes[mutpop], metadata.population_mus[mutpop], hap, metadata.nvariants)
         next!(p)
     end
     # concat the arrays of dataframes
     ref_df = vcat(ref_df_samples...)
-    mut_df = vcat(mut_df_samples...)
-    return ref_df, mut_df
+    return ref_df
 end
 
 
@@ -117,17 +89,17 @@ end
 """
 function create_synthetic_genotype_for_chromosome(metadata)
     @info "Creating the algorithm mapping table"
-    ref_df, mut_df = create_reference_table(metadata)
+    ref_df = create_reference_table(metadata)
     
     @info "Writing the population file"
     create_sample_list_file(metadata)
     
     if metadata.outfile_type == "plink"
         @info "Writing genotype output to PLINK"
-        write_to_plink(ref_df, mut_df, metadata.batchsize, metadata)
+        write_to_plink(ref_df, metadata.batchsize, metadata)
     elseif metadata.outfile_type == "vcf"
         @info "Writing genotype output to VCF"
-        write_to_vcf(ref_df, mut_df, metadata)
+        write_to_vcf(ref_df, metadata)
     else
         throw(error("Config error: outfile_type not supported"))
     end

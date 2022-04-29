@@ -53,7 +53,6 @@ mutable struct GenomicMetadata
     population_Ns::Dict # {pop : N}
     population_Nes::Dict # {pop : Ne}
     population_rhos::Dict # {pop : rho}
-    population_mus::Dict # {pop: mu}
     genetic_distances::Vector # [list of genetic distances (in centimorgans) at each variant position]
     mutation_ages::Vector # [list of mutation ages (in years) at each variant position]
     outfile_type::String
@@ -259,7 +258,6 @@ function parse_genomic_metadata(options, superpopulation, filepaths)
     population_N = get_population_sizes(haplotypes, poplist) 
     population_Nes = Dict(pop=>options["genotype_data"]["Ne"][pop] for pop in poplist)
     population_rhos = Dict(pop=>options["genotype_data"]["rho"][pop] for pop in poplist)
-    population_mus = Dict(pop=>options["genotype_data"]["mu"][pop] for pop in poplist)
     genetic_distances = get_genetic_distances(filepaths.genetic_distfile)
     mutation_ages = get_mutation_ages(filepaths.mutation_agefile)
     outfile_type = options["genotype_data"]["filetype"]
@@ -269,5 +267,5 @@ function parse_genomic_metadata(options, superpopulation, filepaths)
 
     nvariants = length(genetic_distances)
 
-    return GenomicMetadata(nsamples, nvariants, H1, H2, fixed_fields, haplotypes, index_map, population_groups, population_weights, population_N, population_Nes, population_rhos, population_mus, genetic_distances, mutation_ages, outfile_type, outfile_prefix, batchsize, plink)
+    return GenomicMetadata(nsamples, nvariants, H1, H2, fixed_fields, haplotypes, index_map, population_groups, population_weights, population_N, population_Nes, population_rhos, genetic_distances, mutation_ages, outfile_type, outfile_prefix, batchsize, plink)
 end
