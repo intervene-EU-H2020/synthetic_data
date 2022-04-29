@@ -25,7 +25,7 @@ filepaths:
     vcf_input_processed: data/inputs/processed/1KG+HGDP/1KG+HGDP.chr{chromosome}.hapmap.final.recode.vcf
     vcf_metadata: data/inputs/processed/1KG+HGDP/1KG+HGDP.chr{chromosome}.metadata
     popfile_raw: data/inputs/raw/1KG+HGDP/1KG+HGDP.pop.panel
-    popfile_processed: data/inputs/processed/1KG+HGDP/1KG+HGDP.pop.panel
+    popfile_processed: external/population_files/merged_pop.tsv
     variant_list: external/variant_lists/hapmap_variant_list_chr{chromosome}.txt
     rsid_list: external/variant_lists/rsid_map_list_chr{chromosome}.txt
     genetic_mapfile: data/inputs/raw/1KG+HGDP/genetic_maps/chr{chromosome}.interpolated_genetic_map

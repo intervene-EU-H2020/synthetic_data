@@ -8,10 +8,8 @@ include("utils.jl")
 """
 function preprocessing_pipeline(filepaths)
 
-    # TODO what to do about this... already converted 1KG+HGDP to hapmap format (though some snps appear to be missing)
-    # TODO the ID field in the VCFs is missing - need to fill this (add a code check for this and throw error if not present)
     @info "Filtering SNPs"
-    # extract_variants(filepaths.vcftools, filepaths.vcf_input_raw, filepaths.vcf_input_processed_prefix, filepaths.vcf_input_processed, filepaths.variant_list)
+    # for 1KG+HGDP we've already done this - so just copy the file
     cp(filepaths.vcf_input_raw, filepaths.vcf_input_processed, force=true)
     
     @info "Creating genetic distance files"

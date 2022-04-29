@@ -17,7 +17,7 @@ function get_snpids(datafile)
     snpid = String[]
     for line in eachline(datafile)
         if !startswith(line, "#")
-            push!(snpid, split(line)[3])
+            push!(snpid, join(split(line)[[1,2,4,5]],":")[4:end])
         end
     end
     return snpid
@@ -32,6 +32,7 @@ function get_id_df(datafile, rsidfile)
     snpid = get_snpids(datafile)
     snp_df = DataFrame(Id=snpid)
     snp_df = innerjoin(rs_df, snp_df, on=:Id)
+    @assert nrow(snp_df)==get_number_variants(datafile) # check all variants have a matching rsid
     return snp_df
 end
 
