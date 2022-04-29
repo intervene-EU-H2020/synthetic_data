@@ -27,6 +27,7 @@ filepaths:
     popfile_raw: external/population_files/merged_pop.tsv
     popfile_processed: data/inputs/processed/1KG+HGDP/merged_pop.tsv
     variant_list: external/variant_lists/hapmap_variant_list_chr{chromosome}.txt
+    remove_list: external/population_files/remove.txt
     rsid_list: external/variant_lists/rsid_map_list_chr{chromosome}.txt
     genetic_mapfile: data/inputs/raw/1KG+HGDP/genetic_maps/chr{chromosome}.interpolated_genetic_map
     genetic_distfile: data/inputs/processed/1KG+HGDP/1KG+HGDP.chr{chromosome}.hapmap.distfile

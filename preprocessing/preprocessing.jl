@@ -8,8 +8,7 @@ include("utils.jl")
 """
 function preprocessing_pipeline(filepaths)
     @info "Filtering SNPs"
-    # TODO remove 3 samples with no population from vcf (use samples in poplist)
-    extract_variants(filepaths.vcftools, filepaths.vcf_input_raw, filepaths.vcf_input_processed_prefix, filepaths.vcf_input_processed, filepaths.variant_list)
+    extract_variants(filepaths.vcftools, filepaths.vcf_input_raw, filepaths.vcf_input_processed_prefix, filepaths.vcf_input_processed, filepaths.variant_list, filepaths.remove_list)
     
     @info "Creating genetic distance files"
     get_genetic_distances(filepaths.vcf_input_processed, filepaths.genetic_mapfile, filepaths.rsid_list, filepaths.genetic_distfile)

@@ -10,6 +10,7 @@ mutable struct Filepaths
     vcf_input_processed_prefix::String
     vcf_input_processed::String
     variant_list::String
+    remove_list::String
     rsid_list::String
     genetic_mapfile::String
     genetic_distfile::String
@@ -106,6 +107,7 @@ function parse_filepaths(options, chromosome, superpopulation)
     vcf_input_processed = format_filepath(options["filepaths"]["genotype"]["vcf_input_processed"], chromosome, superpopulation, true) 
     vcf_input_processed_prefix = endswith(vcf_input_processed,".recode.vcf") ? chop(vcf_input_processed, tail=11) : chop(vcf_input_processed, tail=4)
     variant_list = format_filepath(options["filepaths"]["genotype"]["variant_list"], chromosome, superpopulation, true)
+    remove_list = format_filepath(options["filepaths"]["genotype"]["remove_list"], chromosome, superpopulation, true)
     rsid_list = format_filepath(options["filepaths"]["genotype"]["rsid_list"], chromosome, superpopulation, true)
     genetic_mapfile = format_filepath(options["filepaths"]["genotype"]["genetic_mapfile"], chromosome, superpopulation, true)
     genetic_distfile = format_filepath(options["filepaths"]["genotype"]["genetic_distfile"], chromosome, superpopulation, true)
@@ -135,7 +137,7 @@ function parse_filepaths(options, chromosome, superpopulation)
     mapthin = format_filepath(options["filepaths"]["software"]["mapthin"], chromosome, superpopulation, false)
     phenoalg = format_filepath(options["filepaths"]["software"]["phenoalg"], chromosome, superpopulation, false)
 
-    return Filepaths(vcf_input_raw, vcf_input_processed_prefix, vcf_input_processed, variant_list, rsid_list, genetic_mapfile, genetic_distfile, mutation_mapfile, mutation_agefile, hap1_matrix_output, hap2_matrix_output, metadata_output, popfile_raw, popfile_processed, synthetic_data_prefix, synthetic_data_traw_prefix, evaluation_output, optimisation_output, reference_dir, prspipe_dir, phenotype_causal_list, phenotype_sample_list, phenotype_reference, vcftools, plink, plink2, king, mapthin, phenoalg)
+    return Filepaths(vcf_input_raw, vcf_input_processed_prefix, vcf_input_processed, variant_list, remove_list, rsid_list, genetic_mapfile, genetic_distfile, mutation_mapfile, mutation_agefile, hap1_matrix_output, hap2_matrix_output, metadata_output, popfile_raw, popfile_processed, synthetic_data_prefix, synthetic_data_traw_prefix, evaluation_output, optimisation_output, reference_dir, prspipe_dir, phenotype_causal_list, phenotype_sample_list, phenotype_reference, vcftools, plink, plink2, king, mapthin, phenoalg)
 end
 
 

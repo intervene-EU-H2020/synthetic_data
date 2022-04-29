@@ -3,8 +3,8 @@ using DelimitedFiles, LsqFit, DataFrames, CSV, Mmap, Impute
 
 """Using the vcftools software, create a VCF file retaining only the variants in a given list
 """
-function extract_variants(vcftools, vcf_input, vcf_output_prefix, vcf_output, variant_list)
-    vcf_cmd = `$vcftools --gzvcf $vcf_input --snps $variant_list --out $vcf_output_prefix --recode`
+function extract_variants(vcftools, vcf_input, vcf_output_prefix, vcf_output, variant_list, remove_list)
+    vcf_cmd = `$vcftools --gzvcf $vcf_input --snps $variant_list --remove $remove_list --out $vcf_output_prefix --recode`
     run(vcf_cmd)
     
     @assert isfile(vcf_output) "Error occurred with creation of VCF file"
