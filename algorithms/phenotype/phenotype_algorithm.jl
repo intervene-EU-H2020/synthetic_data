@@ -60,7 +60,6 @@ end
 
 
 function synthetic_pheno(filepaths, options, seed, combine, synth_paths)
-    # TODO don't push to main branch - just useful for PRS experiments
     if options["filepaths"]["phenotype"]["traw_prefix"] != "none"
         # traw file already exists 
         traw_prefix = options["filepaths"]["phenotype"]["traw_prefix"]

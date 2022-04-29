@@ -10,8 +10,12 @@ mutable struct Filepaths
     vcf_input_processed_prefix::String
     vcf_input_processed::String
     variant_list::String
+    remove_list::String
+    rsid_list::String
     genetic_mapfile::String
     genetic_distfile::String
+    mutation_mapfile::String
+    mutation_agefile::String
     hap1_matrix_output::String
     hap2_matrix_output::String
     metadata_output::String
@@ -50,8 +54,8 @@ mutable struct GenomicMetadata
     population_Ns::Dict # {pop : N}
     population_Nes::Dict # {pop : Ne}
     population_rhos::Dict # {pop : rho}
-    population_mus::Dict # {pop: mu}
     genetic_distances::Vector # [list of genetic distances (in centimorgans) at each variant position]
+    mutation_ages::Vector # [list of mutation ages (in years) at each variant position]
     outfile_type::String
     outfile_prefix::String
     batchsize::Integer
@@ -103,8 +107,12 @@ function parse_filepaths(options, chromosome, superpopulation)
     vcf_input_processed = format_filepath(options["filepaths"]["genotype"]["vcf_input_processed"], chromosome, superpopulation, true) 
     vcf_input_processed_prefix = endswith(vcf_input_processed,".recode.vcf") ? chop(vcf_input_processed, tail=11) : chop(vcf_input_processed, tail=4)
     variant_list = format_filepath(options["filepaths"]["genotype"]["variant_list"], chromosome, superpopulation, true)
+    remove_list = format_filepath(options["filepaths"]["genotype"]["remove_list"], chromosome, superpopulation, false)
+    rsid_list = format_filepath(options["filepaths"]["genotype"]["rsid_list"], chromosome, superpopulation, true)
     genetic_mapfile = format_filepath(options["filepaths"]["genotype"]["genetic_mapfile"], chromosome, superpopulation, true)
     genetic_distfile = format_filepath(options["filepaths"]["genotype"]["genetic_distfile"], chromosome, superpopulation, true)
+    mutation_mapfile= format_filepath(options["filepaths"]["genotype"]["mutation_mapfile"], chromosome, superpopulation, true)
+    mutation_agefile= format_filepath(options["filepaths"]["genotype"]["mutation_agefile"], chromosome, superpopulation, true)
     hap1_matrix_output = format_filepath(options["filepaths"]["genotype"]["hap1_matrix"], chromosome, superpopulation, true)
     hap2_matrix_output = format_filepath(options["filepaths"]["genotype"]["hap2_matrix"], chromosome, superpopulation, true)
     metadata_output = format_filepath(options["filepaths"]["genotype"]["vcf_metadata"], chromosome, superpopulation, true)
@@ -129,7 +137,7 @@ function parse_filepaths(options, chromosome, superpopulation)
     mapthin = format_filepath(options["filepaths"]["software"]["mapthin"], chromosome, superpopulation, false)
     phenoalg = format_filepath(options["filepaths"]["software"]["phenoalg"], chromosome, superpopulation, false)
 
-    return Filepaths(vcf_input_raw, vcf_input_processed_prefix, vcf_input_processed, variant_list, genetic_mapfile, genetic_distfile, hap1_matrix_output, hap2_matrix_output, metadata_output, popfile_raw, popfile_processed, synthetic_data_prefix, synthetic_data_traw_prefix, evaluation_output, optimisation_output, reference_dir, prspipe_dir, phenotype_causal_list, phenotype_sample_list, phenotype_reference, vcftools, plink, plink2, king, mapthin, phenoalg)
+    return Filepaths(vcf_input_raw, vcf_input_processed_prefix, vcf_input_processed, variant_list, remove_list, rsid_list, genetic_mapfile, genetic_distfile, mutation_mapfile, mutation_agefile, hap1_matrix_output, hap2_matrix_output, metadata_output, popfile_raw, popfile_processed, synthetic_data_prefix, synthetic_data_traw_prefix, evaluation_output, optimisation_output, reference_dir, prspipe_dir, phenotype_causal_list, phenotype_sample_list, phenotype_reference, vcftools, plink, plink2, king, mapthin, phenoalg)
 end
 
 
@@ -176,6 +184,13 @@ function get_genetic_distances(distfile)
     sort!(dist_df, [:Distance])
     variant_dist = dist_df.Distance
     return variant_dist
+end
+
+
+function get_mutation_ages(agefile)
+    age_df = DataFrame(CSV.File(agefile))
+    variant_age = age_df.Age
+    return variant_age
 end
 
 
@@ -245,8 +260,8 @@ function parse_genomic_metadata(options, superpopulation, filepaths)
     population_N = get_population_sizes(haplotypes, poplist) 
     population_Nes = Dict(pop=>options["genotype_data"]["Ne"][pop] for pop in poplist)
     population_rhos = Dict(pop=>options["genotype_data"]["rho"][pop] for pop in poplist)
-    population_mus = Dict(pop=>options["genotype_data"]["mu"][pop] for pop in poplist)
     genetic_distances = get_genetic_distances(filepaths.genetic_distfile)
+    mutation_ages = get_mutation_ages(filepaths.mutation_agefile)
     outfile_type = options["genotype_data"]["filetype"]
     outfile_prefix = filepaths.synthetic_data_prefix
     batchsize = outfile_type=="plink" ? get_batchsize(nsamples, options["global_parameters"]["batchsize"]) : -1
@@ -254,5 +269,5 @@ function parse_genomic_metadata(options, superpopulation, filepaths)
 
     nvariants = length(genetic_distances)
 
-    return GenomicMetadata(nsamples, nvariants, H1, H2, fixed_fields, haplotypes, index_map, population_groups, population_weights, population_N, population_Nes, population_rhos, population_mus, genetic_distances, outfile_type, outfile_prefix, batchsize, plink)
+    return GenomicMetadata(nsamples, nvariants, H1, H2, fixed_fields, haplotypes, index_map, population_groups, population_weights, population_N, population_Nes, population_rhos, genetic_distances, mutation_ages, outfile_type, outfile_prefix, batchsize, plink)
 end

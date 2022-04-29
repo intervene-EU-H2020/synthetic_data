@@ -34,12 +34,10 @@ Arguments
 function simulator_function(var_params::AbstractArray{Float64,1})
     Ne_s = var_params[1]
     rho_s = var_params[2]
-    mu_s = var_params[3]
     
     # simulate a synthetic dataset with these parameter values and calculate the summary statistic
     genomic_metadata.population_Nes[abc_metadata.superpopulation] = trunc(Int, Ne_s)
     genomic_metadata.population_rhos[abc_metadata.superpopulation] = rho_s
-    genomic_metadata.population_mus[abc_metadata.superpopulation] = mu_s
     create_synthetic_genotype_for_chromosome(genomic_metadata) 
     sumstat = calculate_summary_statistic(abc_metadata.out_prefix, abc_metadata.nsamples_syn, abc_metadata.ref_prefix)
     
@@ -80,9 +78,7 @@ function get_priors(options)
     Ne_upper = options["optimisation"]["priors"]["Ne"]["uniform_upper"]
     rho_lower = options["optimisation"]["priors"]["rho"]["uniform_lower"]
     rho_upper = options["optimisation"]["priors"]["rho"]["uniform_upper"]
-    mu_lower = options["optimisation"]["priors"]["mu"]["uniform_lower"]
-    mu_upper = options["optimisation"]["priors"]["mu"]["uniform_upper"]
-    return [Uniform(Ne_lower, Ne_upper), Uniform(rho_lower, rho_upper), Uniform(mu_lower, mu_upper)] 
+    return [Uniform(Ne_lower, Ne_upper), Uniform(rho_lower, rho_upper)] 
 end
 
 
@@ -110,9 +106,8 @@ function save_results(abc_result, output_prefix, simulation_type)
     
     Nes = abc_result.population[:,1]
     rhos = abc_result.population[:,2]
-    mus = abc_result.population[:,3]
     ds = abc_result.distances
-    df = DataFrame(Ne=Nes, ρ=rhos, μ=mus, d=ds)
+    df = DataFrame(Ne=Nes, ρ=rhos, d=ds)
     CSV.write(@sprintf("%s_%s.csv", output_prefix, simulation_type), df)
 end
 

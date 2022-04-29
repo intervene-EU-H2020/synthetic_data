@@ -180,7 +180,7 @@ function run_evaluation(options)
             new_metrics["gwas"] = true
             run_pipeline(options, chromosome, superpopulation, new_metrics)
         end
-
+        
         for chromosome_i in 1:22
             metrics["gwas"] = false
             run_pipeline(options, chromosome_i, superpopulation, metrics)

@@ -1,0 +1,829 @@
+Sample name	Sex	Biosample ID	Population code	Population name	Superpopulation code	Superpopulation name	Population elastic ID	Data collections
+HGDP00005	male			Brahui		Central South Asia (HGDP)	BrahuiHGDP	Human Genome Diversity Project
+HGDP00288	male			Kalash		Central South Asia (HGDP)	KalashHGDP	Human Genome Diversity Project
+HGDP00290	male			Kalash		Central South Asia (HGDP)	KalashHGDP	Human Genome Diversity Project
+HGDP00315	male			Kalash		Central South Asia (HGDP)	KalashHGDP	Human Genome Diversity Project
+HGDP00341	male			Burusho		Central South Asia (HGDP)	BurushoHGDP	Human Genome Diversity Project
+HGDP00346	male			Burusho		Central South Asia (HGDP)	BurushoHGDP	Human Genome Diversity Project
+HGDP00106	male			Hazara		Central South Asia (HGDP)	HazaraHGDP	Human Genome Diversity Project
+HGDP00118	male			Hazara		Central South Asia (HGDP)	HazaraHGDP	Human Genome Diversity Project
+HGDP00120	male			Hazara		Central South Asia (HGDP)	HazaraHGDP	Human Genome Diversity Project
+HGDP00137	male			Makrani		Central South Asia (HGDP)	MakraniHGDP	Human Genome Diversity Project
+HGDP00144	male			Makrani		Central South Asia (HGDP)	MakraniHGDP	Human Genome Diversity Project
+HGDP00149	male			Makrani		Central South Asia (HGDP)	MakraniHGDP	Human Genome Diversity Project
+HGDP00151	female			Makrani		Central South Asia (HGDP)	MakraniHGDP	Human Genome Diversity Project
+HGDP00163	male			Sindhi		Central South Asia (HGDP)	SindhiHGDP	Human Genome Diversity Project
+HGDP00175	male			Sindhi		Central South Asia (HGDP)	SindhiHGDP	Human Genome Diversity Project
+HGDP00187	male			Sindhi		Central South Asia (HGDP)	SindhiHGDP	Human Genome Diversity Project
+HGDP00199	male			Sindhi		Central South Asia (HGDP)	SindhiHGDP	Human Genome Diversity Project
+HGDP00214	male			Pathan		Central South Asia (HGDP)	PathanHGDP	Human Genome Diversity Project
+HGDP00372	male			Burusho		Central South Asia (HGDP)	BurushoHGDP	Human Genome Diversity Project
+HGDP00423	male			Burusho		Central South Asia (HGDP)	BurushoHGDP	Human Genome Diversity Project
+HGDP00454	male			Biaka		Africa (HGDP)	BiakaHGDP	Human Genome Diversity Project
+HGDP00062	male			Balochi		Central South Asia (HGDP)	BalochiHGDP	Human Genome Diversity Project
+HGDP00074	male			Balochi		Central South Asia (HGDP)	BalochiHGDP	Human Genome Diversity Project
+HGDP00086	male			Balochi		Central South Asia (HGDP)	BalochiHGDP	Human Genome Diversity Project
+HGDP00098	male			Balochi		Central South Asia (HGDP)	BalochiHGDP	Human Genome Diversity Project
+HGDP00017	male			Brahui		Central South Asia (HGDP)	BrahuiHGDP	Human Genome Diversity Project
+HGDP00029	male			Brahui		Central South Asia (HGDP)	BrahuiHGDP	Human Genome Diversity Project
+HGDP00031	male			Brahui		Central South Asia (HGDP)	BrahuiHGDP	Human Genome Diversity Project
+HGDP00043	male			Brahui		Central South Asia (HGDP)	BrahuiHGDP	Human Genome Diversity Project
+HGDP00226	male			Pathan		Central South Asia (HGDP)	PathanHGDP	Human Genome Diversity Project
+HGDP00264	male			Pathan		Central South Asia (HGDP)	PathanHGDP	Human Genome Diversity Project
+HGDP00543	male			Papuan,Papuan Sepik		Oceania (SGDP),Oceania (HGDP)	PapuanSGDP,PapuanSepikHGDP	Simons Genome Diversity Project,Human Genome Diversity Project
+HGDP00550	female			Papuan,Papuan Highlands		Oceania (SGDP),Oceania (HGDP)	PapuanSGDP,PapuanHighlandsHGDP	Simons Genome Diversity Project,Human Genome Diversity Project
+HGDP00555	male			Papuan,Papuan Highlands		Oceania (SGDP),Oceania (HGDP)	PapuanSGDP,PapuanHighlandsHGDP	Simons Genome Diversity Project,Human Genome Diversity Project
+HGDP00562	male			Druze		Middle East (HGDP)	DruzeHGDP	Human Genome Diversity Project
+HGDP00668	male			Sardinian		Europe (HGDP)	SardinianHGDP	Human Genome Diversity Project
+HGDP00670	male			Sardinian		Europe (HGDP)	SardinianHGDP	Human Genome Diversity Project
+HGDP00675	male			Palestinian		Middle East (HGDP)	PalestinianHGDP	Human Genome Diversity Project
+HGDP00682	female			Palestinian		Middle East (HGDP)	PalestinianHGDP	Human Genome Diversity Project
+HGDP00009	male			Brahui		Central South Asia (HGDP)	BrahuiHGDP	Human Genome Diversity Project
+HGDP00687	female			Palestinian		Middle East (HGDP)	PalestinianHGDP	Human Genome Diversity Project
+HGDP00011	male			Brahui		Central South Asia (HGDP)	BrahuiHGDP	Human Genome Diversity Project
+HGDP00694	female			Palestinian		Middle East (HGDP)	PalestinianHGDP	Human Genome Diversity Project
+HGDP00699	female			Palestinian		Middle East (HGDP)	PalestinianHGDP	Human Genome Diversity Project
+HGDP00714	male			Cambodian		East Asia (HGDP)	CambodianHGDP	Human Genome Diversity Project
+HGDP00719	female			Cambodian		East Asia (HGDP)	CambodianHGDP	Human Genome Diversity Project
+HGDP00644	male			Bedouin		Middle East (HGDP)	BedouinHGDP	Human Genome Diversity Project
+HGDP00649	female			Bedouin		Middle East (HGDP)	BedouinHGDP	Human Genome Diversity Project
+HGDP00651	female			Bedouin		Middle East (HGDP)	BedouinHGDP	Human Genome Diversity Project
+HGDP00663	female			Bougainville		Oceania (HGDP)	BougainvilleHGDP	Human Genome Diversity Project
+HGDP00512	male			French		Europe (HGDP)	FrenchHGDP	Human Genome Diversity Project
+HGDP00517	female			French		Europe (HGDP)	FrenchHGDP	Human Genome Diversity Project
+HGDP00524	female			French		Europe (HGDP)	FrenchHGDP	Human Genome Diversity Project
+HGDP00529	female			French		Europe (HGDP)	FrenchHGDP	Human Genome Diversity Project
+HGDP00531	female			French		Europe (HGDP)	FrenchHGDP	Human Genome Diversity Project
+HGDP00536	female			French		Europe (HGDP)	FrenchHGDP	Human Genome Diversity Project
+HGDP00179	male			Sindhi		Central South Asia (HGDP)	SindhiHGDP	Human Genome Diversity Project
+HGDP00618	male			Bedouin		Middle East (HGDP)	BedouinHGDP	Human Genome Diversity Project
+HGDP00181	male			Sindhi		Central South Asia (HGDP)	SindhiHGDP	Human Genome Diversity Project
+HGDP00620	male			Bedouin		Middle East (HGDP)	BedouinHGDP	Human Genome Diversity Project
+HGDP00201	male			Sindhi		Central South Asia (HGDP)	SindhiHGDP	Human Genome Diversity Project
+HGDP00625	male			Bedouin		Middle East (HGDP)	BedouinHGDP	Human Genome Diversity Project
+HGDP00206	female			Sindhi		Central South Asia (HGDP)	SindhiHGDP	Human Genome Diversity Project
+HGDP00632	female			Bedouin		Middle East (HGDP)	BedouinHGDP	Human Genome Diversity Project
+HGDP00213	male			Pathan		Central South Asia (HGDP)	PathanHGDP	HGDP Transcriptome,Human Genome Diversity Project
+HGDP00637	female			Bedouin		Middle East (HGDP)	BedouinHGDP	Human Genome Diversity Project
+HGDP00218	male			Pathan		Central South Asia (HGDP)	PathanHGDP	Human Genome Diversity Project
+HGDP00598	male			Druze		Middle East (HGDP)	DruzeHGDP	Human Genome Diversity Project
+HGDP00143	male			Makrani		Central South Asia (HGDP)	MakraniHGDP	Human Genome Diversity Project
+HGDP00601	female			Druze		Middle East (HGDP)	DruzeHGDP	Human Genome Diversity Project
+HGDP00148	male			Makrani		Central South Asia (HGDP)	MakraniHGDP	Human Genome Diversity Project
+HGDP00606	female			Druze		Middle East (HGDP)	DruzeHGDP	Human Genome Diversity Project
+HGDP00150	male			Makrani		Central South Asia (HGDP)	MakraniHGDP	Human Genome Diversity Project
+HGDP00613	female			Bedouin		Middle East (HGDP)	BedouinHGDP	Human Genome Diversity Project
+HGDP00155	female			Makrani		Central South Asia (HGDP)	MakraniHGDP	Human Genome Diversity Project
+HGDP00459	male			Biaka		Africa (HGDP)	BiakaHGDP	Human Genome Diversity Project
+HGDP00167	male			Sindhi		Central South Asia (HGDP)	SindhiHGDP	Human Genome Diversity Project
+HGDP00466	male			Biaka		Africa (HGDP)	BiakaHGDP	Human Genome Diversity Project
+HGDP00066	male			Balochi		Central South Asia (HGDP)	BalochiHGDP	Human Genome Diversity Project
+HGDP00473	male			Biaka		Africa (HGDP)	BiakaHGDP	Human Genome Diversity Project
+HGDP00078	male			Balochi		Central South Asia (HGDP)	BalochiHGDP	Human Genome Diversity Project
+HGDP00478	male			Mbuti		Africa (HGDP)	MbutiHGDP	Human Genome Diversity Project
+HGDP00080	male			Balochi		Central South Asia (HGDP)	BalochiHGDP	Human Genome Diversity Project
+HGDP00567	female			Druze		Middle East (HGDP)	DruzeHGDP	Human Genome Diversity Project
+HGDP00092	male			Balochi		Central South Asia (HGDP)	BalochiHGDP	Human Genome Diversity Project
+HGDP00574	female			Druze		Middle East (HGDP)	DruzeHGDP	Human Genome Diversity Project
+HGDP00100	male			Hazara		Central South Asia (HGDP)	HazaraHGDP	Human Genome Diversity Project
+HGDP00579	female			Druze		Middle East (HGDP)	DruzeHGDP	Human Genome Diversity Project
+HGDP00105	male			Hazara		Central South Asia (HGDP)	HazaraHGDP	Human Genome Diversity Project
+HGDP00581	female			Druze		Middle East (HGDP)	DruzeHGDP	Human Genome Diversity Project
+HGDP00129	male			Hazara		Central South Asia (HGDP)	HazaraHGDP	Human Genome Diversity Project
+HGDP00586	female			Druze		Middle East (HGDP)	DruzeHGDP	Human Genome Diversity Project
+HGDP00131	male			Makrani		Central South Asia (HGDP)	MakraniHGDP	Human Genome Diversity Project
+HGDP00721	female			Cambodian		East Asia (HGDP)	CambodianHGDP	HGDP Transcriptome,Human Genome Diversity Project
+HGDP00136	male			Makrani		Central South Asia (HGDP)	MakraniHGDP	Human Genome Diversity Project
+HGDP00726	male			Palestinian		Middle East (HGDP)	PalestinianHGDP	Human Genome Diversity Project
+HGDP00023	male			Brahui		Central South Asia (HGDP)	BrahuiHGDP	Human Genome Diversity Project
+HGDP00733	male			Palestinian		Middle East (HGDP)	PalestinianHGDP	Human Genome Diversity Project
+HGDP00035	male			Brahui		Central South Asia (HGDP)	BrahuiHGDP	Human Genome Diversity Project
+HGDP00738	female			Palestinian		Middle East (HGDP)	PalestinianHGDP	Human Genome Diversity Project
+HGDP00047	male			Brahui		Central South Asia (HGDP)	BrahuiHGDP	Human Genome Diversity Project
+HGDP00740	female			Palestinian		Middle East (HGDP)	PalestinianHGDP	Human Genome Diversity Project
+HGDP00054	male			Balochi		Central South Asia (HGDP)	BalochiHGDP	Human Genome Diversity Project
+HGDP00745	female			Palestinian		Middle East (HGDP)	PalestinianHGDP	Human Genome Diversity Project
+HGDP00542	male			Papuan Sepik		Oceania (HGDP)	PapuanSepikHGDP	Human Genome Diversity Project
+HGDP00776	female			Han		East Asia (HGDP)	HanHGDP	Human Genome Diversity Project
+HGDP00547	male			Papuan,Papuan Sepik		Oceania (SGDP),Oceania (HGDP)	PapuanSGDP,PapuanSepikHGDP	Simons Genome Diversity Project,Human Genome Diversity Project
+HGDP00788	male			Bougainville		Oceania (HGDP)	BougainvilleHGDP	Human Genome Diversity Project
+HGDP00559	female			Druze		Middle East (HGDP)	DruzeHGDP	Human Genome Diversity Project
+HGDP00790	male			Japanese		East Asia (HGDP)	JapaneseHGDP	Human Genome Diversity Project
+HGDP00561	female			Druze		Middle East (HGDP)	DruzeHGDP	Human Genome Diversity Project
+HGDP00795	male			Orcadian		Europe (HGDP)	OrcadianHGDP	Human Genome Diversity Project
+HGDP00364	male			Burusho		Central South Asia (HGDP)	BurushoHGDP	Human Genome Diversity Project
+HGDP00803	male			Orcadian		Europe (HGDP)	OrcadianHGDP	Human Genome Diversity Project
+HGDP00371	female			Burusho		Central South Asia (HGDP)	BurushoHGDP	Human Genome Diversity Project
+HGDP00877	male			Maya		America (HGDP)	MayaHGDP	HGDP Transcriptome,Human Genome Diversity Project
+HGDP00376	male			Burusho		Central South Asia (HGDP)	BurushoHGDP	Human Genome Diversity Project
+HGDP00884	female			Russian		Europe (HGDP)	RussianHGDP	Human Genome Diversity Project
+HGDP00388	male			Burusho		Central South Asia (HGDP)	BurushoHGDP	Human Genome Diversity Project
+HGDP00889	female			Russian		Europe (HGDP)	RussianHGDP	Human Genome Diversity Project
+HGDP00453	male			Biaka		Africa (HGDP)	BiakaHGDP	Human Genome Diversity Project
+HGDP00891	male			Russian		Europe (HGDP)	RussianHGDP	Human Genome Diversity Project
+HGDP00458	male			Biaka		Africa (HGDP)	BiakaHGDP	Human Genome Diversity Project
+HGDP00896	male			Russian		Europe (HGDP)	RussianHGDP	Human Genome Diversity Project
+HGDP00460	male			Biaka		Africa (HGDP)	BiakaHGDP	Human Genome Diversity Project
+HGDP00954	male			Yakut		East Asia (HGDP)	YakutHGDP	Human Genome Diversity Project
+HGDP00465	male			Biaka		Africa (HGDP)	BiakaHGDP	Human Genome Diversity Project
+HGDP00959	female			Yakut		East Asia (HGDP)	YakutHGDP	HGDP Transcriptome,Human Genome Diversity Project
+HGDP00472	male			Biaka		Africa (HGDP)	BiakaHGDP	Human Genome Diversity Project
+HGDP00961	male			Yakut		East Asia (HGDP)	YakutHGDP	Human Genome Diversity Project
+HGDP00491	male			Bougainville		Oceania (HGDP)	BougainvilleHGDP	Human Genome Diversity Project
+HGDP00966	female			Yakut		East Asia (HGDP)	YakutHGDP	Human Genome Diversity Project
+HGDP00302	male			Kalash		Central South Asia (HGDP)	KalashHGDP	Human Genome Diversity Project
+HGDP00973	male			Han		East Asia (HGDP)	HanHGDP	Human Genome Diversity Project
+HGDP00307	male			Kalash		Central South Asia (HGDP)	KalashHGDP	Human Genome Diversity Project
+HGDP00930	male			Yoruba		Africa (HGDP)	YorubaHGDP	Human Genome Diversity Project
+HGDP00319	male			Kalash		Central South Asia (HGDP)	KalashHGDP	Human Genome Diversity Project
+HGDP00935	female			Yoruba		Africa (HGDP)	YorubaHGDP	Human Genome Diversity Project
+HGDP00321	male			Kalash		Central South Asia (HGDP)	KalashHGDP	Human Genome Diversity Project
+HGDP00942	male			Yoruba		Africa (HGDP)	YorubaHGDP	Human Genome Diversity Project
+HGDP00326	male			Kalash		Central South Asia (HGDP)	KalashHGDP	Human Genome Diversity Project
+HGDP00947	male			Yakut		East Asia (HGDP)	YakutHGDP	Human Genome Diversity Project
+HGDP00333	male			Kalash		Central South Asia (HGDP)	KalashHGDP	Human Genome Diversity Project
+HGDP00858	female			Maya		America (HGDP)	MayaHGDP	HGDP Transcriptome,Human Genome Diversity Project
+HGDP00237	female			Pathan		Central South Asia (HGDP)	PathanHGDP	HGDP Transcriptome,Human Genome Diversity Project
+HGDP00860	female			Maya		America (HGDP)	MayaHGDP	Human Genome Diversity Project
+HGDP00244	female			Pathan		Central South Asia (HGDP)	PathanHGDP	Human Genome Diversity Project
+HGDP00865	female			Maya		America (HGDP)	MayaHGDP	Human Genome Diversity Project
+HGDP00251	male			Pathan		Central South Asia (HGDP)	PathanHGDP	Human Genome Diversity Project
+HGDP00872	female			Maya		America (HGDP)	MayaHGDP	Human Genome Diversity Project
+HGDP00566	female			Druze		Middle East (HGDP)	DruzeHGDP	Human Genome Diversity Project
+HGDP00752	male			Japanese		East Asia (HGDP)	JapaneseHGDP	Human Genome Diversity Project
+HGDP00573	female			Druze		Middle East (HGDP)	DruzeHGDP	Human Genome Diversity Project
+HGDP00757	male			Japanese		East Asia (HGDP)	JapaneseHGDP	Human Genome Diversity Project
+HGDP00578	female			Druze		Middle East (HGDP)	DruzeHGDP	Human Genome Diversity Project
+HGDP00764	male			Japanese		East Asia (HGDP)	JapaneseHGDP	Human Genome Diversity Project
+HGDP00580	male			Druze		Middle East (HGDP)	DruzeHGDP	Human Genome Diversity Project
+HGDP00769	male			Japanese		East Asia (HGDP)	JapaneseHGDP	Human Genome Diversity Project
+HGDP00511	male			French		Europe (HGDP)	FrenchHGDP	Human Genome Diversity Project
+HGDP00771	female			Japanese		East Asia (HGDP)	JapaneseHGDP	Human Genome Diversity Project
+HGDP00516	female			French		Europe (HGDP)	FrenchHGDP	Human Genome Diversity Project
+HGDP00808	male			Orcadian		Europe (HGDP)	OrcadianHGDP	Human Genome Diversity Project
+HGDP00523	female			French		Europe (HGDP)	FrenchHGDP	Human Genome Diversity Project
+HGDP00810	male			Orcadian		Europe (HGDP)	OrcadianHGDP	Human Genome Diversity Project
+HGDP00528	male			French		Europe (HGDP)	FrenchHGDP	Human Genome Diversity Project
+HGDP00815	male			Han		East Asia (HGDP)	HanHGDP	Human Genome Diversity Project
+HGDP00535	female			French		Europe (HGDP)	FrenchHGDP	Human Genome Diversity Project
+HGDP00822	male			Han		East Asia (HGDP)	HanHGDP	Human Genome Diversity Project
+HGDP00624	male			Bedouin		Middle East (HGDP)	BedouinHGDP	Human Genome Diversity Project
+HGDP00904	male			Mandenka		Africa (HGDP)	MandenkaHGDP	Human Genome Diversity Project
+HGDP00629	male			Bedouin		Middle East (HGDP)	BedouinHGDP	Human Genome Diversity Project
+HGDP00909	female			Mandenka		Africa (HGDP)	MandenkaHGDP	Human Genome Diversity Project
+HGDP00631	male			Bedouin		Middle East (HGDP)	BedouinHGDP	Human Genome Diversity Project
+HGDP00911	male			Mandenka		Africa (HGDP)	MandenkaHGDP	Human Genome Diversity Project
+HGDP00636	female			Bedouin		Middle East (HGDP)	BedouinHGDP	Human Genome Diversity Project
+HGDP00916	female			Mandenka		Africa (HGDP)	MandenkaHGDP	Human Genome Diversity Project
+HGDP00600	male			Druze		Middle East (HGDP)	DruzeHGDP	Human Genome Diversity Project
+HGDP01104	male			Tujia		East Asia (HGDP)	TujiaHGDP	Human Genome Diversity Project
+HGDP00612	female			Bedouin		Middle East (HGDP)	BedouinHGDP	Human Genome Diversity Project
+HGDP01161	male			Tuscan		Europe (HGDP)	TuscanHGDP	Human Genome Diversity Project
+HGDP00643	female			Bedouin		Middle East (HGDP)	BedouinHGDP	Human Genome Diversity Project
+HGDP01166	male			Tuscan		Europe (HGDP)	TuscanHGDP	Human Genome Diversity Project
+HGDP00648	male			Bedouin		Middle East (HGDP)	BedouinHGDP	Human Genome Diversity Project
+HGDP01173	male			Bergamo Italian		Europe (HGDP)	BergamoItalianHGDP	Human Genome Diversity Project
+HGDP00655	male			Bougainville		Oceania (HGDP)	BougainvilleHGDP	Human Genome Diversity Project
+HGDP01180	male			Yi		East Asia (HGDP)	YiHGDP	Human Genome Diversity Project
+HGDP00662	male			Bougainville		Oceania (HGDP)	BougainvilleHGDP	Human Genome Diversity Project
+HGDP00985	male			Biaka		Africa (HGDP)	BiakaHGDP	Human Genome Diversity Project
+HGDP00667	female			Sardinian		Europe (HGDP)	SardinianHGDP	Human Genome Diversity Project
+HGDP00992	male			San		Africa (HGDP)	SanHGDP	HGDP Transcriptome,Human Genome Diversity Project
+HGDP00782	male			Han		East Asia (HGDP)	HanHGDP	Human Genome Diversity Project
+HGDP01010	female			Karitiana		America (HGDP)	KaritianaHGDP	Human Genome Diversity Project
+HGDP00787	female			Bougainville		Oceania (HGDP)	BougainvilleHGDP	Human Genome Diversity Project
+HGDP01205	male			Oroqen		East Asia (HGDP)	OroqenHGDP	Human Genome Diversity Project
+HGDP00794	female			Orcadian		Europe (HGDP)	OrcadianHGDP	Human Genome Diversity Project
+HGDP01212	female			Oroqen		East Asia (HGDP)	OroqenHGDP	Human Genome Diversity Project
+HGDP00799	female			Orcadian		Europe (HGDP)	OrcadianHGDP	Human Genome Diversity Project
+HGDP01217	male			Daur		East Asia (HGDP)	DaurHGDP	Human Genome Diversity Project
+HGDP00802	female			Orcadian		Europe (HGDP)	OrcadianHGDP	Human Genome Diversity Project
+HGDP01224	male			Mongolian		East Asia (HGDP)	MongolianHGDP	Human Genome Diversity Project
+HGDP00720	male			Cambodian		East Asia (HGDP)	CambodianHGDP	HGDP Transcriptome,Human Genome Diversity Project
+HGDP01229	male			Mongolian		East Asia (HGDP)	MongolianHGDP	Human Genome Diversity Project
+HGDP00732	male			Palestinian		Middle East (HGDP)	PalestinianHGDP	Human Genome Diversity Project
+HGDP01231	female			Mongolian		East Asia (HGDP)	MongolianHGDP	Human Genome Diversity Project
+HGDP00744	female			Palestinian		Middle East (HGDP)	PalestinianHGDP	Human Genome Diversity Project
+HGDP01236	male			Hezhen		East Asia (HGDP)	HezhenHGDP	Human Genome Diversity Project
+HGDP00807	male			Orcadian		Europe (HGDP)	OrcadianHGDP	Human Genome Diversity Project
+HGDP01243	male			Xibo		East Asia (HGDP)	XiboHGDP	Human Genome Diversity Project
+HGDP00814	female			Han		East Asia (HGDP)	HanHGDP	Human Genome Diversity Project
+HGDP01248	male			Xibo		East Asia (HGDP)	XiboHGDP	Human Genome Diversity Project
+HGDP00819	male			Han		East Asia (HGDP)	HanHGDP	Human Genome Diversity Project
+HGDP01255	male			Mozabite		Middle East (HGDP)	MozabiteHGDP	Human Genome Diversity Project
+HGDP00821	male			Han		East Asia (HGDP)	HanHGDP	Human Genome Diversity Project
+HGDP01185	male			Yi		East Asia (HGDP)	YiHGDP	Human Genome Diversity Project
+HGDP00838	female			Surui		America (HGDP)	SuruiHGDP	Human Genome Diversity Project
+HGDP01192	male			Miao		East Asia (HGDP)	MiaoHGDP	Human Genome Diversity Project
+HGDP00876	female			Maya		America (HGDP)	MayaHGDP	Human Genome Diversity Project
+HGDP01197	female			Miao		East Asia (HGDP)	MiaoHGDP	Human Genome Diversity Project
+HGDP00883	male			Russian		Europe (HGDP)	RussianHGDP	Human Genome Diversity Project
+HGDP01200	male			Mandenka		Africa (HGDP)	MandenkaHGDP	Human Genome Diversity Project
+HGDP00888	male			Russian		Europe (HGDP)	RussianHGDP	Human Genome Diversity Project
+HGDP01027	female			Bougainville		Oceania (HGDP)	BougainvilleHGDP	Human Genome Diversity Project
+HGDP00890	male			Russian		Europe (HGDP)	RussianHGDP	Human Genome Diversity Project
+HGDP01041	female			Pima		America (HGDP)	PimaHGDP	Human Genome Diversity Project
+HGDP00895	male			Russian		Europe (HGDP)	RussianHGDP	Human Genome Diversity Project
+HGDP01053	female			Pima		America (HGDP)	PimaHGDP	Human Genome Diversity Project
+HGDP00674	male			Sardinian		Europe (HGDP)	SardinianHGDP	Human Genome Diversity Project
+HGDP01058	female			Pima		America (HGDP)	PimaHGDP	Human Genome Diversity Project
+HGDP00679	female			Palestinian		Middle East (HGDP)	PalestinianHGDP	Human Genome Diversity Project
+HGDP01060	male			Pima		America (HGDP)	PimaHGDP	Human Genome Diversity Project
+HGDP00686	female			Palestinian		Middle East (HGDP)	PalestinianHGDP	Human Genome Diversity Project
+HGDP01065	female			Sardinian		Europe (HGDP)	SardinianHGDP	Human Genome Diversity Project
+HGDP00845	male			Surui		America (HGDP)	SuruiHGDP	Human Genome Diversity Project
+HGDP01072	female			Sardinian		Europe (HGDP)	SardinianHGDP	Human Genome Diversity Project
+HGDP00864	female			Maya		America (HGDP)	MayaHGDP	Human Genome Diversity Project
+HGDP01077	male			Sardinian		Europe (HGDP)	SardinianHGDP	Human Genome Diversity Project
+HGDP00869	female			Maya		America (HGDP)	MayaHGDP	Human Genome Diversity Project
+HGDP01096	male			Tujia		East Asia (HGDP)	TujiaHGDP	Human Genome Diversity Project
+HGDP00871	female			Maya		America (HGDP)	MayaHGDP	Human Genome Diversity Project
+HGDP01293	male			Northern Han		East Asia (HGDP)	NorthernHanHGDP	Human Genome Diversity Project
+HGDP00693	female			Palestinian		Middle East (HGDP)	PalestinianHGDP	Human Genome Diversity Project
+HGDP01298	male			Uygur		Central South Asia (HGDP)	UygurHGDP	Human Genome Diversity Project
+HGDP00698	female			Palestinian		Middle East (HGDP)	PalestinianHGDP	Human Genome Diversity Project
+HGDP01301	male			Uygur		Central South Asia (HGDP)	UygurHGDP	Human Genome Diversity Project
+HGDP00701	female			Bedouin		Middle East (HGDP)	BedouinHGDP	Human Genome Diversity Project
+HGDP01262	male			Mozabite		Middle East (HGDP)	MozabiteHGDP	HGDP Transcriptome,Human Genome Diversity Project
+HGDP00751	male			Japanese		East Asia (HGDP)	JapaneseHGDP	Human Genome Diversity Project
+HGDP01267	female			Mozabite		Middle East (HGDP)	MozabiteHGDP	Human Genome Diversity Project
+HGDP00756	female			Japanese		East Asia (HGDP)	JapaneseHGDP	Human Genome Diversity Project
+HGDP01279	male			Mozabite		Middle East (HGDP)	MozabiteHGDP	Human Genome Diversity Project
+HGDP00763	male			Japanese		East Asia (HGDP)	JapaneseHGDP	Human Genome Diversity Project
+HGDP00768	male			Japanese		East Asia (HGDP)	JapaneseHGDP	Human Genome Diversity Project
+HGDP00977	male			Han		East Asia (HGDP)	HanHGDP	Human Genome Diversity Project
+HGDP00984	male			Mbuti		Africa (HGDP)	MbutiHGDP	Human Genome Diversity Project
+HGDP01014	female			Karitiana		America (HGDP)	KaritianaHGDP	Human Genome Diversity Project
+HGDP01019	male			Karitiana		America (HGDP)	KaritianaHGDP	Human Genome Diversity Project
+HGDP01064	female			Sardinian		Europe (HGDP)	SardinianHGDP	Human Genome Diversity Project
+HGDP01069	male			Sardinian		Europe (HGDP)	SardinianHGDP	Human Genome Diversity Project
+HGDP01071	male			Sardinian		Europe (HGDP)	SardinianHGDP	Human Genome Diversity Project
+HGDP01090	male			Biaka		Africa (HGDP)	BiakaHGDP	Human Genome Diversity Project
+HGDP01021	female			Han		East Asia (HGDP)	HanHGDP	Human Genome Diversity Project
+HGDP01033	male			Bantu South Africa		Africa (HGDP)	BantuSouthAfricaHGDP	Human Genome Diversity Project
+HGDP01057	male			Pima		America (HGDP)	PimaHGDP	Human Genome Diversity Project
+HGDP01419	male			Bantu Kenya		Africa (HGDP)	BantuKenyaHGDP	Human Genome Diversity Project
+HGDP00934	female			Yoruba		Africa (HGDP)	YorubaHGDP	Human Genome Diversity Project
+HGDP00939	female			Yoruba		Africa (HGDP)	YorubaHGDP	Human Genome Diversity Project
+HGDP00941	male			Yoruba		Africa (HGDP)	YorubaHGDP	Human Genome Diversity Project
+HGDP00946	male			Yakut		East Asia (HGDP)	YakutHGDP	Human Genome Diversity Project
+HGDP01184	male			Yi		East Asia (HGDP)	YiHGDP	Human Genome Diversity Project
+HGDP01189	male			Miao		East Asia (HGDP)	MiaoHGDP	Human Genome Diversity Project
+HGDP01196	female			Miao		East Asia (HGDP)	MiaoHGDP	Human Genome Diversity Project
+HGDP01204	male			Oroqen		East Asia (HGDP)	OroqenHGDP	Human Genome Diversity Project
+HGDP00953	male			Yakut		East Asia (HGDP)	YakutHGDP	Human Genome Diversity Project
+HGDP00958	male			Yakut		East Asia (HGDP)	YakutHGDP	Human Genome Diversity Project
+HGDP00960	male			Yakut		East Asia (HGDP)	YakutHGDP	Human Genome Diversity Project
+HGDP00965	male			Yakut		East Asia (HGDP)	YakutHGDP	Human Genome Diversity Project
+HGDP00972	female			Han		East Asia (HGDP)	HanHGDP	Human Genome Diversity Project
+HGDP01349	male			Tu		East Asia (HGDP)	TuHGDP	Human Genome Diversity Project
+HGDP01209	female			Oroqen		East Asia (HGDP)	OroqenHGDP	Human Genome Diversity Project
+HGDP01351	male			Tu		East Asia (HGDP)	TuHGDP	Human Genome Diversity Project
+HGDP01216	male			Daur		East Asia (HGDP)	DaurHGDP	Human Genome Diversity Project
+HGDP01356	female			Tu		East Asia (HGDP)	TuHGDP	Human Genome Diversity Project
+HGDP01230	male			Mongolian		East Asia (HGDP)	MongolianHGDP	Human Genome Diversity Project
+HGDP01363	female			Basque		Europe (HGDP)	BasqueHGDP	Human Genome Diversity Project
+HGDP01103	male			Tujia		East Asia (HGDP)	TujiaHGDP	Human Genome Diversity Project
+HGDP01368	female			Basque		Europe (HGDP)	BasqueHGDP	Human Genome Diversity Project
+HGDP01177	female			Bergamo Italian		Europe (HGDP)	BergamoItalianHGDP	Human Genome Diversity Project
+HGDP01370	male			Basque		Europe (HGDP)	BasqueHGDP	Human Genome Diversity Project
+HGDP00908	male			Mandenka		Africa (HGDP)	MandenkaHGDP	Human Genome Diversity Project
+HGDP01375	male			Basque		Europe (HGDP)	BasqueHGDP	Human Genome Diversity Project
+HGDP00910	female			Mandenka		Africa (HGDP)	MandenkaHGDP	Human Genome Diversity Project
+HGDP01382	female			Adygei		Europe (HGDP)	AdygeiHGDP	Human Genome Diversity Project
+HGDP01406	male			Bantu Kenya		Africa (HGDP)	BantuKenyaHGDP	Human Genome Diversity Project
+HGDP01387	female			Adygei		Europe (HGDP)	AdygeiHGDP	Human Genome Diversity Project
+HGDP01413	male			Bantu Kenya		Africa (HGDP)	BantuKenyaHGDP	Human Genome Diversity Project
+HGDP01399	female			Adygei		Europe (HGDP)	AdygeiHGDP	Human Genome Diversity Project
+HGDP01418	male			Bantu Kenya		Africa (HGDP)	BantuKenyaHGDP	Human Genome Diversity Project
+HGDP01313	male			Dai		East Asia (HGDP)	DaiHGDP	Human Genome Diversity Project
+HGDP01318	male			Lahu		East Asia (HGDP)	LahuHGDP	Human Genome Diversity Project
+HGDP01332	male			She		East Asia (HGDP)	SheHGDP	Human Genome Diversity Project
+HGDP01337	male			Naxi		East Asia (HGDP)	NaxiHGDP	Human Genome Diversity Project
+HGDP01285	male			Mandenka		Africa (HGDP)	MandenkaHGDP	Human Genome Diversity Project
+HGDP01292	male			Northern Han		East Asia (HGDP)	NorthernHanHGDP	Human Genome Diversity Project
+HGDP01300	male			Uygur		Central South Asia (HGDP)	UygurHGDP	Human Genome Diversity Project
+HGDP01305	female			Uygur		Central South Asia (HGDP)	UygurHGDP	Human Genome Diversity Project
+HGDP01259	male			Mozabite		Middle East (HGDP)	MozabiteHGDP	HGDP Transcriptome,Human Genome Diversity Project
+HGDP01261	male			Mozabite		Middle East (HGDP)	MozabiteHGDP	Human Genome Diversity Project
+HGDP01266	male			Mozabite		Middle East (HGDP)	MozabiteHGDP	Human Genome Diversity Project
+HGDP01273	female			Mozabite		Middle East (HGDP)	MozabiteHGDP	Human Genome Diversity Project
+HGDP01280	female			Mozabite		Middle East (HGDP)	MozabiteHGDP	Human Genome Diversity Project
+HGDP01374	male			Basque		Europe (HGDP)	BasqueHGDP	Human Genome Diversity Project
+HGDP01379	male			Basque		Europe (HGDP)	BasqueHGDP	Human Genome Diversity Project
+HGDP01381	female			Adygei		Europe (HGDP)	AdygeiHGDP	Human Genome Diversity Project
+HGDP01386	female			Adygei		Europe (HGDP)	AdygeiHGDP	Human Genome Diversity Project
+HGDP01398	female			Adygei		Europe (HGDP)	AdygeiHGDP	Human Genome Diversity Project
+HGDP01317	male			Lahu		East Asia (HGDP)	LahuHGDP	Human Genome Diversity Project
+HGDP01329	male			She		East Asia (HGDP)	SheHGDP	Human Genome Diversity Project
+HGDP01331	male			She		East Asia (HGDP)	SheHGDP	Human Genome Diversity Project
+HGDP01336	female			She		East Asia (HGDP)	SheHGDP	Human Genome Diversity Project
+HGDP01348	male			Tu		East Asia (HGDP)	TuHGDP	Human Genome Diversity Project
+HGDP01362	male			Basque		Europe (HGDP)	BasqueHGDP	Human Genome Diversity Project
+HGDP01367	female			Basque		Europe (HGDP)	BasqueHGDP	Human Genome Diversity Project
+HGDP01247	male			Xibo		East Asia (HGDP)	XiboHGDP	Human Genome Diversity Project
+HGDP01254	female			Mozabite		Middle East (HGDP)	MozabiteHGDP	Human Genome Diversity Project
+HGDP00001	male			Brahui		Central South Asia (HGDP)	BrahuiHGDP	Human Genome Diversity Project
+HGDP00013	male			Brahui		Central South Asia (HGDP)	BrahuiHGDP	Human Genome Diversity Project
+HGDP00025	male			Brahui		Central South Asia (HGDP)	BrahuiHGDP	Human Genome Diversity Project
+HGDP00082	male			Balochi		Central South Asia (HGDP)	BalochiHGDP	Human Genome Diversity Project
+HGDP00094	male			Balochi		Central South Asia (HGDP)	BalochiHGDP	Human Genome Diversity Project
+HGDP00099	male			Hazara		Central South Asia (HGDP)	HazaraHGDP	Human Genome Diversity Project
+HGDP00003	male			Brahui		Central South Asia (HGDP)	BrahuiHGDP	Human Genome Diversity Project
+HGDP00102	male			Hazara		Central South Asia (HGDP)	HazaraHGDP	Human Genome Diversity Project
+HGDP00119	male			Hazara		Central South Asia (HGDP)	HazaraHGDP	Human Genome Diversity Project
+HGDP00121	male			Hazara		Central South Asia (HGDP)	HazaraHGDP	Human Genome Diversity Project
+HGDP00037	male			Brahui		Central South Asia (HGDP)	BrahuiHGDP	Human Genome Diversity Project
+HGDP00049	male			Brahui		Central South Asia (HGDP)	BrahuiHGDP	Human Genome Diversity Project
+HGDP00056	male			Balochi		Central South Asia (HGDP)	BalochiHGDP	Human Genome Diversity Project
+HGDP00068	male			Balochi		Central South Asia (HGDP)	BalochiHGDP	Human Genome Diversity Project
+HGDP00070	male			Balochi		Central South Asia (HGDP)	BalochiHGDP	Human Genome Diversity Project
+HGDP00525	male			French		Europe (HGDP)	FrenchHGDP	Human Genome Diversity Project
+HGDP00537	female			French		Europe (HGDP)	FrenchHGDP	Human Genome Diversity Project
+HGDP00544	female			Papuan Sepik		Oceania (HGDP)	PapuanSepikHGDP	Human Genome Diversity Project
+HGDP00549	male			Papuan,Papuan Highlands		Oceania (SGDP),Oceania (HGDP)	PapuanSGDP,PapuanHighlandsHGDP	Simons Genome Diversity Project,Human Genome Diversity Project
+HGDP00551	male			Papuan,Papuan Highlands		Oceania (SGDP),Oceania (HGDP)	PapuanSGDP,PapuanHighlandsHGDP	Simons Genome Diversity Project,Human Genome Diversity Project
+HGDP00556	male			Papuan,Papuan Highlands		Oceania (SGDP),Oceania (HGDP)	PapuanSGDP,PapuanHighlandsHGDP	Simons Genome Diversity Project,Human Genome Diversity Project
+HGDP00563	female			Druze		Middle East (HGDP)	DruzeHGDP	Human Genome Diversity Project
+HGDP00568	female			Druze		Middle East (HGDP)	DruzeHGDP	Human Genome Diversity Project
+HGDP00412	male			Burusho		Central South Asia (HGDP)	BurushoHGDP	Human Genome Diversity Project
+HGDP00417	male			Burusho		Central South Asia (HGDP)	BurushoHGDP	Human Genome Diversity Project
+HGDP00450	male			Mbuti		Africa (HGDP)	MbutiHGDP	Human Genome Diversity Project
+HGDP00455	male			Biaka		Africa (HGDP)	BiakaHGDP	Human Genome Diversity Project
+HGDP00462	male			Mbuti		Africa (HGDP)	MbutiHGDP	HGDP Transcriptome,Human Genome Diversity Project
+HGDP00467	male			Mbuti		Africa (HGDP)	MbutiHGDP	HGDP Transcriptome,Human Genome Diversity Project
+HGDP00210	female			Sindhi		Central South Asia (HGDP)	SindhiHGDP	Human Genome Diversity Project
+HGDP00222	male			Pathan		Central South Asia (HGDP)	PathanHGDP	HGDP Transcriptome,Human Genome Diversity Project
+HGDP00234	male			Pathan		Central South Asia (HGDP)	PathanHGDP	Human Genome Diversity Project
+HGDP00239	female			Pathan		Central South Asia (HGDP)	PathanHGDP	HGDP Transcriptome,Human Genome Diversity Project
+HGDP00241	male			Pathan		Central South Asia (HGDP)	PathanHGDP	Human Genome Diversity Project
+HGDP00258	male			Pathan		Central South Asia (HGDP)	PathanHGDP	HGDP Transcriptome,Human Genome Diversity Project
+HGDP00277	male			Kalash		Central South Asia (HGDP)	KalashHGDP	Human Genome Diversity Project
+HGDP00304	female			Kalash		Central South Asia (HGDP)	KalashHGDP	Human Genome Diversity Project
+HGDP00309	male			Kalash		Central South Asia (HGDP)	KalashHGDP	Human Genome Diversity Project
+HGDP00311	male			Kalash		Central South Asia (HGDP)	KalashHGDP	Human Genome Diversity Project
+HGDP00323	female			Kalash		Central South Asia (HGDP)	KalashHGDP	Human Genome Diversity Project
+HGDP00330	male			Kalash		Central South Asia (HGDP)	KalashHGDP	Human Genome Diversity Project
+HGDP00359	male			Burusho		Central South Asia (HGDP)	BurushoHGDP	Human Genome Diversity Project
+HGDP00015	male			Brahui		Central South Asia (HGDP)	BrahuiHGDP	Human Genome Diversity Project
+HGDP00392	male			Burusho		Central South Asia (HGDP)	BurushoHGDP	Human Genome Diversity Project
+HGDP00039	male			Brahui		Central South Asia (HGDP)	BrahuiHGDP	Human Genome Diversity Project
+HGDP00397	male			Burusho		Central South Asia (HGDP)	BurushoHGDP	Human Genome Diversity Project
+HGDP00041	male			Brahui		Central South Asia (HGDP)	BrahuiHGDP	Human Genome Diversity Project
+HGDP00479	male			Biaka		Africa (HGDP)	BiakaHGDP	Human Genome Diversity Project
+HGDP00060	male			Balochi		Central South Asia (HGDP)	BalochiHGDP	Human Genome Diversity Project
+HGDP00513	female			French		Europe (HGDP)	FrenchHGDP	Human Genome Diversity Project
+HGDP00382	male			Burusho		Central South Asia (HGDP)	BurushoHGDP	Human Genome Diversity Project
+HGDP00518	male			French		Europe (HGDP)	FrenchHGDP	Human Genome Diversity Project
+HGDP00402	male			Burusho		Central South Asia (HGDP)	BurushoHGDP	Human Genome Diversity Project
+HGDP00520	female			French		Europe (HGDP)	FrenchHGDP	Human Genome Diversity Project
+HGDP00407	male			Burusho		Central South Asia (HGDP)	BurushoHGDP	Human Genome Diversity Project
+HGDP00133	male			Makrani		Central South Asia (HGDP)	MakraniHGDP	Human Genome Diversity Project
+HGDP00433	male			Burusho		Central South Asia (HGDP)	BurushoHGDP	Human Genome Diversity Project
+HGDP00140	male			Makrani		Central South Asia (HGDP)	MakraniHGDP	Human Genome Diversity Project
+HGDP00438	male			Burusho		Central South Asia (HGDP)	BurushoHGDP	Human Genome Diversity Project
+HGDP00145	male			Makrani		Central South Asia (HGDP)	MakraniHGDP	Human Genome Diversity Project
+HGDP00445	male			Burusho		Central South Asia (HGDP)	BurushoHGDP	Human Genome Diversity Project
+HGDP00169	male			Sindhi		Central South Asia (HGDP)	SindhiHGDP	Human Genome Diversity Project
+HGDP00452	male			Biaka		Africa (HGDP)	BiakaHGDP	Human Genome Diversity Project
+HGDP00171	male			Sindhi		Central South Asia (HGDP)	SindhiHGDP	Human Genome Diversity Project
+HGDP00464	male			Biaka		Africa (HGDP)	BiakaHGDP	Human Genome Diversity Project
+HGDP00183	male			Sindhi		Central South Asia (HGDP)	SindhiHGDP	Human Genome Diversity Project
+HGDP00469	male			Biaka		Africa (HGDP)	BiakaHGDP	Human Genome Diversity Project
+HGDP00703	male			Colombian		America (HGDP)	ColombianHGDP	Human Genome Diversity Project
+HGDP00471	female			Mbuti		Africa (HGDP)	MbutiHGDP	HGDP Transcriptome,Human Genome Diversity Project
+HGDP00708	female			Colombian		America (HGDP)	ColombianHGDP	Human Genome Diversity Project
+HGDP00490	male			Bougainville		Oceania (HGDP)	BougainvilleHGDP	Human Genome Diversity Project
+HGDP00710	male			Colombian		America (HGDP)	ColombianHGDP	Human Genome Diversity Project
+HGDP00224	male			Pathan		Central South Asia (HGDP)	PathanHGDP	Human Genome Diversity Project
+HGDP00715	male			Cambodian		East Asia (HGDP)	CambodianHGDP	HGDP Transcriptome,Human Genome Diversity Project
+HGDP00243	male			Pathan		Central South Asia (HGDP)	PathanHGDP	Human Genome Diversity Project
+HGDP00727	male			Palestinian		Middle East (HGDP)	PalestinianHGDP	Human Genome Diversity Project
+HGDP00248	male			Pathan		Central South Asia (HGDP)	PathanHGDP	Human Genome Diversity Project
+HGDP00734	male			Palestinian		Middle East (HGDP)	PalestinianHGDP	Human Genome Diversity Project
+HGDP00262	male			Pathan		Central South Asia (HGDP)	PathanHGDP	Human Genome Diversity Project
+HGDP00739	female			Palestinian		Middle East (HGDP)	PalestinianHGDP	Human Genome Diversity Project
+HGDP00274	female			Kalash		Central South Asia (HGDP)	KalashHGDP	Human Genome Diversity Project
+HGDP00741	female			Palestinian		Middle East (HGDP)	PalestinianHGDP	Human Genome Diversity Project
+HGDP00279	male			Kalash		Central South Asia (HGDP)	KalashHGDP	Human Genome Diversity Project
+HGDP00746	female			Palestinian		Middle East (HGDP)	PalestinianHGDP	Human Genome Diversity Project
+HGDP00281	male			Kalash		Central South Asia (HGDP)	KalashHGDP	Human Genome Diversity Project
+HGDP00753	male			Japanese		East Asia (HGDP)	JapaneseHGDP	Human Genome Diversity Project
+HGDP00298	female			Kalash		Central South Asia (HGDP)	KalashHGDP	Human Genome Diversity Project
+HGDP00758	male			Japanese		East Asia (HGDP)	JapaneseHGDP	Human Genome Diversity Project
+HGDP00313	male			Kalash		Central South Asia (HGDP)	KalashHGDP	Human Genome Diversity Project
+HGDP00664	female			Bougainville		Oceania (HGDP)	BougainvilleHGDP	Human Genome Diversity Project
+HGDP00351	male			Burusho		Central South Asia (HGDP)	BurushoHGDP	Human Genome Diversity Project
+HGDP00669	female			Sardinian		Europe (HGDP)	SardinianHGDP	Human Genome Diversity Project
+HGDP00356	female			Burusho		Central South Asia (HGDP)	BurushoHGDP	Human Genome Diversity Project
+HGDP00671	male			Sardinian		Europe (HGDP)	SardinianHGDP	Human Genome Diversity Project
+HGDP00109	male			Hazara		Central South Asia (HGDP)	HazaraHGDP	Human Genome Diversity Project
+HGDP00676	male			Palestinian		Middle East (HGDP)	PalestinianHGDP	Human Genome Diversity Project
+HGDP00130	male			Makrani		Central South Asia (HGDP)	MakraniHGDP	Human Genome Diversity Project
+HGDP00575	female			Druze		Middle East (HGDP)	DruzeHGDP	Human Genome Diversity Project
+HGDP00135	male			Makrani		Central South Asia (HGDP)	MakraniHGDP	Human Genome Diversity Project
+HGDP00582	female			Druze		Middle East (HGDP)	DruzeHGDP	Human Genome Diversity Project
+HGDP00185	male			Sindhi		Central South Asia (HGDP)	SindhiHGDP	Human Genome Diversity Project
+HGDP00587	female			Druze		Middle East (HGDP)	DruzeHGDP	Human Genome Diversity Project
+HGDP00192	female			Sindhi		Central South Asia (HGDP)	SindhiHGDP	Human Genome Diversity Project
+HGDP00594	male			Druze		Middle East (HGDP)	DruzeHGDP	Human Genome Diversity Project
+HGDP00197	male			Sindhi		Central South Asia (HGDP)	SindhiHGDP	Human Genome Diversity Project
+HGDP00599	male			Druze		Middle East (HGDP)	DruzeHGDP	Human Genome Diversity Project
+HGDP00205	male			Sindhi		Central South Asia (HGDP)	SindhiHGDP	Human Genome Diversity Project
+HGDP00602	male			Druze		Middle East (HGDP)	DruzeHGDP	Human Genome Diversity Project
+HGDP00072	male			Balochi		Central South Asia (HGDP)	BalochiHGDP	Human Genome Diversity Project
+HGDP00760	female			Japanese		East Asia (HGDP)	JapaneseHGDP	Human Genome Diversity Project
+HGDP00096	male			Balochi		Central South Asia (HGDP)	BalochiHGDP	Human Genome Diversity Project
+HGDP00765	female			Japanese		East Asia (HGDP)	JapaneseHGDP	Human Genome Diversity Project
+HGDP00104	male			Hazara		Central South Asia (HGDP)	HazaraHGDP	Human Genome Diversity Project
+HGDP00772	female			Japanese		East Asia (HGDP)	JapaneseHGDP	Human Genome Diversity Project
+HGDP00154	female			Makrani		Central South Asia (HGDP)	MakraniHGDP	Human Genome Diversity Project
+HGDP00777	male			Han		East Asia (HGDP)	HanHGDP	Human Genome Diversity Project
+HGDP00161	male			Makrani		Central South Asia (HGDP)	MakraniHGDP	Human Genome Diversity Project
+HGDP00784	female			Han		East Asia (HGDP)	HanHGDP	Human Genome Diversity Project
+HGDP00173	male			Sindhi		Central South Asia (HGDP)	SindhiHGDP	Human Genome Diversity Project
+HGDP00607	female			Bedouin		Middle East (HGDP)	BedouinHGDP	Human Genome Diversity Project
+HGDP00515	male			French		Europe (HGDP)	FrenchHGDP	Human Genome Diversity Project
+HGDP00614	female			Bedouin		Middle East (HGDP)	BedouinHGDP	Human Genome Diversity Project
+HGDP00522	male			French		Europe (HGDP)	FrenchHGDP	Human Genome Diversity Project
+HGDP00619	male			Bedouin		Middle East (HGDP)	BedouinHGDP	Human Genome Diversity Project
+HGDP00527	female			French		Europe (HGDP)	FrenchHGDP	Human Genome Diversity Project
+HGDP00621	male			Bedouin		Middle East (HGDP)	BedouinHGDP	Human Genome Diversity Project
+HGDP00534	female			French		Europe (HGDP)	FrenchHGDP	Human Genome Diversity Project
+HGDP00626	male			Bedouin		Middle East (HGDP)	BedouinHGDP	Human Genome Diversity Project
+HGDP00539	female			French		Europe (HGDP)	FrenchHGDP	Human Genome Diversity Project
+HGDP00791	male			Japanese		East Asia (HGDP)	JapaneseHGDP	Human Genome Diversity Project
+HGDP00541	male			Papuan,Papuan Sepik		Oceania (SGDP),Oceania (HGDP)	PapuanSGDP,PapuanSepikHGDP	Simons Genome Diversity Project,Human Genome Diversity Project
+HGDP00804	male			Orcadian		Europe (HGDP)	OrcadianHGDP	Human Genome Diversity Project
+HGDP00546	male			Papuan,Papuan Sepik		Oceania (SGDP),Oceania (HGDP)	PapuanSGDP,PapuanSepikHGDP	Simons Genome Diversity Project,Human Genome Diversity Project
+HGDP00811	female			Han		East Asia (HGDP)	HanHGDP	Human Genome Diversity Project
+HGDP00553	male			Papuan,Papuan Highlands		Oceania (SGDP),Oceania (HGDP)	PapuanSGDP,PapuanHighlandsHGDP	Simons Genome Diversity Project,Human Genome Diversity Project
+HGDP00683	female			Palestinian		Middle East (HGDP)	PalestinianHGDP	Human Genome Diversity Project
+HGDP00558	female			Druze		Middle East (HGDP)	DruzeHGDP	Human Genome Diversity Project
+HGDP00688	female			Palestinian		Middle East (HGDP)	PalestinianHGDP	Human Genome Diversity Project
+HGDP00560	female			Druze		Middle East (HGDP)	DruzeHGDP	Human Genome Diversity Project
+HGDP00690	female			Palestinian		Middle East (HGDP)	PalestinianHGDP	Human Genome Diversity Project
+HGDP00642	male			Bedouin		Middle East (HGDP)	BedouinHGDP	Human Genome Diversity Project
+HGDP00638	female			Bedouin		Middle East (HGDP)	BedouinHGDP	Human Genome Diversity Project
+HGDP00647	female			Bedouin		Middle East (HGDP)	BedouinHGDP	Human Genome Diversity Project
+HGDP00640	male			Bedouin		Middle East (HGDP)	BedouinHGDP	Human Genome Diversity Project
+HGDP00654	male			Bedouin		Middle East (HGDP)	BedouinHGDP	Human Genome Diversity Project
+HGDP00645	male			Bedouin		Middle East (HGDP)	BedouinHGDP	Human Genome Diversity Project
+HGDP00661	female			Bougainville		Oceania (HGDP)	BougainvilleHGDP	Human Genome Diversity Project
+HGDP00967	female			Yakut		East Asia (HGDP)	YakutHGDP	HGDP Transcriptome,Human Genome Diversity Project
+HGDP00666	male			Sardinian		Europe (HGDP)	SardinianHGDP	Human Genome Diversity Project
+HGDP00974	female			Han		East Asia (HGDP)	HanHGDP	Human Genome Diversity Project
+HGDP00692	female			Palestinian		Middle East (HGDP)	PalestinianHGDP	Human Genome Diversity Project
+HGDP00981	male			Biaka		Africa (HGDP)	BiakaHGDP	Human Genome Diversity Project
+HGDP00697	female			Palestinian		Middle East (HGDP)	PalestinianHGDP	Human Genome Diversity Project
+HGDP00986	male			Biaka		Africa (HGDP)	BiakaHGDP	Human Genome Diversity Project
+HGDP00700	female			Palestinian		Middle East (HGDP)	PalestinianHGDP	Human Genome Diversity Project
+HGDP00993	male			Bantu South Africa		Africa (HGDP)	BantuSouthAfricaHGDP	Human Genome Diversity Project
+HGDP00712	female			Cambodian		East Asia (HGDP)	CambodianHGDP	HGDP Transcriptome,Human Genome Diversity Project
+HGDP00823	male			Bougainville		Oceania (HGDP)	BougainvilleHGDP	Human Genome Diversity Project
+HGDP00673	female			Sardinian		Europe (HGDP)	SardinianHGDP	Human Genome Diversity Project
+HGDP00828	male			Japanese		East Asia (HGDP)	JapaneseHGDP	Human Genome Diversity Project
+HGDP00678	male			Palestinian		Middle East (HGDP)	PalestinianHGDP	Human Genome Diversity Project
+HGDP00854	female			Maya		America (HGDP)	MayaHGDP	HGDP Transcriptome,Human Genome Diversity Project
+HGDP00680	female			Palestinian		Middle East (HGDP)	PalestinianHGDP	Human Genome Diversity Project
+HGDP00859	female			Maya		America (HGDP)	MayaHGDP	Human Genome Diversity Project
+HGDP00685	female			Palestinian		Middle East (HGDP)	PalestinianHGDP	Human Genome Diversity Project
+HGDP00861	female			Maya		America (HGDP)	MayaHGDP	Human Genome Diversity Project
+HGDP00591	female			Druze		Middle East (HGDP)	DruzeHGDP	Human Genome Diversity Project
+HGDP00943	male			Yoruba		Africa (HGDP)	YorubaHGDP	Human Genome Diversity Project
+HGDP00604	male			Druze		Middle East (HGDP)	DruzeHGDP	Human Genome Diversity Project
+HGDP00948	male			Yakut		East Asia (HGDP)	YakutHGDP	HGDP Transcriptome,Human Genome Diversity Project
+HGDP00609	male			Bedouin		Middle East (HGDP)	BedouinHGDP	Human Genome Diversity Project
+HGDP00950	male			Yakut		East Asia (HGDP)	YakutHGDP	HGDP Transcriptome,Human Genome Diversity Project
+HGDP00611	male			Bedouin		Middle East (HGDP)	BedouinHGDP	Human Genome Diversity Project
+HGDP00955	female			Yakut		East Asia (HGDP)	YakutHGDP	HGDP Transcriptome,Human Genome Diversity Project
+HGDP00724	male			Palestinian		Middle East (HGDP)	PalestinianHGDP	Human Genome Diversity Project
+HGDP00962	male			Yakut		East Asia (HGDP)	YakutHGDP	Human Genome Diversity Project
+HGDP00729	male			Palestinian		Middle East (HGDP)	PalestinianHGDP	Human Genome Diversity Project
+HGDP01092	male			Biaka		Africa (HGDP)	BiakaHGDP	Human Genome Diversity Project
+HGDP00731	male			Palestinian		Middle East (HGDP)	PalestinianHGDP	Human Genome Diversity Project
+HGDP01097	male			Tujia		East Asia (HGDP)	TujiaHGDP	Human Genome Diversity Project
+HGDP00736	female			Palestinian		Middle East (HGDP)	PalestinianHGDP	Human Genome Diversity Project
+HGDP01100	male			Tujia		East Asia (HGDP)	TujiaHGDP	Human Genome Diversity Project
+HGDP00748	male			Japanese		East Asia (HGDP)	JapaneseHGDP	Human Genome Diversity Project
+HGDP01155	male			Bergamo Italian		Europe (HGDP)	BergamoItalianHGDP	Human Genome Diversity Project
+HGDP00750	male			Japanese		East Asia (HGDP)	JapaneseHGDP	Human Genome Diversity Project
+HGDP00892	male			Russian		Europe (HGDP)	RussianHGDP	Human Genome Diversity Project
+HGDP00755	male			Japanese		East Asia (HGDP)	JapaneseHGDP	Human Genome Diversity Project
+HGDP00897	male			Russian		Europe (HGDP)	RussianHGDP	Human Genome Diversity Project
+HGDP00762	male			Japanese		East Asia (HGDP)	JapaneseHGDP	Human Genome Diversity Project
+HGDP00900	male			Russian		Europe (HGDP)	RussianHGDP	Human Genome Diversity Project
+HGDP00767	male			Japanese		East Asia (HGDP)	JapaneseHGDP	Human Genome Diversity Project
+HGDP00905	male			Mandenka		Africa (HGDP)	MandenkaHGDP	Human Genome Diversity Project
+HGDP00623	male			Bedouin		Middle East (HGDP)	BedouinHGDP	Human Genome Diversity Project
+HGDP00912	male			Mandenka		Africa (HGDP)	MandenkaHGDP	Human Genome Diversity Project
+HGDP00628	male			Bedouin		Middle East (HGDP)	BedouinHGDP	Human Genome Diversity Project
+HGDP00917	female			Mandenka		Africa (HGDP)	MandenkaHGDP	Human Genome Diversity Project
+HGDP00630	male			Bedouin		Middle East (HGDP)	BedouinHGDP	Human Genome Diversity Project
+HGDP00924	female			Yoruba		Africa (HGDP)	YorubaHGDP	Human Genome Diversity Project
+HGDP00635	female			Bedouin		Middle East (HGDP)	BedouinHGDP	Human Genome Diversity Project
+HGDP00929	male			Yoruba		Africa (HGDP)	YorubaHGDP	Human Genome Diversity Project
+HGDP00565	female			Druze		Middle East (HGDP)	DruzeHGDP	Human Genome Diversity Project
+HGDP00931	male			Yoruba		Africa (HGDP)	YorubaHGDP	Human Genome Diversity Project
+HGDP00572	female			Druze		Middle East (HGDP)	DruzeHGDP	Human Genome Diversity Project
+HGDP00873	female			Maya		America (HGDP)	MayaHGDP	Human Genome Diversity Project
+HGDP00577	female			Druze		Middle East (HGDP)	DruzeHGDP	Human Genome Diversity Project
+HGDP00880	male			Russian		Europe (HGDP)	RussianHGDP	Human Genome Diversity Project
+HGDP00584	female			Druze		Middle East (HGDP)	DruzeHGDP	Human Genome Diversity Project
+HGDP00885	female			Russian		Europe (HGDP)	RussianHGDP	Human Genome Diversity Project
+HGDP00976	female			Han		East Asia (HGDP)	HanHGDP	Human Genome Diversity Project
+HGDP01059	male			Pima		America (HGDP)	PimaHGDP	Human Genome Diversity Project
+HGDP00983	male			Mbuti		Africa (HGDP)	MbutiHGDP	Human Genome Diversity Project
+HGDP01066	male			Sardinian		Europe (HGDP)	SardinianHGDP	Human Genome Diversity Project
+HGDP00995	female			Karitiana		America (HGDP)	KaritianaHGDP	Human Genome Diversity Project
+HGDP01073	male			Sardinian		Europe (HGDP)	SardinianHGDP	Human Genome Diversity Project
+HGDP01001	female			Karitiana		America (HGDP)	KaritianaHGDP	Human Genome Diversity Project
+HGDP01009	male			Karitiana		America (HGDP)	KaritianaHGDP	Human Genome Diversity Project
+HGDP01006	female			Karitiana		America (HGDP)	KaritianaHGDP	Human Genome Diversity Project
+HGDP01023	female			Han		East Asia (HGDP)	HanHGDP	Human Genome Diversity Project
+HGDP01013	male			Karitiana		America (HGDP)	KaritianaHGDP	Human Genome Diversity Project
+HGDP01388	female			Adygei		Europe (HGDP)	AdygeiHGDP	Human Genome Diversity Project
+HGDP00849	male			Surui		America (HGDP)	SuruiHGDP	Human Genome Diversity Project
+HGDP01403	male			Adygei		Europe (HGDP)	AdygeiHGDP	Human Genome Diversity Project
+HGDP00856	male			Maya		America (HGDP)	MayaHGDP	HGDP Transcriptome,Human Genome Diversity Project
+HGDP01408	male			Bantu Kenya		Africa (HGDP)	BantuKenyaHGDP	Human Genome Diversity Project
+HGDP00863	female			Maya		America (HGDP)	MayaHGDP	Human Genome Diversity Project
+HGDP01415	male			Bantu Kenya		Africa (HGDP)	BantuKenyaHGDP	Human Genome Diversity Project
+HGDP00868	female			Maya		America (HGDP)	MayaHGDP	HGDP Transcriptome,Human Genome Diversity Project
+HGDP00870	female			Maya		America (HGDP)	MayaHGDP	Human Genome Diversity Project
+HGDP01275	female			Mozabite		Middle East (HGDP)	MozabiteHGDP	HGDP Transcriptome,Human Genome Diversity Project
+HGDP00875	female			Maya		America (HGDP)	MayaHGDP	Human Genome Diversity Project
+HGDP01282	male			Mozabite		Middle East (HGDP)	MozabiteHGDP	Human Genome Diversity Project
+HGDP00806	female			Orcadian		Europe (HGDP)	OrcadianHGDP	Human Genome Diversity Project
+HGDP01287	female			Northern Han		East Asia (HGDP)	NorthernHanHGDP	Human Genome Diversity Project
+HGDP00813	female			Han		East Asia (HGDP)	HanHGDP	Human Genome Diversity Project
+HGDP01294	male			Northern Han		East Asia (HGDP)	NorthernHanHGDP	Human Genome Diversity Project
+HGDP00818	female			Han		East Asia (HGDP)	HanHGDP	Human Genome Diversity Project
+HGDP01299	male			Uygur		Central South Asia (HGDP)	UygurHGDP	Human Genome Diversity Project
+HGDP00820	female			Han		East Asia (HGDP)	HanHGDP	Human Genome Diversity Project
+HGDP01162	male			Tuscan		Europe (HGDP)	TuscanHGDP	Human Genome Diversity Project
+HGDP00832	female			Surui		America (HGDP)	SuruiHGDP	Human Genome Diversity Project
+HGDP01167	male			Tuscan		Europe (HGDP)	TuscanHGDP	Human Genome Diversity Project
+HGDP00837	male			Surui		America (HGDP)	SuruiHGDP	Human Genome Diversity Project
+HGDP01174	male			Bergamo Italian		Europe (HGDP)	BergamoItalianHGDP	Human Genome Diversity Project
+HGDP00952	male			Yakut		East Asia (HGDP)	YakutHGDP	Human Genome Diversity Project
+HGDP01181	male			Yi		East Asia (HGDP)	YiHGDP	Human Genome Diversity Project
+HGDP00957	female			Yakut		East Asia (HGDP)	YakutHGDP	Human Genome Diversity Project
+HGDP01186	male			Yi		East Asia (HGDP)	YiHGDP	Human Genome Diversity Project
+HGDP00964	male			Yakut		East Asia (HGDP)	YakutHGDP	HGDP Transcriptome,Human Genome Diversity Project
+HGDP01193	male			Miao		East Asia (HGDP)	MiaoHGDP	Human Genome Diversity Project
+HGDP00969	male			Yakut		East Asia (HGDP)	YakutHGDP	Human Genome Diversity Project
+HGDP01249	male			Xibo		East Asia (HGDP)	XiboHGDP	Human Genome Diversity Project
+HGDP00971	male			Han		East Asia (HGDP)	HanHGDP	Human Genome Diversity Project
+HGDP01251	female			Xibo		East Asia (HGDP)	XiboHGDP	Human Genome Diversity Project
+HGDP00902	female			Russian		Europe (HGDP)	RussianHGDP	Human Genome Diversity Project
+HGDP01256	male			Mozabite		Middle East (HGDP)	MozabiteHGDP	Human Genome Diversity Project
+HGDP00907	male			Mandenka		Africa (HGDP)	MandenkaHGDP	Human Genome Diversity Project
+HGDP01263	male			Mozabite		Middle East (HGDP)	MozabiteHGDP	Human Genome Diversity Project
+HGDP00914	female			Mandenka		Africa (HGDP)	MandenkaHGDP	Human Genome Diversity Project
+HGDP01268	male			Mozabite		Middle East (HGDP)	MozabiteHGDP	Human Genome Diversity Project
+HGDP00919	male			Mandenka		Africa (HGDP)	MandenkaHGDP	Human Genome Diversity Project
+HGDP01270	female			Mozabite		Middle East (HGDP)	MozabiteHGDP	Human Genome Diversity Project
+HGDP00926	female			Yoruba		Africa (HGDP)	YorubaHGDP	Human Genome Diversity Project
+HGDP01201	female			Mandenka		Africa (HGDP)	MandenkaHGDP	Human Genome Diversity Project
+HGDP00933	female			Yoruba		Africa (HGDP)	YorubaHGDP	Human Genome Diversity Project
+HGDP01206	male			Oroqen		East Asia (HGDP)	OroqenHGDP	Human Genome Diversity Project
+HGDP00938	female			Yoruba		Africa (HGDP)	YorubaHGDP	Human Genome Diversity Project
+HGDP01213	male			Daur		East Asia (HGDP)	DaurHGDP	Human Genome Diversity Project
+HGDP00940	male			Yoruba		Africa (HGDP)	YorubaHGDP	Human Genome Diversity Project
+HGDP01218	male			Daur		East Asia (HGDP)	DaurHGDP	Human Genome Diversity Project
+HGDP00945	male			Yakut		East Asia (HGDP)	YakutHGDP	Human Genome Diversity Project
+HGDP01220	male			Daur		East Asia (HGDP)	DaurHGDP	Human Genome Diversity Project
+HGDP01037	male			Pima		America (HGDP)	PimaHGDP	Human Genome Diversity Project
+HGDP01225	male			Mongolian		East Asia (HGDP)	MongolianHGDP	Human Genome Diversity Project
+HGDP01051	female			Pima		America (HGDP)	PimaHGDP	Human Genome Diversity Project
+HGDP01232	female			Mongolian		East Asia (HGDP)	MongolianHGDP	Human Genome Diversity Project
+HGDP01056	female			Pima		America (HGDP)	PimaHGDP	Human Genome Diversity Project
+HGDP01237	male			Hezhen		East Asia (HGDP)	HezhenHGDP	Human Genome Diversity Project
+HGDP01063	male			Sardinian		Europe (HGDP)	SardinianHGDP	Human Genome Diversity Project
+HGDP01244	male			Xibo		East Asia (HGDP)	XiboHGDP	Human Genome Diversity Project
+HGDP00774	male			Han		East Asia (HGDP)	HanHGDP	Human Genome Diversity Project
+HGDP01369	female			Basque		Europe (HGDP)	BasqueHGDP	Human Genome Diversity Project
+HGDP00779	male			Han		East Asia (HGDP)	HanHGDP	Human Genome Diversity Project
+HGDP01371	male			Basque		Europe (HGDP)	BasqueHGDP	Human Genome Diversity Project
+HGDP00781	female			Han		East Asia (HGDP)	HanHGDP	Human Genome Diversity Project
+HGDP01376	male			Basque		Europe (HGDP)	BasqueHGDP	Human Genome Diversity Project
+HGDP00786	male			Han		East Asia (HGDP)	HanHGDP	Human Genome Diversity Project
+HGDP01383	male			Adygei		Europe (HGDP)	AdygeiHGDP	Human Genome Diversity Project
+HGDP00882	male			Russian		Europe (HGDP)	RussianHGDP	Human Genome Diversity Project
+HGDP01302	male			Uygur		Central South Asia (HGDP)	UygurHGDP	Human Genome Diversity Project
+HGDP00894	male			Russian		Europe (HGDP)	RussianHGDP	Human Genome Diversity Project
+HGDP01319	male			Lahu		East Asia (HGDP)	LahuHGDP	Human Genome Diversity Project
+HGDP00899	female			Russian		Europe (HGDP)	RussianHGDP	Human Genome Diversity Project
+HGDP01321	male			Lahu		East Asia (HGDP)	LahuHGDP	Human Genome Diversity Project
+HGDP01068	female			Sardinian		Europe (HGDP)	SardinianHGDP	Human Genome Diversity Project
+HGDP01326	male			Lahu		East Asia (HGDP)	LahuHGDP	Human Genome Diversity Project
+HGDP01070	female			Sardinian		Europe (HGDP)	SardinianHGDP	Human Genome Diversity Project
+HGDP01340	male			Naxi		East Asia (HGDP)	NaxiHGDP	Human Genome Diversity Project
+HGDP01075	male			Sardinian		Europe (HGDP)	SardinianHGDP	Human Genome Diversity Project
+HGDP01352	male			Tu		East Asia (HGDP)	TuHGDP	Human Genome Diversity Project
+HGDP01087	male			Biaka		Africa (HGDP)	BiakaHGDP	Human Genome Diversity Project
+HGDP01357	male			Basque		Europe (HGDP)	BasqueHGDP	Human Genome Diversity Project
+HGDP01094	male			Biaka		Africa (HGDP)	BiakaHGDP	Human Genome Diversity Project
+HGDP01099	male			Tujia		East Asia (HGDP)	TujiaHGDP	Human Genome Diversity Project
+HGDP01102	male			Tujia		East Asia (HGDP)	TujiaHGDP	Human Genome Diversity Project
+HGDP01152	male			Bergamo Italian		Europe (HGDP)	BergamoItalianHGDP	Human Genome Diversity Project
+HGDP01157	female			Bergamo Italian		Europe (HGDP)	BergamoItalianHGDP	Human Genome Diversity Project
+HGDP01164	male			Tuscan		Europe (HGDP)	TuscanHGDP	Human Genome Diversity Project
+HGDP01169	female			Tuscan		Europe (HGDP)	TuscanHGDP	Human Genome Diversity Project
+HGDP01171	female			Bergamo Italian		Europe (HGDP)	BergamoItalianHGDP	Human Genome Diversity Project
+HGDP01234	female			Hezhen		East Asia (HGDP)	HezhenHGDP	Human Genome Diversity Project
+HGDP01239	female			Hezhen		East Asia (HGDP)	HezhenHGDP	Human Genome Diversity Project
+HGDP01241	male			Hezhen		East Asia (HGDP)	HezhenHGDP	Human Genome Diversity Project
+HGDP01258	male			Mozabite		Middle East (HGDP)	MozabiteHGDP	HGDP Transcriptome,Human Genome Diversity Project
+HGDP01289	male			Northern Han		East Asia (HGDP)	NorthernHanHGDP	Human Genome Diversity Project
+HGDP01291	female			Northern Han		East Asia (HGDP)	NorthernHanHGDP	Human Genome Diversity Project
+HGDP01296	male			Northern Han		East Asia (HGDP)	NorthernHanHGDP	Human Genome Diversity Project
+HGDP01304	male			Uygur		Central South Asia (HGDP)	UygurHGDP	Human Genome Diversity Project
+HGDP01309	male			Dai		East Asia (HGDP)	DaiHGDP	Human Genome Diversity Project
+HGDP01260	male			Mozabite		Middle East (HGDP)	MozabiteHGDP	Human Genome Diversity Project
+HGDP01265	male			Mozabite		Middle East (HGDP)	MozabiteHGDP	Human Genome Diversity Project
+HGDP01272	male			Mozabite		Middle East (HGDP)	MozabiteHGDP	Human Genome Diversity Project
+HGDP01277	female			Mozabite		Middle East (HGDP)	MozabiteHGDP	HGDP Transcriptome,Human Genome Diversity Project
+HGDP01347	male			Tu		East Asia (HGDP)	TuHGDP	Human Genome Diversity Project
+HGDP01354	female			Tu		East Asia (HGDP)	TuHGDP	Human Genome Diversity Project
+HGDP01359	male			Basque		Europe (HGDP)	BasqueHGDP	Human Genome Diversity Project
+HGDP01361	male			Basque		Europe (HGDP)	BasqueHGDP	Human Genome Diversity Project
+HGDP01366	female			Basque		Europe (HGDP)	BasqueHGDP	Human Genome Diversity Project
+HGDP01311	male			Dai		East Asia (HGDP)	DaiHGDP	Human Genome Diversity Project
+HGDP01316	female			Dai		East Asia (HGDP)	DaiHGDP	Human Genome Diversity Project
+HGDP01328	male			She		East Asia (HGDP)	SheHGDP	Human Genome Diversity Project
+HGDP01330	male			She		East Asia (HGDP)	SheHGDP	Human Genome Diversity Project
+HGDP01342	male			Naxi		East Asia (HGDP)	NaxiHGDP	Human Genome Diversity Project
+HGDP01208	male			Oroqen		East Asia (HGDP)	OroqenHGDP	Human Genome Diversity Project
+HGDP01222	female			Daur		East Asia (HGDP)	DaurHGDP	Human Genome Diversity Project
+HGDP01227	male			Mongolian		East Asia (HGDP)	MongolianHGDP	Human Genome Diversity Project
+HGDP01183	male			Yi		East Asia (HGDP)	YiHGDP	Human Genome Diversity Project
+HGDP01190	male			Miao		East Asia (HGDP)	MiaoHGDP	Human Genome Diversity Project
+HGDP01195	male			Miao		East Asia (HGDP)	MiaoHGDP	Human Genome Diversity Project
+HGDP00007	male			Brahui		Central South Asia (HGDP)	BrahuiHGDP	Human Genome Diversity Project
+HGDP00021	male			Brahui		Central South Asia (HGDP)	BrahuiHGDP	Human Genome Diversity Project
+HGDP00033	male			Brahui		Central South Asia (HGDP)	BrahuiHGDP	Human Genome Diversity Project
+HGDP01373	female			Basque		Europe (HGDP)	BasqueHGDP	Human Genome Diversity Project
+HGDP00468	male			Mbuti		Africa (HGDP)	MbutiHGDP	Human Genome Diversity Project
+HGDP01378	male			Basque		Europe (HGDP)	BasqueHGDP	Human Genome Diversity Project
+HGDP00470	male			Biaka		Africa (HGDP)	BiakaHGDP	Human Genome Diversity Project
+HGDP01380	female			Basque		Europe (HGDP)	BasqueHGDP	Human Genome Diversity Project
+HGDP00475	male			Biaka		Africa (HGDP)	BiakaHGDP	Human Genome Diversity Project
+HGDP01385	male			Adygei		Europe (HGDP)	AdygeiHGDP	Human Genome Diversity Project
+HGDP00514	female			French		Europe (HGDP)	FrenchHGDP	Human Genome Diversity Project
+HGDP01397	male			Adygei		Europe (HGDP)	AdygeiHGDP	Human Genome Diversity Project
+HGDP00519	male			French		Europe (HGDP)	FrenchHGDP	Human Genome Diversity Project
+HGDP01400	female			Adygei		Europe (HGDP)	AdygeiHGDP	Human Genome Diversity Project
+HGDP00122	male			Hazara		Central South Asia (HGDP)	HazaraHGDP	Human Genome Diversity Project
+HGDP00127	male			Hazara		Central South Asia (HGDP)	HazaraHGDP	Human Genome Diversity Project
+HGDP00134	male			Makrani		Central South Asia (HGDP)	MakraniHGDP	Human Genome Diversity Project
+HGDP00139	male			Makrani		Central South Asia (HGDP)	MakraniHGDP	Human Genome Diversity Project
+HGDP00141	male			Makrani		Central South Asia (HGDP)	MakraniHGDP	Human Genome Diversity Project
+HGDP00146	male			Makrani		Central South Asia (HGDP)	MakraniHGDP	Human Genome Diversity Project
+HGDP01405	male			Bantu Kenya		Africa (HGDP)	BantuKenyaHGDP	Human Genome Diversity Project
+HGDP00247	female			Pathan		Central South Asia (HGDP)	PathanHGDP	HGDP Transcriptome,Human Genome Diversity Project
+HGDP01412	male			Bantu Kenya		Africa (HGDP)	BantuKenyaHGDP	Human Genome Diversity Project
+HGDP00254	male			Pathan		Central South Asia (HGDP)	PathanHGDP	Human Genome Diversity Project
+HGDP00259	male			Pathan		Central South Asia (HGDP)	PathanHGDP	Human Genome Diversity Project
+HGDP00285	male			Kalash		Central South Asia (HGDP)	KalashHGDP	Human Genome Diversity Project
+HGDP00045	male			Brahui		Central South Asia (HGDP)	BrahuiHGDP	Human Genome Diversity Project
+HGDP00052	male			Balochi		Central South Asia (HGDP)	BalochiHGDP	Human Genome Diversity Project
+HGDP00057	male			Balochi		Central South Asia (HGDP)	BalochiHGDP	Human Genome Diversity Project
+HGDP00064	male			Balochi		Central South Asia (HGDP)	BalochiHGDP	Human Genome Diversity Project
+HGDP00076	male			Balochi		Central South Asia (HGDP)	BalochiHGDP	Human Genome Diversity Project
+HGDP00153	female			Makrani		Central South Asia (HGDP)	MakraniHGDP	Human Genome Diversity Project
+HGDP00158	male			Makrani		Central South Asia (HGDP)	MakraniHGDP	Human Genome Diversity Project
+HGDP00165	male			Sindhi		Central South Asia (HGDP)	SindhiHGDP	Human Genome Diversity Project
+HGDP00177	male			Sindhi		Central South Asia (HGDP)	SindhiHGDP	Human Genome Diversity Project
+HGDP00189	male			Sindhi		Central South Asia (HGDP)	SindhiHGDP	Human Genome Diversity Project
+HGDP00088	male			Balochi		Central South Asia (HGDP)	BalochiHGDP	Human Genome Diversity Project
+HGDP00103	male			Hazara		Central South Asia (HGDP)	HazaraHGDP	Human Genome Diversity Project
+HGDP00108	male			Hazara		Central South Asia (HGDP)	HazaraHGDP	Human Genome Diversity Project
+HGDP00110	male			Hazara		Central South Asia (HGDP)	HazaraHGDP	Human Genome Diversity Project
+HGDP00115	male			Hazara		Central South Asia (HGDP)	HazaraHGDP	Human Genome Diversity Project
+HGDP00444	female			Burusho		Central South Asia (HGDP)	BurushoHGDP	Human Genome Diversity Project
+HGDP00463	male			Mbuti		Africa (HGDP)	MbutiHGDP	Human Genome Diversity Project
+HGDP00191	male			Sindhi		Central South Asia (HGDP)	SindhiHGDP	Human Genome Diversity Project
+HGDP00228	male			Pathan		Central South Asia (HGDP)	PathanHGDP	Human Genome Diversity Project
+HGDP00230	male			Pathan		Central South Asia (HGDP)	PathanHGDP	Human Genome Diversity Project
+HGDP00538	male			French		Europe (HGDP)	FrenchHGDP	Human Genome Diversity Project
+HGDP00540	male			Papuan,Papuan Sepik		Oceania (SGDP),Oceania (HGDP)	PapuanSGDP,PapuanSepikHGDP	Simons Genome Diversity Project,Human Genome Diversity Project
+HGDP00545	male			Papuan,Papuan Sepik		Oceania (SGDP),Oceania (HGDP)	PapuanSGDP,PapuanSepikHGDP	Simons Genome Diversity Project,Human Genome Diversity Project
+HGDP00704	female			Colombian		America (HGDP)	ColombianHGDP	Human Genome Diversity Project
+HGDP00711	male			Cambodian		East Asia (HGDP)	CambodianHGDP	HGDP Transcriptome,Human Genome Diversity Project
+HGDP00716	male			Cambodian		East Asia (HGDP)	CambodianHGDP	HGDP Transcriptome,Human Genome Diversity Project
+HGDP00723	male			Palestinian		Middle East (HGDP)	PalestinianHGDP	Human Genome Diversity Project
+HGDP00730	male			Palestinian		Middle East (HGDP)	PalestinianHGDP	Human Genome Diversity Project
+HGDP00677	male			Palestinian		Middle East (HGDP)	PalestinianHGDP	Human Genome Diversity Project
+HGDP00684	female			Palestinian		Middle East (HGDP)	PalestinianHGDP	Human Genome Diversity Project
+HGDP00689	female			Palestinian		Middle East (HGDP)	PalestinianHGDP	Human Genome Diversity Project
+HGDP00691	female			Palestinian		Middle East (HGDP)	PalestinianHGDP	Human Genome Diversity Project
+HGDP00696	female			Palestinian		Middle East (HGDP)	PalestinianHGDP	Human Genome Diversity Project
+HGDP00576	male			Druze		Middle East (HGDP)	DruzeHGDP	Human Genome Diversity Project
+HGDP00583	female			Druze		Middle East (HGDP)	DruzeHGDP	Human Genome Diversity Project
+HGDP00588	male			Druze		Middle East (HGDP)	DruzeHGDP	Human Genome Diversity Project
+HGDP00590	female			Druze		Middle East (HGDP)	DruzeHGDP	Human Genome Diversity Project
+HGDP00595	male			Druze		Middle East (HGDP)	DruzeHGDP	Human Genome Diversity Project
+HGDP00735	female			Palestinian		Middle East (HGDP)	PalestinianHGDP	Human Genome Diversity Project
+HGDP00747	male			Japanese		East Asia (HGDP)	JapaneseHGDP	Human Genome Diversity Project
+HGDP00754	female			Japanese		East Asia (HGDP)	JapaneseHGDP	Human Genome Diversity Project
+HGDP00627	male			Bedouin		Middle East (HGDP)	BedouinHGDP	Human Genome Diversity Project
+HGDP00634	female			Bedouin		Middle East (HGDP)	BedouinHGDP	Human Genome Diversity Project
+HGDP00639	male			Bedouin		Middle East (HGDP)	BedouinHGDP	Human Genome Diversity Project
+HGDP00641	male			Bedouin		Middle East (HGDP)	BedouinHGDP	Human Genome Diversity Project
+HGDP00646	female			Bedouin		Middle East (HGDP)	BedouinHGDP	Human Genome Diversity Project
+HGDP00608	male			Bedouin		Middle East (HGDP)	BedouinHGDP	Human Genome Diversity Project
+HGDP00610	male			Bedouin		Middle East (HGDP)	BedouinHGDP	Human Genome Diversity Project
+HGDP00615	female			Bedouin		Middle East (HGDP)	BedouinHGDP	Human Genome Diversity Project
+HGDP00622	male			Bedouin		Middle East (HGDP)	BedouinHGDP	Human Genome Diversity Project
+HGDP00653	female			Bedouin		Middle East (HGDP)	BedouinHGDP	Human Genome Diversity Project
+HGDP00672	female			Sardinian		Europe (HGDP)	SardinianHGDP	Human Genome Diversity Project
+HGDP00557	female			Druze		Middle East (HGDP)	DruzeHGDP	Human Genome Diversity Project
+HGDP00564	female			Druze		Middle East (HGDP)	DruzeHGDP	Human Genome Diversity Project
+HGDP00571	female			Druze		Middle East (HGDP)	DruzeHGDP	Human Genome Diversity Project
+HGDP00994	male			Bantu South Africa		Africa (HGDP)	BantuSouthAfricaHGDP	Human Genome Diversity Project
+HGDP00999	female			Karitiana		America (HGDP)	KaritianaHGDP	Human Genome Diversity Project
+HGDP01024	female			Han		East Asia (HGDP)	HanHGDP	Human Genome Diversity Project
+HGDP01029	male			San		Africa (HGDP)	SanHGDP	HGDP Transcriptome,Human Genome Diversity Project
+HGDP01031	male			Bantu South Africa		Africa (HGDP)	BantuSouthAfricaHGDP	Human Genome Diversity Project
+HGDP01043	male			Pima		America (HGDP)	PimaHGDP	Human Genome Diversity Project
+HGDP01050	male			Pima		America (HGDP)	PimaHGDP	Human Genome Diversity Project
+HGDP00913	male			Mandenka		Africa (HGDP)	MandenkaHGDP	Human Genome Diversity Project
+HGDP00918	female			Mandenka		Africa (HGDP)	MandenkaHGDP	Human Genome Diversity Project
+HGDP00920	female			Yoruba		Africa (HGDP)	YorubaHGDP	Human Genome Diversity Project
+HGDP00925	female			Yoruba		Africa (HGDP)	YorubaHGDP	Human Genome Diversity Project
+HGDP00937	male			Yoruba		Africa (HGDP)	YorubaHGDP	Human Genome Diversity Project
+HGDP00963	female			Yakut		East Asia (HGDP)	YakutHGDP	Human Genome Diversity Project
+HGDP00968	male			Yakut		East Asia (HGDP)	YakutHGDP	Human Genome Diversity Project
+HGDP00970	female			Colombian		America (HGDP)	ColombianHGDP	Human Genome Diversity Project
+HGDP00975	female			Han		East Asia (HGDP)	HanHGDP	Human Genome Diversity Project
+HGDP00817	female			Han		East Asia (HGDP)	HanHGDP	Human Genome Diversity Project
+HGDP00843	male			Surui		America (HGDP)	SuruiHGDP	Human Genome Diversity Project
+HGDP00862	female			Maya		America (HGDP)	MayaHGDP	Human Genome Diversity Project
+HGDP00893	male			Russian		Europe (HGDP)	RussianHGDP	Human Genome Diversity Project
+HGDP00898	female			Russian		Europe (HGDP)	RussianHGDP	Human Genome Diversity Project
+HGDP00901	female			Russian		Europe (HGDP)	RussianHGDP	Human Genome Diversity Project
+HGDP00906	male			Mandenka		Africa (HGDP)	MandenkaHGDP	Human Genome Diversity Project
+HGDP00797	female			Orcadian		Europe (HGDP)	OrcadianHGDP	Human Genome Diversity Project
+HGDP00800	female			Orcadian		Europe (HGDP)	OrcadianHGDP	Human Genome Diversity Project
+HGDP00805	female			Orcadian		Europe (HGDP)	OrcadianHGDP	Human Genome Diversity Project
+HGDP00812	female			Han		East Asia (HGDP)	HanHGDP	Human Genome Diversity Project
+HGDP00759	male			Japanese		East Asia (HGDP)	JapaneseHGDP	Human Genome Diversity Project
+HGDP00761	female			Japanese		East Asia (HGDP)	JapaneseHGDP	Human Genome Diversity Project
+HGDP00766	male			Japanese		East Asia (HGDP)	JapaneseHGDP	Human Genome Diversity Project
+HGDP00780	male			Han		East Asia (HGDP)	HanHGDP	Human Genome Diversity Project
+HGDP00944	male			Yoruba		Africa (HGDP)	YorubaHGDP	Human Genome Diversity Project
+HGDP00949	male			Yakut		East Asia (HGDP)	YakutHGDP	Human Genome Diversity Project
+HGDP00879	male			Russian		Europe (HGDP)	RussianHGDP	Human Genome Diversity Project
+HGDP00881	female			Russian		Europe (HGDP)	RussianHGDP	Human Genome Diversity Project
+HGDP00886	male			Russian		Europe (HGDP)	RussianHGDP	Human Genome Diversity Project
+HGDP01081	male			Mbuti		Africa (HGDP)	MbutiHGDP	HGDP Transcriptome,Human Genome Diversity Project
+HGDP01086	male			Biaka		Africa (HGDP)	BiakaHGDP	Human Genome Diversity Project
+HGDP01101	male			Tujia		East Asia (HGDP)	TujiaHGDP	Human Genome Diversity Project
+HGDP01149	male			Bergamo Italian		Europe (HGDP)	BergamoItalianHGDP	Human Genome Diversity Project
+HGDP01151	male			Bergamo Italian		Europe (HGDP)	BergamoItalianHGDP	Human Genome Diversity Project
+HGDP01156	female			Bergamo Italian		Europe (HGDP)	BergamoItalianHGDP	Human Genome Diversity Project
+HGDP01271	male			Mozabite		Middle East (HGDP)	MozabiteHGDP	Human Genome Diversity Project
+HGDP01276	female			Mozabite		Middle East (HGDP)	MozabiteHGDP	Human Genome Diversity Project
+HGDP01283	male			Mandenka		Africa (HGDP)	MandenkaHGDP	Human Genome Diversity Project
+HGDP01288	male			Northern Han		East Asia (HGDP)	NorthernHanHGDP	Human Genome Diversity Project
+HGDP01290	male			Northern Han		East Asia (HGDP)	NorthernHanHGDP	Human Genome Diversity Project
+HGDP01295	male			Northern Han		East Asia (HGDP)	NorthernHanHGDP	Human Genome Diversity Project
+HGDP01334	female			She		East Asia (HGDP)	SheHGDP	Human Genome Diversity Project
+HGDP01339	male			Naxi		East Asia (HGDP)	NaxiHGDP	Human Genome Diversity Project
+HGDP01341	male			Naxi		East Asia (HGDP)	NaxiHGDP	Human Genome Diversity Project
+HGDP01346	female			Naxi		East Asia (HGDP)	NaxiHGDP	Human Genome Diversity Project
+HGDP01353	male			Tu		East Asia (HGDP)	TuHGDP	Human Genome Diversity Project
+HGDP01358	male			Basque		Europe (HGDP)	BasqueHGDP	Human Genome Diversity Project
+HGDP01360	male			Basque		Europe (HGDP)	BasqueHGDP	Human Genome Diversity Project
+HGDP01194	male			Miao		East Asia (HGDP)	MiaoHGDP	Human Genome Diversity Project
+HGDP01202	male			Mandenka		Africa (HGDP)	MandenkaHGDP	Human Genome Diversity Project
+HGDP01207	male			Oroqen		East Asia (HGDP)	OroqenHGDP	Human Genome Diversity Project
+HGDP01214	male			Daur		East Asia (HGDP)	DaurHGDP	Human Genome Diversity Project
+HGDP01219	female			Daur		East Asia (HGDP)	DaurHGDP	Human Genome Diversity Project
+HGDP01221	male			Daur		East Asia (HGDP)	DaurHGDP	Human Genome Diversity Project
+HGDP01226	male			Mongolian		East Asia (HGDP)	MongolianHGDP	Human Genome Diversity Project
+HGDP01233	male			Hezhen		East Asia (HGDP)	HezhenHGDP	Human Genome Diversity Project
+HGDP01238	female			Hezhen		East Asia (HGDP)	HezhenHGDP	Human Genome Diversity Project
+HGDP01245	male			Xibo		East Asia (HGDP)	XiboHGDP	Human Genome Diversity Project
+HGDP01257	male			Mozabite		Middle East (HGDP)	MozabiteHGDP	Human Genome Diversity Project
+HGDP01264	male			Mozabite		Middle East (HGDP)	MozabiteHGDP	HGDP Transcriptome,Human Genome Diversity Project
+HGDP01269	male			Mozabite		Middle East (HGDP)	MozabiteHGDP	Human Genome Diversity Project
+HGDP01303	male			Uygur		Central South Asia (HGDP)	UygurHGDP	Human Genome Diversity Project
+HGDP01310	male			Dai		East Asia (HGDP)	DaiHGDP	Human Genome Diversity Project
+HGDP01322	male			Lahu		East Asia (HGDP)	LahuHGDP	Human Genome Diversity Project
+HGDP01327	male			She		East Asia (HGDP)	SheHGDP	Human Genome Diversity Project
+HGDP01055	male			Pima		America (HGDP)	PimaHGDP	Human Genome Diversity Project
+HGDP01062	female			Sardinian		Europe (HGDP)	SardinianHGDP	Human Genome Diversity Project
+HGDP01067	male			Sardinian		Europe (HGDP)	SardinianHGDP	Human Genome Diversity Project
+HGDP01074	female			Sardinian		Europe (HGDP)	SardinianHGDP	Human Genome Diversity Project
+HGDP01182	male			Yi		East Asia (HGDP)	YiHGDP	Human Genome Diversity Project
+HGDP01187	male			Yi		East Asia (HGDP)	YiHGDP	Human Genome Diversity Project
+HGDP01396	male			Adygei		Europe (HGDP)	AdygeiHGDP	Human Genome Diversity Project
+HGDP01404	male			Adygei		Europe (HGDP)	AdygeiHGDP	Human Genome Diversity Project
+HGDP01411	male			Bantu Kenya		Africa (HGDP)	BantuKenyaHGDP	Human Genome Diversity Project
+HGDP01416	male			Bantu Kenya		Africa (HGDP)	BantuKenyaHGDP	Human Genome Diversity Project
+HGDP01372	male			Basque		Europe (HGDP)	BasqueHGDP	Human Genome Diversity Project
+HGDP01377	male			Basque		Europe (HGDP)	BasqueHGDP	Human Genome Diversity Project
+HGDP01384	female			Adygei		Europe (HGDP)	AdygeiHGDP	Human Genome Diversity Project

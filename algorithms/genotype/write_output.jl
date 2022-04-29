@@ -7,30 +7,29 @@ using PyCall
 
 Output is written in batches then merged back together
 """
-function write_to_plink(ref_df, mut_df, batchsize, metadata)
+function write_to_plink(ref_df, batchsize, metadata)
 
     number_of_batches = Int(ceil(metadata.nsamples/batchsize))
 
     batch_files = Vector{String}(undef, number_of_batches)
     
     for batch_number in 1:number_of_batches
-        batch_ref_df, batch_mut_df = get_batch_dfs(ref_df, mut_df, batch_number, batchsize)
-        batch_file = write_to_plink_batch(batch_ref_df, batch_mut_df, batchsize, batch_number, metadata)
+        batch_ref_df = get_batch_dfs(ref_df, batch_number, batchsize)
+        batch_file = write_to_plink_batch(batch_ref_df, batchsize, batch_number, metadata)
         batch_files[batch_number] = batch_file[1:end-4]
     end
-
+    
     merge_batch_files(batch_files, metadata.outfile_prefix, metadata.plink)
 end
 
 
 """Returns the subset of ref_df containing only rows relevant to the current batch
 """
-function get_batch_dfs(ref_df, mut_df, batch_number, batchsize)
+function get_batch_dfs(ref_df, batch_number, batchsize)
     start_haplotype = ((batch_number-1)*batchsize)*2+1
     end_haplotype = start_haplotype+batchsize*2-1
     batch_ref_df = ref_df[(ref_df.H .<= end_haplotype).&(ref_df.H .>= start_haplotype), :]
-    batch_mut_df = mut_df[(mut_df.H .<= end_haplotype).&(mut_df.H .>= start_haplotype), :]
-    return batch_ref_df, batch_mut_df
+    return batch_ref_df
 end
 
 
@@ -67,9 +66,24 @@ function merge_batch_files(batch_files, outfile, plink)
 end
 
 
+"""Add mutations by only copying if T < age of mutation
+"""
+function add_mutations(segment, T, mutation_ages, start_idx)
+    new_segment = Vector{Int8}(undef, length(segment))
+    for pos in 1:length(segment)
+        if T < mutation_ages[start_idx+pos-1]
+            new_segment[pos] = segment[pos]
+        else
+            new_segment[pos] = 0
+        end
+    end
+    return new_segment
+end
+
+
 """Construct the data into the format for writing to plink output
 """
-function get_genostr(batch_ref_df, batch_mut_df, batchsize, start_haplotype, metadata)
+function get_genostr(batch_ref_df, batchsize, start_haplotype, metadata)
     I_hap = Dict(1=>Array{Int8}(undef, batchsize, metadata.nvariants), 2=>Array{Int8}(undef, batchsize, metadata.nvariants))
 
     p = Progress(batchsize)
@@ -83,7 +97,7 @@ function get_genostr(batch_ref_df, batch_mut_df, batchsize, start_haplotype, met
             else
                 true_hap = (start_haplotype + (genotype-1)*2 + 1)
             end
-
+            
             hap_df = batch_ref_df[batch_ref_df.H .== true_hap, :]
             
             I_pos = 1
@@ -91,8 +105,10 @@ function get_genostr(batch_ref_df, batch_mut_df, batchsize, start_haplotype, met
             for row in eachrow(hap_df)
                 if hap == 1
                     segment = metadata.H1[metadata.index_map[row.I], row.S:row.E]
+                    segment = add_mutations(segment, row.T, metadata.mutation_ages, I_pos)
                 else
                     segment = metadata.H2[metadata.index_map[row.I], row.S:row.E]
+                    segment = add_mutations(segment, row.T, metadata.mutation_ages, I_pos)
                 end
                 segment_sums += sum(segment)
                 length_of_segment = length(segment)
@@ -102,11 +118,6 @@ function get_genostr(batch_ref_df, batch_mut_df, batchsize, start_haplotype, met
             
             I = vcat(I...)
             @assert segment_sums == sum(I)
-            
-            # add mutations
-            for mut_pos in batch_mut_df[batch_mut_df.H .== true_hap, :].P 
-                I[mut_pos] = 1 - I[mut_pos]
-            end
 
             I_hap[hap][genotype,:] = I
         end
@@ -121,7 +132,7 @@ end
 
 """Writes the plink output for a single batch, using the Python package bed_reader
 """
-function write_to_plink_batch(batch_ref_df, batch_mut_df, batchsize, batch_number, metadata)
+function write_to_plink_batch(batch_ref_df, batchsize, batch_number, metadata)
     properties = Dict("fid"=>[string("syn",x) for x in ((batch_number-1)*batchsize+1):((batch_number-1)*batchsize+batchsize)],
             "iid"=>[string("syn",x) for x in ((batch_number-1)*batchsize+1):((batch_number-1)*batchsize+batchsize)],
             "chromosome"=>[split(f, "\t")[1][5:end] for f in metadata.fixed_fields], 
@@ -131,7 +142,7 @@ function write_to_plink_batch(batch_ref_df, batch_mut_df, batchsize, batch_numbe
             "allele_2"=>[split(f, "\t")[4] for f in metadata.fixed_fields])
 
     start_haplotype = ((batch_number-1)*batchsize)*2+1
-    genostr = get_genostr(batch_ref_df, batch_mut_df, batchsize, start_haplotype, metadata)
+    genostr = get_genostr(batch_ref_df, batchsize, start_haplotype, metadata)
     batch_file = @sprintf("%s_%i.bed", metadata.outfile_prefix, (batch_number-1))
 
     bed_reader.to_bed(batch_file, genostr, properties=properties)
@@ -144,7 +155,7 @@ end
 
 Warning: only use VCF format for smaller datasets, because it is much slower than PLINK
 """
-function write_to_vcf(ref_df, mut_df, metadata)
+function write_to_vcf(ref_df, metadata)
 
     outfile = @sprintf("%s.vcf", metadata.outfile_prefix)
 
