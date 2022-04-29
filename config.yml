@@ -4,7 +4,7 @@
 
 global_parameters:
   random_seed: 123
-  chromosome: all # "all" or a number from 1 to 22
+  chromosome: 1 # "all" or a number from 1 to 22
   superpopulation: none # "none" or a specific superpopulation (AFR, AMR, EAS, EUR, SAS)
   memory: 8000 # amount of memory available (in MB) for memory-intensive commands
   batchsize: 10000 # batchsize for writing plink output during genotype generation
@@ -40,12 +40,12 @@ filepaths:
     causal_list: data/inputs/processed/1KG+HGDP/Test.CausalList
     reference: data/inputs/processed/1KG+HGDP/Africa.Annot
   software:
-    plink: software/plink
-    plink2: software/plink2
-    king: software/king
+    plink: plink
+    plink2: plink2
+    king: king
     vcftools: vcftools
-    mapthin: software/mapthin
-    phenoalg: software/phenoalg
+    mapthin: mapthin
+    phenoalg: phenoalg
 
 
 ####################################
