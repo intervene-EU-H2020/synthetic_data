@@ -88,7 +88,7 @@ end
 
 function main()
     parsed_args = parse_commandline()
-
+    
     options = YAML.load_file("config.yml")
     if parsed_args["config"] != nothing
         options_override = YAML.load_file(parsed_args["config"])

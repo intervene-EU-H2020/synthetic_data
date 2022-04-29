@@ -7,7 +7,7 @@ CURR_DIR=`pwd`
 
 
 ### Fetch preprocessed data from CSC bucket
-URL_DATA_BUCKET="https://a3s.fi/swift/v1/AUTH_c520b8e7583e49069dbfb13cf078c683/INTERVENE_WP3_reference_datasets_public/"
+URL_DATA_BUCKET="https://a3s.fi/swift/v1/AUTH_c520b8e7583e49069dbfb13cf078c683/INTERVENE_WP3_reference_datasets_public_v2/"
 
 cd $DATA_DIR
 curl -sfL -o $DATA_DIR/preprocessed.txt $URL_DATA_BUCKET
