@@ -18,20 +18,20 @@ global_parameters:
 # - the superpopulation can be given as a wildcard by specifying {superpopulation} in the filepath
 filepaths:
   general:
-    output_dir: data/outputs/test_newmutations_gamma
-    output_prefix: test{chromosome}
+    output_dir: data/outputs/test
+    output_prefix: test_chr{chromosome}
   genotype:
     vcf_input_raw: data/inputs/raw/1KG+HGDP/1KG+HGDP.chr{chromosome}.hapmap.final.vcf.gz
     vcf_input_processed: data/inputs/processed/1KG+HGDP/1KG+HGDP.chr{chromosome}.hapmap.final.recode.vcf
     vcf_metadata: data/inputs/processed/1KG+HGDP/1KG+HGDP.chr{chromosome}.metadata
-    popfile_raw: external/population_files/merged_pop.tsv
+    popfile_raw: external/population_files/merged_pop_adjusted.tsv
     popfile_processed: data/inputs/processed/1KG+HGDP/merged_pop.tsv
     variant_list: external/variant_lists/hapmap_variant_list_chr{chromosome}.txt
     remove_list: external/population_files/remove.txt
     rsid_list: external/variant_lists/rsid_map_list_chr{chromosome}.txt
     genetic_mapfile: data/inputs/raw/1KG+HGDP/genetic_maps/chr{chromosome}.interpolated_genetic_map
     genetic_distfile: data/inputs/processed/1KG+HGDP/1KG+HGDP.chr{chromosome}.hapmap.distfile
-    mutation_mapfile: data/inputs/raw/1KG+HGDP/mutation_maps/altas.chr{chromosome}.csv
+    mutation_mapfile: data/inputs/raw/1KG+HGDP/mutation_maps/atlas.chr{chromosome}.csv
     mutation_agefile: data/inputs/processed/1KG+HGDP/1KG+HGDP.chr{chromosome}.hapmap.agefile
     hap1_matrix: data/inputs/processed/1KG+HGDP/1KG+HGDP.chr{chromosome}.hapmap.h1
     hap2_matrix: data/inputs/processed/1KG+HGDP/1KG+HGDP.chr{chromosome}.hapmap.h2
@@ -45,7 +45,7 @@ filepaths:
     king: software/king
     vcftools: vcftools
     mapthin: software/mapthin
-    phenoalg: phenoalg
+    phenoalg: software/phenoalg
 
 
 ####################################
@@ -119,7 +119,7 @@ evaluation:
     ld_decay: true # linkage disequilibrium (LD) decay plot (and distance)
     maf: true # minor allele frequency divergences
     pca: true # principal components analysis
-    gwas: false # run GWAS and generate manhattan and qqplot
+    gwas: true # run GWAS and generate manhattan and qqplot
 
 
 ####################################

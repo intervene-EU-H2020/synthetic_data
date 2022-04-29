@@ -8,7 +8,6 @@ function extract_variants(vcftools, vcf_input, vcf_output_prefix, vcf_output, va
     run(vcf_cmd)
     
     @assert isfile(vcf_output) "Error occurred with creation of VCF file"
-    @assert length(variant_list)==get_number_variants(vcf_output) "Number of SNPs in VCF is not equal to length of variant list"
 end
 
 

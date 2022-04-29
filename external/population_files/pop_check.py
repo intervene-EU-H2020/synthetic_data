@@ -31,7 +31,7 @@ len(samples)
 
 mer_df = pd.merge(df, pd.DataFrame({'SampleID':samples}), how='right')
 
-# pop_map = {'AFR':'Africa', 'Africa (HGDP)':'Africa', 'AMR': 'America', 'America (HGDP)':'America', 'Central South Asia (HGDP)':'Central South Asia', 'CentralAsiaSiberia':'Central Asia Siberia', 'EAS':'East Asia', 'EUR':'Europe', 'East Asia (HGDP)':'East Asia', 'EastAsia':'East Asia', 'Europe (HGDP)':'Europe', 'Middle East (HGDP)':'Middle East', 'Oceania (HGDP)':'Oceania', 'Oceania (SGDP),Oceania (HGDP)':'Oceania', 'SAS':'South Asia', 'SouthAsia':'South Asia', 'WestEurasia':'West Eurasia'}
+# pop_map = {'Africa':'AFR', 'Africa (HGDP)':'AFR', 'America':'AMR', 'America (HGDP)':'AMR', 'Central South Asia (HGDP)':'SAS', 'CentralAsiaSiberia':'EUR', 'East Asia (HGDP)':'EAS', 'EastAsia':'EAS', 'Europe (HGDP)':'EUR', 'Middle East (HGDP)':'AFR', 'Oceania (HGDP)':'SAS', 'Oceania (SGDP),Oceania (HGDP)':'SAS', 'Oceania':'SAS', 'SouthAsia':'SAS', 'WestEurasia':'EUR'}
 # mer_df['Superpopulation'] = mer_df['Superpopulation'].apply(lambda x : pop_map[x] if x in pop_map else x)
 
 mer_df = mer_df[~mer_df['Superpopulation'].isna()]
