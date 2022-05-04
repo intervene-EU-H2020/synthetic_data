@@ -83,10 +83,10 @@ function parse_superpopulation(options)
 
     if superpopulation == "none"
         @info "No superpopulation specified"
-    elseif superpopulation ∈ ["AFR", "AMR", "EAS", "EUR", "SAS"]
+    elseif superpopulation ∈ ["AFR", "AMR", "EAS", "EUR", "CSA", "MID"]
         @info @sprintf("Using the superpopulation %s", superpopulation)
     else
-        throw(error("Config error: superpopulation value must be either `none` or one of AFR, AMR, EAS, EUR or SAS"))
+        throw(error("Config error: superpopulation value must be either `none` or one of AFR, AMR, EAS, EUR, CSA or MID"))
     end
     return superpopulation
 end
@@ -249,7 +249,7 @@ end
 
 function parse_genomic_metadata(options, superpopulation, filepaths)
 
-    poplist = ["AFR", "AMR", "EAS", "EUR", "SAS"]
+    poplist = ["AFR", "AMR", "EAS", "EUR", "CSA", "MID"]
     
     nsamples, population_groups, population_weights =  get_population_structure(superpopulation, options, poplist)
     H1 = open_hapfile(filepaths.hap1_matrix_output)

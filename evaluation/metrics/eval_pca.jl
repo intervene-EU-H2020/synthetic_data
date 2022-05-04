@@ -73,7 +73,7 @@ function pca_plot(real_data_prefix, synt_data_prefix, real_data_popfile, synt_da
 
     # Assign colors for plotting
     # TODO just hardcoded this to quickly make an example, but should be generalised to arbitrary populations
-    superpopulations = ["AFR", "AMR", "EAS", "EUR", "SAS"]
+    superpopulations = ["AFR", "AMR", "EAS", "EUR", "CSA", "MID"]
     col_map = Dict(zip(superpopulations, distinguishable_colors(length(superpopulations))))
     real_col_map = [haskey(col_map, x) ? col_map[x] : "blue" for x in real_pop]
     synt_col_map = [haskey(col_map, x) ? col_map[x] : "blue" for x in synt_pop]

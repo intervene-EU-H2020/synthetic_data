@@ -4,6 +4,7 @@
 include("../utils/reference_data.jl")
 include("metrics/eval_aats.jl")
 include("metrics/eval_kinship_detail.jl")
+include("metrics/eval_kinship_quick.jl")
 include("metrics/eval_ld_corr.jl")
 include("metrics/eval_ld_decay.jl")
 include("metrics/eval_maf.jl")
@@ -12,6 +13,11 @@ include("metrics/eval_gwas.jl")
 
 function run_kinship_evaluation(ibsfile_real, ibsfile_synt, ibsfile_cross)
     run_kinship(ibsfile_real, ibsfile_synt, ibsfile_cross)
+end
+
+
+function run_quick_kinship_evaluation(synfile, nsamples_synfile, reffile, king, out_prefix)
+    kinship_quick(synfile, nsamples_synfile, reffile, king, out_prefix)
 end
 
 
@@ -135,6 +141,9 @@ function run_pipeline(options, chromosome, superpopulation, metrics)
     end
     if metrics["kinship"]
         run_kinship_evaluation(external_files["real_ibsfile"], external_files["syn_ibsfile"], external_files["cross_ibsfile"])
+    end
+    if metrics["kinship_quick"]
+        run_quick_kinship_evaluation(synfile_prefix, genomic_metadata.nsamples, reffile_prefix, filepaths.king, filepaths.evaluation_output)
     end
     if metrics["ld_corr"]
         run_ld_corr_evaluation(reffile_prefix, synfile_prefix, filepaths.evaluation_output, filepaths.plink)

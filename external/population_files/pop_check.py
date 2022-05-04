@@ -29,11 +29,21 @@ fp.close()
 
 len(samples)
 
+# Use the following superpopulation groups (based on 1KG and HGDP):
+# - AFR: Africa
+# - AMR: Admixed America
+# - EAS: East Asia
+# - EUR: Europe
+# - CSA: Central/South Asia
+# - MID: Middle East
+# 
+# Removed the following groups due to too little data:
+# - CAS: Central Asia Siberia
+# - OCE: Oceania
+
 mer_df = pd.merge(df, pd.DataFrame({'SampleID':samples}), how='right')
 
-# pop_map = {'Africa':'AFR', 'Africa (HGDP)':'AFR', 'America':'AMR', 'America (HGDP)':'AMR', 'Central South Asia (HGDP)':'SAS', 'CentralAsiaSiberia':'EUR', 'East Asia (HGDP)':'EAS', 'EastAsia':'EAS', 'Europe (HGDP)':'EUR', 'Middle East (HGDP)':'AFR', 'Oceania (HGDP)':'SAS', 'Oceania (SGDP),Oceania (HGDP)':'SAS', 'Oceania':'SAS', 'SouthAsia':'SAS', 'WestEurasia':'EUR'}
-# mer_df['Superpopulation'] = mer_df['Superpopulation'].apply(lambda x : pop_map[x] if x in pop_map else x)
+pop_map = {'Africa':'AFR', 'Africa (HGDP)':'AFR', 'America':'AMR', 'America (HGDP)':'AMR', 'Central South Asia (HGDP)':'CSA', 'CentralAsiaSiberia':'CAS', 'East Asia (HGDP)':'EAS', 'EastAsia':'EAS', 'Europe (HGDP)':'EUR', 'Middle East (HGDP)':'MID', 'Oceania (HGDP)':'OCE', 'Oceania (SGDP),Oceania (HGDP)':'OCE', 'Oceania':'OCE', 'SouthAsia':'CSA', 'WestEurasia':'EUR', 'SAS':'CSA'}
+mer_df['Superpopulation'] = mer_df['Superpopulation'].apply(lambda x : pop_map[x] if x in pop_map else x)
 
-mer_df = mer_df[~mer_df['Superpopulation'].isna()]
-
-mer_df.to_csv('merged_pop.tsv', index=None, sep='\t')
+mer_df.to_csv('merged_pop_adjusted.tsv', index=None, sep='\t')

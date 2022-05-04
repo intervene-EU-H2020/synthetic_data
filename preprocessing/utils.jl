@@ -57,6 +57,10 @@ function get_mutation_ages(datafile, mapfile, rsidfile, output)
     mean = sum(skipmissing(final_df.AgeMean_Mut))/count(!ismissing, final_df.AgeMean_Mut)
     replace!(final_df.AgeMean_Mut, missing => mean)
     replace!(final_df.DataSource, missing => "Imputed")
+
+    # convert from years to generations 
+    years_per_gen = 25
+    final_df.AgeMean_Mut = round.(final_df.AgeMean_Mut/years_per_gen, digits=3)
     
     # save to output
     rename!(final_df, :Id => :Variant)

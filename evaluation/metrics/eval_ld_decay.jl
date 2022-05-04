@@ -36,6 +36,12 @@ end
 function run_ld_decay(synfile, realfile, plink, mapthin, out_prefix, bp_to_cm_map)
     ld_decay_real = LD_decay(realfile, plink, mapthin, out_prefix, bp_to_cm_map)
     ld_decay_syn = LD_decay(synfile, plink, mapthin, out_prefix, bp_to_cm_map)
+    # store data points
+    df = DataFrame(real_x=ld_decay_real[:,1], real_y=ld_decay_real[:,2], syn_x=ld_decay_syn[:,1], syn_y=ld_decay_syn[:,2])
+    outfile = joinpath(dirname(out_prefix), "results-ld-decay.csv")
+    CSV.write(outfile, df)
+    @info "LD decay data saved at $outfile"
+    # make plot
     outfile = joinpath(dirname(out_prefix), "results-ld-decay.png")
     fig = Plots.plot(size=(400, 400))
     plot!(fig, ld_decay_real[:,1], ld_decay_real[:,2], label="real", xaxis="Genetic distance (cm)", yaxis="LD estimate (r2)", title="LD decay")
