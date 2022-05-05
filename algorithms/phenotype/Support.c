@@ -752,7 +752,7 @@ void GetCovarEff() {
 		for (i = 0; i < nTrait; i++) {
 			for (l = 0; l < nSample; l++) {
 				popIndex = PopIndicator[l];
-				CovarEff[i][l] += BaseBeta[popIndex][k] * CovarMat[k][l];
+				CovarEff[i][l] += BaseBeta[popIndex][i] * CovarMat[k][l];
 			}
 		}
 	}
