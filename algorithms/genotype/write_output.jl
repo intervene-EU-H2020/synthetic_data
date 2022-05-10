@@ -14,6 +14,10 @@ function write_to_plink(ref_df, batchsize, metadata)
     batch_files = Vector{String}(undef, number_of_batches)
     
     for batch_number in 1:number_of_batches
+        # check size of last batch
+        if batch_number == number_of_batches
+            batchsize = metadata.nsamples - batchsize*(number_of_batches-1)
+        end
         batch_ref_df = get_batch_dfs(ref_df, batch_number, batchsize)
         batch_file = write_to_plink_batch(batch_ref_df, batchsize, batch_number, metadata)
         batch_files[batch_number] = batch_file[1:end-4]
