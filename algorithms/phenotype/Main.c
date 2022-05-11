@@ -182,9 +182,9 @@ int main(int argc, char const *argv[])
 			GCEweight[n][1] = sqrt(CovarEffProp[n][k]/VarCovar[n][k]);
 			GCEweight[n][2] = sqrt(EnvEffProp[n][k]/VarEnv[n][k]);
 			// printf("GenoEffP = %lf, VarGeno = %lf, EnvEffP = %lf, VarEnv = %lf\n", GenoEffProp[n][k], VarGeno[n][k], EnvEffProp[n][k], VarEnv[n][k]);
-			GCEweight[n][0] = (isnan(GCEweight[n][0]) ? 0.0 : GCEweight[n][0]);
-			GCEweight[n][1] = (isnan(GCEweight[n][1]) ? 0.0 : GCEweight[n][1]);
-			GCEweight[n][2] = (isnan(GCEweight[n][2]) ? 0.0 : GCEweight[n][2]);
+			GCEweight[n][0] = (isnan(GCEweight[n][0]) || isinf(GCEweight[n][0]) ? 0.0 : GCEweight[n][0]);
+			GCEweight[n][1] = (isnan(GCEweight[n][1]) || isinf(GCEweight[n][1]) ? 0.0 : GCEweight[n][1]);
+			GCEweight[n][2] = (isnan(GCEweight[n][2]) || isinf(GCEweight[n][2]) ? 0.0 : GCEweight[n][2]);
 		}
 		memset(PopSampleCt, 0, sizeof(long int) * nMaxPop);
 		memset(PopMatTmp, 0, sizeof(double) * nMaxPop * nMaxInd * 3);
