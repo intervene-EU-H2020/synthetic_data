@@ -15,7 +15,7 @@ function run_gwas_tools(plink2, syngeno_prefix, synpheno_prefix, trait_idx, cova
 	fam[!,"Sample"] = string.(fam[:,1], "_",fam[:,2])
 
 	PhenoFam = leftjoin(fam, pheno, on = :Sample)
-	PhenoFam = PhenoFam[:, ["Column1","Column2","Column3","Column4","Column5","Phenotype"]]
+	PhenoFam = PhenoFam[:, ["Column1","Column2","Column3","Column4","Column5","Phenotype(liability)"]]
 	CSV.write(syngeno_prefix * ".phe" * string(trait_idx), DataFrame(PhenoFam), delim = "\t", header = false)
 	
 	@info  "GWAS using plink 2"
