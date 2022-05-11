@@ -4,10 +4,10 @@
 
 global_parameters:
   random_seed: 123
-  chromosome: 22 # "all" or a number from 1 to 22
-  superpopulation: none # "none" or a specific superpopulation (AFR, AMR, EAS, EUR, SAS)
+  chromosome: 21 # "all" or a number from 1 to 22
+  superpopulation: EUR # "none" or a specific superpopulation (AFR, AMR, EAS, EUR, SAS)
   memory: 8000 # amount of memory available (in MB) for memory-intensive commands
-  batchsize: 10000 # batchsize for writing plink output during genotype generation
+  batchsize: 2000 # batchsize for writing plink output during genotype generation
 
 
 ####################################
@@ -70,20 +70,20 @@ genotype_data:
       nsamples: 5000 # only used if not using custom samples
   # recombination rate (default values determined by optimisation procedure)
   rho:
-    AFR: 0.1
-    AMR: 0.1
-    EAS: 0.1
-    EUR: 0.1
-    CSA: 0.1
-    MID: 0.1
+    AFR: 0.7
+    AMR: 0.7
+    EAS: 0.7
+    EUR: 0.7
+    CSA: 0.7
+    MID: 0.7
   # mean of effective population size (default values determined by optimisation procedure)
   Ne:
-    AFR: 2000
-    AMR: 2000
-    EAS: 2000
-    EUR: 2000
-    CSA: 2000
-    MID: 2000
+    AFR: 9000
+    AMR: 9000
+    EAS: 9000
+    EUR: 9000
+    CSA: 9000
+    MID: 9000
 
 
 ####################################
@@ -99,6 +99,7 @@ phenotype_data:
   nComponent: 1
   PropotionGeno: 0.2,0.7,0.8,0.2
   PropotionCovar: 0.0,0.0,0.0,0.0
+  Prevalence: 0.5
   TraitCorr: 1,-0.7,-0.7,1
   PopulationCorr: 1,0.25,0.25,1
   CompWeight: 1
@@ -115,14 +116,14 @@ phenotype_data:
 # Set to true if you want the script to calculate the metric
 evaluation:
   metrics:
-    aats: true  # nearest neighbour adversarial accuracy
-    kinship: true # relatedness, including kinship density and IBS plots
+    aats: false  # nearest neighbour adversarial accuracy
+    kinship: false # relatedness, including kinship density and IBS plots
     kinship_quick: true # quick calculations for number of related samples
     ld_corr: true # linkage disequilibrium (LD) correlation matrix
     ld_decay: true # linkage disequilibrium (LD) decay plot (and distance)
     maf: true # minor allele frequency divergences
     pca: true # principal components analysis
-    gwas: true # run GWAS and generate manhattan and qqplot
+    gwas: false # run GWAS and generate manhattan and qqplot
 
 
 ####################################

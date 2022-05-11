@@ -44,6 +44,7 @@ function create_parfile(phenotype_options, filepaths, traw_prefix, out_prefix)
     
     push!(lines, @sprintf("TraitCorr %s", phenotype_options["TraitCorr"]))
     push!(lines, @sprintf("PopulationCorr %s", phenotype_options["PopulationCorr"]))
+    push!(lines, @sprintf("Prevalence %s", phenotype_options["Prevalence"]))
     push!(lines, @sprintf("Reference %s", filepaths.phenotype_reference))
     push!(lines, @sprintf("GenoFile %s", traw_prefix))
     push!(lines, @sprintf("Output %s", out_prefix))
