@@ -63,9 +63,10 @@ end
 
 function kinship_quick(synfile, nsamples_synfile, reffile, king, out_prefix)
     syn = kinship_syn(synfile, nsamples_synfile, king, out_prefix)
-    cross = kinship_cross(synfile, nsamples_synfile, reffile, king, out_prefix)
-
-    df = DataFrame(metric=["syn_duplicates", "syn_1st_degree", "syn_2nd_degree", "syn_combined", "cross_duplicates", "cross_1st_degree", "cross_2nd_degree", "cross_combined"], value=[syn[1,2], syn[2,2], syn[3,2], syn[4,2], cross[1,2], cross[2,2], cross[3,2], cross[4,2]])
+    #cross = kinship_cross(synfile, nsamples_synfile, reffile, king, out_prefix)
+    
+    #df = DataFrame(metric=["syn_duplicates", "syn_1st_degree", "syn_2nd_degree", "syn_combined", "cross_duplicates", "cross_1st_degree", "cross_2nd_degree", "cross_combined"], value=[syn[1,2], syn[2,2], syn[3,2], syn[4,2], cross[1,2], cross[2,2], cross[3,2], cross[4,2]])
+    df = DataFrame(metric=["syn_duplicates", "syn_1st_degree", "syn_2nd_degree", "syn_combined"], value=[syn[1,2], syn[2,2], syn[3,2], syn[4,2]])
     outfile = joinpath(dirname(out_prefix), "results-relatedness.csv")
     CSV.write(outfile, df)
     @info "Relatedness data saved at $outfile"
