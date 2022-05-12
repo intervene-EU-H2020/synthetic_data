@@ -13,15 +13,15 @@ function run_gwas_tools(plink2, syngeno_prefix, synpheno_prefix, trait_idx, cova
 	fam = CSV.File(syngeno_prefix * ".fam", normalizenames=true, header = 0) |> DataFrame
 	pheno = CSV.File(synpheno_prefix * ".pheno" * string(trait_idx), normalizenames=true) |> DataFrame
 	fam[!,"Sample"] = string.(fam[:,1], "_",fam[:,2])
-
+	
 	PhenoFam = leftjoin(fam, pheno, on = :Sample)
 	PhenoFam = PhenoFam[:, ["Column1","Column2","Column3","Column4","Column5","Phenotype_liability_"]]
-	CSV.write(syngeno_prefix * ".phe" * string(trait_idx), DataFrame(PhenoFam), delim = "\t", header = false)
+	syngeno_prefix_phe_trait_idx = @sprintf("%s.phe%i", synpheno_prefix, trait_idx)
+	CSV.write(syngeno_prefix_phe_trait_idx, DataFrame(PhenoFam), delim = "\t", header = false)
 	
 	@info  "GWAS using plink 2"
 	syngeno_prefix_bed = @sprintf("%s.bed", syngeno_prefix)
 	syngeno_prefix_bim = @sprintf("%s.bim", syngeno_prefix)
-	syngeno_prefix_phe_trait_idx = @sprintf("%s.phe%i", syngeno_prefix, trait_idx)
 	run(`$plink2 --bed $syngeno_prefix_bed --bim $syngeno_prefix_bim --fam $syngeno_prefix_phe_trait_idx --glm hide-covar --covar $covar --ci 0.95 --out $outdir`)
 
 	@info  "Create summary statistics"
