@@ -52,6 +52,11 @@ function run_maf(real_maf_file, synt_maf_file)
     maf_real = CSV.File(real_maf_file, delim=' ', ignorerepeated=true) |> DataFrame
     maf_synt = CSV.File(synt_maf_file, delim=' ', ignorerepeated=true) |> DataFrame
 
+    # Clean up MAFs with 0.0 (or very low)
+    sel_snps = maf_real.MAF .> 0.001
+    maf_real = maf_real[sel_snps, :]
+    maf_synt = maf_synt[sel_snps, :]
+    
     # Consolidate variants available in both the tables
     maf_data = innerjoin(maf_real[!, [:SNP, :MAF]], maf_synt[!, [:SNP, :MAF]], 
                     on = :SNP,
