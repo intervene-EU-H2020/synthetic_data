@@ -13,15 +13,20 @@ function write_to_plink(ref_df, batchsize, metadata)
 
     batch_files = Vector{String}(undef, number_of_batches)
     
+    total_samples_written = 0
     for batch_number in 1:number_of_batches
         # check size of last batch
+        modified_batchsize = batchsize
         if batch_number == number_of_batches
-            batchsize = metadata.nsamples - batchsize*(number_of_batches-1)
+            modified_batchsize = metadata.nsamples - batchsize*(number_of_batches-1)
         end
-        batch_ref_df = get_batch_dfs(ref_df, batch_number, batchsize)
-        batch_file = write_to_plink_batch(batch_ref_df, batchsize, batch_number, metadata)
+        batch_ref_df = get_batch_dfs(ref_df, batch_number, batchsize, modified_batchsize)
+        batch_file = write_to_plink_batch(batch_ref_df, batchsize, modified_batchsize, batch_number, metadata)
         batch_files[batch_number] = batch_file[1:end-4]
+        total_samples_written += modified_batchsize
     end
+
+    @assert total_samples_written == metadata.nsamples # check all synthetic samples were written to the output
     
     merge_batch_files(batch_files, metadata.outfile_prefix, metadata.plink)
 end
@@ -29,9 +34,9 @@ end
 
 """Returns the subset of ref_df containing only rows relevant to the current batch
 """
-function get_batch_dfs(ref_df, batch_number, batchsize)
-    start_haplotype = ((batch_number-1)*batchsize)*2+1
-    end_haplotype = start_haplotype+batchsize*2-1
+function get_batch_dfs(ref_df, batch_number, prev_batchsize, cur_batchsize)
+    start_haplotype = ((batch_number-1)*prev_batchsize)*2+1
+    end_haplotype = start_haplotype+cur_batchsize*2-1
     batch_ref_df = ref_df[(ref_df.H .<= end_haplotype).&(ref_df.H .>= start_haplotype), :]
     return batch_ref_df
 end
@@ -136,17 +141,17 @@ end
 
 """Writes the plink output for a single batch, using the Python package bed_reader
 """
-function write_to_plink_batch(batch_ref_df, batchsize, batch_number, metadata)
-    properties = Dict("fid"=>[string("syn",x) for x in ((batch_number-1)*batchsize+1):((batch_number-1)*batchsize+batchsize)],
-            "iid"=>[string("syn",x) for x in ((batch_number-1)*batchsize+1):((batch_number-1)*batchsize+batchsize)],
+function write_to_plink_batch(batch_ref_df, prev_batchsize, cur_batchsize, batch_number, metadata)
+    properties = Dict("fid"=>[string("syn",x) for x in ((batch_number-1)*prev_batchsize+1):((batch_number-1)*prev_batchsize+cur_batchsize)],
+            "iid"=>[string("syn",x) for x in ((batch_number-1)*prev_batchsize+1):((batch_number-1)*prev_batchsize+cur_batchsize)],
             "chromosome"=>[split(f, "\t")[1][5:end] for f in metadata.fixed_fields], 
             "sid"=>[split(f, "\t")[3] for f in metadata.fixed_fields],
             "bp_position"=>[split(f, "\t")[2] for f in metadata.fixed_fields], 
             "allele_1"=>[split(f, "\t")[5] for f in metadata.fixed_fields], 
             "allele_2"=>[split(f, "\t")[4] for f in metadata.fixed_fields])
 
-    start_haplotype = ((batch_number-1)*batchsize)*2+1
-    genostr = get_genostr(batch_ref_df, batchsize, start_haplotype, metadata)
+    start_haplotype = ((batch_number-1)*prev_batchsize)*2+1
+    genostr = get_genostr(batch_ref_df, cur_batchsize, start_haplotype, metadata)
     batch_file = @sprintf("%s_%i.bed", metadata.outfile_prefix, (batch_number-1))
 
     bed_reader.to_bed(batch_file, genostr, properties=properties)
