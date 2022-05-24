@@ -118,7 +118,6 @@ evaluation:
   metrics:
     aats: false  # nearest neighbour adversarial accuracy
     kinship: false # relatedness, including kinship density and IBS plots
-    kinship_quick: true # quick calculations for number of related samples
     ld_corr: true # linkage disequilibrium (LD) correlation matrix
     ld_decay: true # linkage disequilibrium (LD) decay plot (and distance)
     maf: true # minor allele frequency divergences
