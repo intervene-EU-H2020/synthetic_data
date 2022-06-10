@@ -85,7 +85,7 @@ end
 """Run the simulation rejection ABC
 """
 function run_simulation_rejection_abc(sumstat_reference, simulator_function, priors, sim_options)
-    abc_result = SimulatedABCRejection(sumstat_reference, simulator_function, priors, sim_options["threshold"], sim_options["n_particles"], max_iter=sim_options["max_iter"], write_progress=sim_options["write_progress"])
+    abc_result = SimulatedABCRejection(sumstat_reference, simulator_function, priors, sim_options["threshold"], sim_options["n_particles"], max_iter=sim_options["max_iter"], write_progress=sim_options["write_progress"], progress_every=1)
     return abc_result
 end
 
@@ -93,7 +93,7 @@ end
 """Run the emulation rejection ABC
 """
 function run_emulation_rejection_abc(sumstat_reference, simulator_function, priors, emu_options)
-    abc_result = EmulatedABCRejection(sumstat_reference, simulator_function, priors, emu_options["threshold"], emu_options["n_particles"], emu_options["n_design_points"], max_iter=emu_options["max_iter"], write_progress=emu_options["write_progress"])
+    abc_result = EmulatedABCRejection(sumstat_reference, simulator_function, priors, emu_options["threshold"], emu_options["n_particles"], emu_options["n_design_points"], max_iter=emu_options["max_iter"], write_progress=emu_options["write_progress"], progress_every=1)
     return abc_result
 end
 

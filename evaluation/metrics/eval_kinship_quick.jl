@@ -7,12 +7,10 @@ function kinship_cross(synfile, nsamples_synfile, reffile, king, out_prefix)
     cross_input = @sprintf("%s.bed", reffile)
     
     run(`$king -b $input,$cross_input --related --prefix $output`)
-
-    cols = [:ID1, :ID2, :N_SNP, :HetHet, :IBS0, :HetConc, :HomIBS0, :Kinship, :IBD1Seg, :IBD2Seg, :PropIBD, :InfType]
     
     kinship_file = @sprintf("%s.kin0", output)
     if isfile(kinship_file)
-        kin_cross = CSV.File(kinship_file, delim='\t', select=cols) |> DataFrame 
+        kin_cross = CSV.File(kinship_file, delim='\t') |> DataFrame 
 
         kin_cross_filtered = filter(
             [:ID1, :ID2] => (id1, id2) -> 
@@ -20,9 +18,9 @@ function kinship_cross(synfile, nsamples_synfile, reffile, king, out_prefix)
                 (startswith(id1, "syn") && !startswith(id2, "syn")),
             kin_cross, view=true)
         
-        duplicate = kin_cross_filtered[in(["Dup/MZ"]).(kin_cross_filtered.InfType), :]
-        first_degree = kin_cross_filtered[in(["FS","PO"]).(kin_cross_filtered.InfType), :]
-        second_degree = kin_cross_filtered[in(["2nd"]).(kin_cross_filtered.InfType), :]
+        duplicate = kin_cross_filtered[kin_cross_filtered.Kinship .> 0.354, :]
+        first_degree = kin_cross_filtered[0.177 .< kin_cross_filtered.Kinship .<= 0.354, :]
+        second_degree = kin_cross_filtered[0.0884 .< kin_cross_filtered.Kinship .<= 0.177, :]
     end
         
     # compute proportion of samples in synthetic data that are close relatives of reference data
