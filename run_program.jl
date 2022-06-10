@@ -89,7 +89,7 @@ end
 function main()
     parsed_args = parse_commandline()
     
-    options = YAML.load_file("config.yml")
+    options = YAML.load_file("config.yaml")
     if parsed_args["config"] != nothing
         options_override = YAML.load_file(parsed_args["config"])
         options = merge(options, options_override)

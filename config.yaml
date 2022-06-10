@@ -5,7 +5,7 @@
 global_parameters:
   random_seed: 123
   chromosome: 21 # "all" or a number from 1 to 22
-  superpopulation: EUR # "none" or a specific superpopulation (AFR, AMR, EAS, EUR, SAS)
+  superpopulation: none # "none" or a specific superpopulation (AFR, AMR, EAS, EUR, CSA, MID)
   memory: 8000 # amount of memory available (in MB) for memory-intensive commands
   batchsize: 2000 # batchsize for writing plink output during genotype generation
 
@@ -53,7 +53,6 @@ filepaths:
 ####################################
 
 genotype_data:
-  filetype: plink # specify either `plink` or `vcf`
   samples:
     use_default: true # setting this to true will ignore the custom settings
     custom:

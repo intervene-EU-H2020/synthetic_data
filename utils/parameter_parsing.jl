@@ -56,7 +56,6 @@ mutable struct GenomicMetadata
     population_rhos::Dict # {pop : rho}
     genetic_distances::Vector # [list of genetic distances (in centimorgans) at each variant position]
     mutation_ages::Vector # [list of mutation ages (in years) at each variant position]
-    outfile_type::String
     outfile_prefix::String
     batchsize::Integer
     plink::String
@@ -262,12 +261,11 @@ function parse_genomic_metadata(options, superpopulation, filepaths)
     population_rhos = Dict(pop=>options["genotype_data"]["rho"][pop] for pop in poplist)
     genetic_distances = get_genetic_distances(filepaths.genetic_distfile)
     mutation_ages = get_mutation_ages(filepaths.mutation_agefile)
-    outfile_type = options["genotype_data"]["filetype"]
     outfile_prefix = filepaths.synthetic_data_prefix
-    batchsize = outfile_type=="plink" ? get_batchsize(nsamples, options["global_parameters"]["batchsize"]) : -1
+    batchsize = get_batchsize(nsamples, options["global_parameters"]["batchsize"])
     plink = filepaths.plink
 
     nvariants = length(genetic_distances)
 
-    return GenomicMetadata(nsamples, nvariants, H1, H2, fixed_fields, haplotypes, index_map, population_groups, population_weights, population_N, population_Nes, population_rhos, genetic_distances, mutation_ages, outfile_type, outfile_prefix, batchsize, plink)
+    return GenomicMetadata(nsamples, nvariants, H1, H2, fixed_fields, haplotypes, index_map, population_groups, population_weights, population_N, population_Nes, population_rhos, genetic_distances, mutation_ages, outfile_prefix, batchsize, plink)
 end
