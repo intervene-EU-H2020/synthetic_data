@@ -26,7 +26,7 @@ This tool was developed by members of [INTERVENE (INTERnational consortium of in
 
 ## TLDR
 
-1. Download the [Singularity container](www.TODO.com) (or [Docker container](www.TODO.com), but the following commands with differ slightly)
+1. Download the [Singularity container](TODO) (or [Docker container](TODO), but the following commands with differ slightly)
 2. Setup the following file structure with the container you just downloaded and a copy of the `config.yaml` file from this repository:
 
 ```
@@ -37,7 +37,7 @@ This tool was developed by members of [INTERVENE (INTERnational consortium of in
     └── synthetic-data-v1.0.0.sif
 ```
 
-3. Initalise the software dependencies:
+3. Initialise the software dependencies:
 
 ```
 singularity exec --bind data/:/data/ containers/synthetic-data-v1.0.0.sif init
@@ -66,8 +66,8 @@ This quickstart tutorial will show you the simplest approach for generating and 
 For ease of portability and reproducibility, we've made this software available as both Singularity and Docker containers. These containerisation systems streamline software dependency management by creating a standardised environment, to make it easier for you to get started with generating synthetic datasets. 
 
 You can download your choice of container from one of the following links:
-- Singularity: www.TODO.com
-- Docker: www.TODO.com
+- Singularity: TODO
+- Docker: TODO
 
 Alternatively, you can run this software without a container by manually installing the software dependencies. If you prefer this approach, you can view the list of required dependencies in the `Dockerfile` of this repository. 
 
@@ -246,7 +246,7 @@ Example 2: 100 genotypes where each genotype has 50% of segments sampled from EU
 
 ## Phenotype data parameters
 
-Parameters for phenotype data generation (also see [phenotype filepaths](#phenotype-filepaths)):
+Parameters for phenotype data generation:
 
 | Parameter name | Possible values | Description |
 | --- | --- | --- |
@@ -262,7 +262,7 @@ Parameters for phenotype data generation (also see [phenotype filepaths](#phenot
 | TraitCorr | Comma-separated list of floats | A flattened correlation matrix for traits genetic correlation (symmetric positive definite). nTrait x nTrait entries separated by comma. |
 | PopulationCorr | Comma-separated list of floats |A flattened correlation matrix for population genetic correlation (symmetric positive definite). nPop x nPop entries separated by comma. |
 | CompWeight | Comma-separated list of floats | Gaussian mixture component weights |
-| UseCausalList | Boolean | True if using a list of predefined SNPs to be used as causal, overrides Polygenicity parameter if specified. Each column contains causal SNPs for one trait, columns separated by comma. |
+| UseCausalList | Boolean | True if using a list of predefined SNPs to be used as causal, overrides Polygenicity parameter if specified. Each column contains causal SNPs for one trait, columns separated by comma. See [phenotype filepaths](#phenotype-filepaths) for how to specify a causal list as input. |
 | Polygenicity | Float | nTrait vector of trait polygenicity, measured by proportion of total SNPs being causal. e.g. Polygenicity = 0.05 meaning around 5% SNPs will be causal. |
 | Pleiotropy | Float | nTrait vector of trait's pleiotropy relationship comparing to trait 1. i.e. if trait 2 has Pleiotropy = 0.9, it means 90% of causal SNPs in trait 1 are also causal in trait 2. Therefore, first entry of Pleiotropy vector is always 1. Entries separated by comma. |
 
@@ -302,7 +302,7 @@ singularity exec --bind data/:/data/ containers/synthetic-data-v1.0.0.sif optimi
 | `priors` | Numerical values for `uniform_lower` and `uniform_upper` of each parameter | The lower and upper bounds for the uniform prior distributions of each parameter. |
 | `simulation_rejection_ABC` | Set `run` to `true` if using this algorithm. Specify the number of posterior samples with `n_particles`, the maximum number of simulations to run with `max_iter`, the acceptance threshold with `threshold`, and whether the algorithm progress should be printed to standard output with `write_progress`. | Configuration for simulation-based rejection sampling. |
 | `emulation_rejection_ABC` | Set `run` to `true` if using this algorithm. Specify the number of posterior samples with `n_particles`, the number of samples for training the emulator with `n_design_points`, the maximum number of emulations to run with `max_iter`, the acceptance threshold with `threshold`, and whether the algorithm progress should be printed to standard output with `write_progress`. | Configuration for emulation-based rejection sampling. Recommended for computationally expensive simulations of large synthetic datasets. |
-| `summary_statistics` | Set `true`/`false` for `ld_decay` and/or `kinship` | This statistic aims to find model parameters that generate synthetic datasets with LD (linkage disequilibrium) decay curves as similar as possible to the (real) reference dataset. |
+| `summary_statistics` | Set `true`/`false` for `ld_decay` and/or `kinship` | The `ld_decay` objective minimises Euclidean distance between LD decay curves of the reference/synthetic datasets. The `kinship` objective minimises genetic relatedness between the reference/synthetic datasets. The objectives can be used separately or combined together. |
 
 # Large scale synthetic data generation
 
