@@ -4,10 +4,10 @@
 
 global_parameters:
   random_seed: 123
-  chromosome: 21 # "all" or a number from 1 to 22
+  chromosome: 1 # "all" or a number from 1 to 22
   superpopulation: none # "none" or a specific superpopulation (AFR, AMR, EAS, EUR, CSA, MID)
   memory: 8000 # amount of memory available (in MB) for memory-intensive commands
-  batchsize: 2000 # batchsize for writing plink output during genotype generation
+  batchsize: 10000 # batchsize for writing plink output during genotype generation
 
 
 ####################################
@@ -54,35 +54,39 @@ filepaths:
 
 genotype_data:
   samples:
-    use_default: true # setting this to true will ignore the custom settings
-    custom:
-      - id: examplepop1
+    use_default: true # setting this to true will ignore the custom population groups
+    custom: # add your custom population groups below if using use_default=false
+      - id: EUR_pop
         nsamples: 100
         populations: 
           - EUR: 100
-      - id: examplepop2
-        nsamples: 500
+      - id: AFR_pop
+        nsamples: 200
         populations:
-          - EUR: 30
-          - AFR: 70
+          - AFR: 100
+      - id: admix_pop
+        nsamples: 100
+        populations:
+          - EUR: 50
+          - AFR: 50
     default:
-      nsamples: 5000 # only used if not using custom samples
-  # recombination rate (default values determined by optimisation procedure)
+      nsamples: 1000 # used by the algorithm if use_default=true, otherwise custom population groups are used
+  # recombination rate 
   rho:
-    AFR: 0.7
-    AMR: 0.7
-    EAS: 0.7
-    EUR: 0.7
-    CSA: 0.7
-    MID: 0.7
-  # mean of effective population size (default values determined by optimisation procedure)
+    AFR: 0.77
+    AMR: 0.80
+    EAS: 0.58
+    EUR: 0.68
+    CSA: 0.73
+    MID: 0.65
+  # effective population size 
   Ne:
-    AFR: 9000
-    AMR: 9000
-    EAS: 9000
-    EUR: 9000
-    CSA: 9000
-    MID: 9000
+    AFR: 11900
+    AMR: 10400
+    EAS: 11700
+    EUR: 11700
+    CSA: 11500
+    MID: 8100
 
 
 ####################################
@@ -90,22 +94,22 @@ genotype_data:
 ####################################
 
 phenotype_data:
-  nPopulation: 2
-  nTrait: 2
+  nPopulation: 6
+  nTrait: 1
   a: -0.4
   b: -1
   c: 0.5
   nComponent: 1
-  PropotionGeno: 0.2,0.7,0.8,0.2
-  PropotionCovar: 0.0,0.0,0.0,0.0
-  Prevalence: 0.5
-  TraitCorr: 1,-0.7,-0.7,1
-  PopulationCorr: 1,0.25,0.25,1
-  CompWeight: 1
+  PropotionGeno: 0.1,0.1,0.1,0.1,0.1,0.1
+  PropotionCovar: 0,0,0,0,0,0
+  Prevalence: 0.5,0.5,0.5,0.5,0.5,0.5
+  TraitCorr: 1
+  PopulationCorr: 1,0,0,0,0,0,0,1,0,0,0,0,0,0,1,0,0,0,0,0,0,1,0,0,0,0,0,0,1,0,0,0,0,0,0,1
+  CompWeight: 1,5,10
   Causality:
-    UseCausalList: false # if true the algorithm will use the causal_list filepath
-    Polygenicity: 0.8,0.8 # only required if UseCausalList is false
-    Pleiotropy: 1,1 # only required if UseCausalList is false
+      UseCausalList: false # if true the algorithm will use the causal_list filepath
+      Polygenicity: 0.005 # only required if UseCausalList is false
+      Pleiotropy: 1 # only required if UseCausalList is false
 
 
 ####################################
@@ -115,13 +119,13 @@ phenotype_data:
 # Set to true if you want the script to calculate the metric
 evaluation:
   metrics:
-    aats: false  # nearest neighbour adversarial accuracy
-    kinship: false # relatedness, including kinship density and IBS plots
+    aats: true  # nearest neighbour adversarial accuracy
+    kinship: true # relatedness, including kinship density and IBS plots
     ld_corr: true # linkage disequilibrium (LD) correlation matrix
     ld_decay: true # linkage disequilibrium (LD) decay plot (and distance)
     maf: true # minor allele frequency divergences
     pca: true # principal components analysis
-    gwas: false # run GWAS and generate manhattan and qqplot
+    gwas: false # GWAS, manhattan plot and qqplot
 
 
 ####################################
@@ -134,23 +138,23 @@ optimisation:
   priors:
     rho:
       uniform_lower: 0
-      uniform_upper: 0.1
+      uniform_upper: 3
     Ne:
-      uniform_lower: 1000
+      uniform_lower: 0
       uniform_upper: 50000
   # inference type - simulation-based rejection ABC or emulation-based rejection ABC
   simulation_rejection_ABC:
     run: true
     n_particles: 500
-    threshold: 0.05
-    max_iter: 10
+    threshold: 0.15
+    max_iter: 500
     write_progress: true
   emulation_rejection_ABC:
     run: false
     n_particles: 500
-    threshold: 0.05
+    threshold: 0.15
     n_design_points: 50
-    max_iter: 10000
+    max_iter: 500
     write_progress: true
   # choice of summary statistic/s
   summary_statistics:

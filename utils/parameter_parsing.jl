@@ -209,7 +209,7 @@ function get_population_structure(superpopulation, options, poplist)
         @info "Using default population structure"
         nsamples = options["genotype_data"]["samples"]["default"]["nsamples"]
         if superpopulation == "none"
-            # use 5 superpopulations in equal ratio
+            # use all superpopulations in equal ratio
             population_groups = repeat(repeat(poplist,inner=2), Int(ceil(nsamples/length(poplist))))[1:nsamples*2]
             for pop in poplist
                 population_weights[pop] = Dict(pop=>100)
