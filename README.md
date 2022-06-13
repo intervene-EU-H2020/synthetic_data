@@ -124,12 +124,12 @@ singularity exec --bind data/:/data/ containers/synthetic-data-v1.0.0.sif valida
 
 This will store visualisations in the `data/outputs/test/evaluation` directory and print results for quantitative metrics. See our manuscript for details about the evaluation workflow.
 
-Now that you understand the basics, you can read about [how to customise your synthetic datasets](#customising-your-synthetic-datasets). You may be also be interested in [how to generate very large datasets](#large-scale-synthetic-data-generation).
+Now that you understand the basics, you can read about [how to customise your synthetic datasets](#customising-your-synthetic-datasets). You may also be interested in [how to generate very large datasets](#large-scale-synthetic-data-generation).
 
 
 # Customising your synthetic datasets
 
-You can customize the specifications for synthetic data generation by modifying the `config.yml` file.
+You can customise the specifications for synthetic data generation by modifying the `config.yml` file.
 
 ## Global parameters
 
@@ -185,7 +185,7 @@ Filepaths for phenotype data generation. See the [phenotype data parameters sect
 | --- | --- | --- |
 | `traw_prefix` | String or `none` to automatically create this file based on the genotype generation output | Filepath for genotype file, in `.traw` format. Can be generated using `plink --recode A-transpose` from other formats. Genotype file includes all chromosomes and samples. The code assumes that a `.samples` file exists with the same prefix. |
 | `causal_list` | String | Filepath for a list of predefined SNPs to be used as causal, overrides `polygenicity` parameter if specified. Each column contains causal SNPs for one trait, columns separated by comma. |
-| `reference_list` | String | Filepath for a reference file for LD. By default, ues the reference file downloaded by the `fetch` command. |
+| `reference_list` | String | Filepath for a reference file for LD. By default, uses the reference file downloaded by the `fetch` command. |
 
 ### Software filepaths
 
