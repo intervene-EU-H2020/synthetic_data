@@ -37,7 +37,7 @@ This tool was developed by members of [INTERVENE (INTERnational consortium of in
     └── synthetic-data-v1.0.0.sif
 ```
 
-3. Initialise the software dependencies the from root directory you created in the previous step:
+3. Initialise the software dependencies from the root directory you setup in the previous step:
 
 ```
 singularity exec --bind data/:/data/ containers/synthetic-data-v1.0.0.sif init
