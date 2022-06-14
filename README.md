@@ -27,7 +27,7 @@ This tool was developed by members of [INTERVENE (INTERnational consortium of in
 ## TLDR
 
 1. Download the [Singularity container](TODO) (or [Docker container](TODO), but the following commands will differ slightly)
-2. Setup the following file structure with the container you just downloaded and a copy of the `config.yaml` file from this repository:
+2. Setup the following directory structure with the container you just downloaded and a copy of the `config.yaml` file from this repository:
 
 ```
 .
@@ -37,7 +37,7 @@ This tool was developed by members of [INTERVENE (INTERnational consortium of in
     └── synthetic-data-v1.0.0.sif
 ```
 
-3. Initialise the software dependencies from the root directory you setup in the previous step:
+3. Initialise the software dependencies from the root directory you set up in the previous step:
 
 ```
 singularity exec --bind data/:/data/ containers/synthetic-data-v1.0.0.sif init
