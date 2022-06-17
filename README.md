@@ -103,7 +103,7 @@ By default this will store Julia package files in the `~/.julia` directory. If y
 singularity exec --bind data/:/data/ containers/synthetic-data-v1.0.0.sif fetch
 ```
 
-This will download the reference files used as input to the synthetic data generation program to the `data/inputs/processed` directory. See [preprocessing/README.md](preprocessing/README.md) if you would like to know more about how this data was created.
+This will download the reference files used as input to the synthetic data generation program to the `data/inputs/processed` directory. See [preprocessing/README.md](preprocessing/README.md) if you would like to know more about how this data was created and for information about creating your own reference datasets.
 
 5. **Now generate a synthetic dataset using the `generate_geno` and `generate_pheno` commands:**
 
