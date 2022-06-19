@@ -5,7 +5,10 @@
 - Easily analyse data quality with an extensive workflow for evaluating synthetic data reliability and generalisability
 - Examine the posterior distributions of model parameters to aid with model selection
 
-This tool was developed by members of [INTERVENE (INTERnational consortium of integratiVE geNomics prEdiction)](https://www.interveneproject.eu/). If you would like to cite this software, please refer to our manuscript {TODO our preferred citation}.
+{TODO name of tool} has been designed to be highly scalable for large synthetic data generation. For example, we have used {TODO name of tool} to make diverse synthetic genotypes and phenotypes for over 1 million individuals and 2 million variants, and have made this synthetic dataset publicly available for download at TODO.
+
+This software tool was developed by members of [INTERVENE (INTERnational consortium of integratiVE geNomics prEdiction)](https://www.interveneproject.eu/). If you would like to cite this software, please refer to our manuscript {TODO our preferred citation}.
+
 
 ## Contents
 

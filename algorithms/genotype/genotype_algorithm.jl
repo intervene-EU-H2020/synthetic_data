@@ -52,12 +52,12 @@ The reference table has the following columns:
 
 Note that the start and end variant positions are included in the segment
 """
-function create_reference_table(metadata)
-    total_num_hap = 2*metadata.nsamples
+function create_reference_table(metadata, start_haplotype, end_haplotype, batchsize)
+    total_num_hap = 2*batchsize
     # to multi-thread the operation we create a dataframe for each haplotype, then concat these together
     ref_df_samples = Vector{DataFrame}(undef, total_num_hap)
     p = Progress(total_num_hap)
-    Threads.@threads for hap in 1:(total_num_hap)
+    Threads.@threads for hap in start_haplotype:end_haplotype
         happop = metadata.population_groups[hap]
         pos = 1
         # create segments until all variant positions are filled
@@ -76,7 +76,7 @@ function create_reference_table(metadata)
             push!(ref_df_hap, [hap, seghap, start_pos, end_pos, happop, segpop, T])
             pos = end_pos+1
         end
-        ref_df_samples[hap] = ref_df_hap
+        ref_df_samples[hap-start_haplotype+1] = ref_df_hap
         next!(p)
     end
     # concat the arrays of dataframes
@@ -85,17 +85,51 @@ function create_reference_table(metadata)
 end
 
 
+"""Adjusts the batch size if not a divisor of the number of samples
+"""
+function get_adjusted_batchsize(batchsize, number_of_batches, batch_number, metadata)
+    adjusted_batchsize = batchsize
+    if batch_number == number_of_batches
+        adjusted_batchsize = metadata.nsamples - batchsize*(number_of_batches-1)
+    end
+    return adjusted_batchsize
+end
+
+
+"""Returns the subset of ref_df containing only rows relevant to the current batch
+"""
+function get_start_end_haplotypes(batch_number, prev_batchsize, cur_batchsize)
+    start_haplotype = ((batch_number-1)*prev_batchsize)*2+1
+    end_haplotype = start_haplotype+cur_batchsize*2-1
+    return start_haplotype, end_haplotype
+end
+
+
 """Create the synthetic data for the specified chromosome
 """
 function create_synthetic_genotype_for_chromosome(metadata)
-    @info "Creating the algorithm mapping table"
-    ref_df = create_reference_table(metadata)
-    
     @info "Writing the population file"
     create_sample_list_file(metadata)
-    
-    @info "Writing genotype output to PLINK"
-    write_to_plink(ref_df, metadata.batchsize, metadata)
+
+    number_of_batches = Int(ceil(metadata.nsamples/metadata.batchsize))
+    batch_files = Vector{String}(undef, number_of_batches)
+
+    total_samples_written = 0
+    for batch_number in 1:number_of_batches
+        adjusted_batchsize = get_adjusted_batchsize(metadata.batchsize, number_of_batches, batch_number, metadata)
+        @info @sprintf("Creating the reference table for batch %i", batch_number)
+        start_haplotype, end_haplotype = get_start_end_haplotypes(batch_number, metadata.batchsize, adjusted_batchsize)
+        batch_ref_df = create_reference_table(metadata, start_haplotype, end_haplotype, metadata.batchsize)
+        @info @sprintf("Writing the plink file for batch %i", batch_number)
+        batch_file = write_to_plink_batch(batch_ref_df, metadata.batchsize, adjusted_batchsize, batch_number, metadata)
+        batch_files[batch_number] = batch_file[1:end-4]
+        total_samples_written += adjusted_batchsize
+    end
+
+    @assert total_samples_written == metadata.nsamples # check all synthetic samples were written to the output
+
+    @info "Merging all batch files"
+    merge_batch_files(batch_files, metadata.outfile_prefix, metadata.plink)
 end
 
 
