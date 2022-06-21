@@ -64,76 +64,77 @@ int main(int argc, char const *argv[])
 		fclose(OutFileCausal);
 	}
 
-// takes traw as input
+// takes traw (22 files, one for each chr) as input
     FILE *InFileGeno;
     int CHR;
     char SNP[50];
+    char InGenoCHR[1000][22];
 
-    strcat(InGeno, ".traw");
-    InFileGeno = fopen(InGeno, "r");
-    if (InFileGeno == NULL) {
-        printf("Cannot open the traw file %s.\n", InGeno);
-        exit(0);
-    }
-    else {
-		i = 0; // SNP counter
-		j = 0; // Sample counter; PopSampleCt for population sample counter
-		k = 0; // Causal SNP counter
+    i = 0; // SNP counter
+    k = 0; // Causal SNP counter
 
-		fgets(buffer, sizeof(buffer), InFileGeno); // read header
-		p = buffer;
-		tok = strtok_r(p, " ,\t", &p); // CHR
-		tok = strtok_r(p, " ,\t", &p); // SNP
-		tok = strtok_r(p, " ,\t", &p); // Morgan pos
-	    tok = strtok_r(p, " ,\t", &p); // BP pos
-	    tok = strtok_r(p, " ,\t", &p); // Ref Allele
-	    tok = strtok_r(p, " ,\t", &p); // ALT Allele
-	    while ((tok = strtok_r(p, " ,\t\n", &p))) {
-	    	strcpy(SampleList[j++], tok);
+    for (CHR = 1; CHR < 23; CHR++) {
+	    sprintf(InGenoCHR[CHR-1],"%s-%d.traw", InGeno, CHR);
+	    InFileGeno = fopen(InGenoCHR[CHR-1], "r");
+	    if (InFileGeno == NULL) {
+	        printf("Cannot open the traw file %s.\n", InGenoCHR[CHR-1]);
+	        exit(0);
 	    }
-	    if (j != nSample) {
-	    	printf("Sample size in genotype file does not match population file, nSample = %ld, j = %ld.\n", nSample, j);
-	    	exit(0);
-	    }
-	    BaseBetaGen();
-		while (fgets(buffer, sizeof(buffer), InFileGeno) != NULL) {
+	    else {
+			j = 0; // Sample counter; PopSampleCt for population sample counter
+			fgets(buffer, sizeof(buffer), InFileGeno); // read header
 			p = buffer;
-			tok = strtok_r(p, " ,\t", &p); //CHR
-			CHR = atoi(tok);
-			if (CHR < 1 || CHR > 26) {
-		    	printf("line %ld has invalid CHR code.\n", i+1);
-		        exit(0);
+			tok = strtok_r(p, " ,\t", &p); // CHR
+			tok = strtok_r(p, " ,\t", &p); // SNP
+			tok = strtok_r(p, " ,\t", &p); // Morgan pos
+		    tok = strtok_r(p, " ,\t", &p); // BP pos
+		    tok = strtok_r(p, " ,\t", &p); // Ref Allele
+		    tok = strtok_r(p, " ,\t", &p); // ALT Allele
+		    while ((tok = strtok_r(p, " ,\t\n", &p))) {
+		    	strcpy(SampleList[j++], tok);
 		    }
-			else {
-				CHR = CHR-1;
-				tok = strtok_r(p, " ,\t", &p); // SNP ID
-				strcpy(SNP, tok);
-				flag = IsCausal(SNP);
-				if (flag) {
-					k++;
-					tok = strtok_r(p, " ,\t", &p); // Morgan pos
-				    tok = strtok_r(p, " ,\t", &p); // BP pos
-				    tok = strtok_r(p, " ,\t", &p); // Ref Allele
-				    tok = strtok_r(p, " ,\t", &p); // ALT Allele
-				    j = 0;
-				    memset(PopSampleCt, 0, sizeof(long int) * nMaxPop);
-				    memset(PopMatTmp, 0, sizeof(double) * nMaxPop * nMaxInd * 3);
-				    memset(GenoMat, 0, sizeof(double) * nMaxInd);
-				    while ((tok = strtok_r(p, " ,\t", &p))) {
-				    	GenoMat[j] = atof(tok);
-				    	PopIndex = PopIndicator[j++];
-				    	tmpPopCt = PopSampleCt[PopIndex];
-				    	PopMatTmp[PopIndex][0][tmpPopCt] = atof(tok);
-				    	PopSampleCt[PopIndex]++;
-				    }
-				    AnalyzeSNP(CHR, SNP);
+		    if (j != nSample) {
+		    	printf("Sample size in genotype file does not match population file, nSample = %ld, j = %ld.\n", nSample, j);
+		    	exit(0);
+		    }
+		    BaseBetaGen();
+			while (fgets(buffer, sizeof(buffer), InFileGeno) != NULL) {
+				p = buffer;
+				tok = strtok_r(p, " ,\t", &p); //CHR
+				if (CHR != atoi(tok)) {
+			    	printf("line %ld has invalid CHR code.\n", i+1);
+			        exit(0);
+			    }
+				else {
+					tok = strtok_r(p, " ,\t", &p); // SNP ID
+					strcpy(SNP, tok);
+					flag = IsCausal(SNP);
+					if (flag) {
+						k++;
+						tok = strtok_r(p, " ,\t", &p); // Morgan pos
+					    tok = strtok_r(p, " ,\t", &p); // BP pos
+					    tok = strtok_r(p, " ,\t", &p); // Ref Allele
+					    tok = strtok_r(p, " ,\t", &p); // ALT Allele
+					    j = 0;
+					    memset(PopSampleCt, 0, sizeof(long int) * nMaxPop);
+					    memset(PopMatTmp, 0, sizeof(double) * nMaxPop * nMaxInd * 3);
+					    memset(GenoMat, 0, sizeof(double) * nMaxInd);
+					    while ((tok = strtok_r(p, " ,\t", &p))) {
+					    	GenoMat[j] = atof(tok);
+					    	PopIndex = PopIndicator[j++];
+					    	tmpPopCt = PopSampleCt[PopIndex];
+					    	PopMatTmp[PopIndex][0][tmpPopCt] = atof(tok);
+					    	PopSampleCt[PopIndex]++;
+					    }
+					    AnalyzeSNP(CHR-1, SNP);
+					}
+					i++;
 				}
-				i++;
 			}
+			fclose(InFileGeno);
 		}
-		fclose(InFileGeno);
-		printf("Input genomat: %ld SNPs; Using in total %ld causal SNPs.\n", i, k);
-	}	
+	}
+	printf("Input genomat: %ld SNPs; Using in total %ld causal SNPs.\n", i, k);
 
 	if (nCovar) {
 		printf("Getting Cov Effect...\n");
