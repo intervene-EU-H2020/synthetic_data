@@ -2,6 +2,9 @@
 
 _"Working code" for phenotype generation, subject to further updates._
 
+_2022.06.21 Now process genotype input file by chromosome, so that for larget data set generating traw file is more feasible._
+
+
 _2022.01.18 Changed non positive definite matrices handling a bit, but the input (PopulationCorr, TraitCorr) are still tricky for users._
 _Hmm.._
 
@@ -73,7 +76,7 @@ Currently the parameters are as below
 
 ```Reference``` **It also takes a reference file for LD, but it's a little too big for github (~36Mb in .gz). Need to put it somewhere**
 
-```GenoFile``` Input genotype file, in .traw format. Can be generated using ```plink --recode A-transpose``` from other formats. Genotype file includes all chromosomes and samples.
+```GenoFile``` Input genotype file, in .traw format **by chromosome**, ie takes 22 traw files, named as _GenoFile_-chr.traw, where chr is the chromosome number (1-22). Can be generated using ```plink --recode A-transpose``` from other formats. Genotype file includes all chromosomes and samples.
 
 _For each trait_, it outputs two files, ```.pheno``` includes the genetic effect, environmental effect and synthetic phenotype for each individual.
 
