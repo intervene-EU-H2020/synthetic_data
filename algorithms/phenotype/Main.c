@@ -77,8 +77,8 @@ int main(int argc, char const *argv[])
 	    sprintf(InGenoCHR[CHR-1],"%s-%d.traw", InGeno, CHR);
 	    InFileGeno = fopen(InGenoCHR[CHR-1], "r");
 	    if (InFileGeno == NULL) {
-	        printf("Cannot open the traw file %s.\n", InGenoCHR[CHR-1]);
-	        exit(0);
+	        printf("Cannot open the traw file %s, using other available chromosomes, if any.\n", InGenoCHR[CHR-1]);
+	        // exit(0);
 	    }
 	    else {
 			j = 0; // Sample counter; PopSampleCt for population sample counter
