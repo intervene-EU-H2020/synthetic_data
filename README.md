@@ -188,7 +188,6 @@ Filepaths for phenotype data generation. See the [phenotype data parameters sect
 
 | Parameter name | Possible values | Description |
 | --- | --- | --- |
-| `traw_prefix` | String or `none` to automatically create this file based on the genotype generation output | Filepath for genotype file, in `.traw` format. Can be generated using `plink --recode A-transpose` from other formats. Genotype file includes all chromosomes and samples. The code assumes that a `.samples` file exists with the same prefix. |
 | `causal_list` | String | Filepath for a list of predefined SNPs to be used as causal, overrides `polygenicity` parameter if specified. Each column contains causal SNPs for one trait, columns separated by comma. |
 | `reference_list` | String | Filepath for a reference file for LD. By default, uses the reference file downloaded by the `fetch` command. |
 
@@ -343,27 +342,7 @@ sed -i 's/${chr}'"/$n/g" ${CONFIG}$n.yaml
 singularity exec --bind data/:/data/ containers/synthetic-data-v1.0.0.sif generate_geno 8 ${CONFIG}$n.yaml
 ```
 
-3. Create a `.traw` file and `.sample` file to provide as input to the phenotype generation program. The software pipeline does this automatically when generating data for a single chromosome, but for multiple chromosomes you can use the script below to merge the files. The script assumes that genotype files are stored at `data/outputs/test/test_chr${chr}`, where `${chr}` is the chromosome number.
-
-```
-#!/bin/bash
-
-datapath='data/outputs/test/test_chr'
-mergefile='data/outputs/test/mergefile.txt'
-traw_prefix='data/outputs/test/test'
-
-# create a mergefile
-echo -n "" > ${mergefile}
-for ((i=1;i<=22;i++)) ; do echo -e ${datapath}${i} >> ${mergefile} ;  done
-
-# merge chromosome files into a single .traw file
-plink --bfile ${datapath}1 --merge-list ${mergefile} --recode A-transpose --memory 8000 --out ${traw_prefix}
-
-# create a sample file
-cp ${datapath}1.sample ${traw_prefix}.sample
-```
-
-4. Finally, generate phenotypes using the following script. You should make sure that the `traw_prefix` parameter in the configuration file is set to the value used in the previous step.
+3. The script below shows how to generate synthetic phenotypes, using the genotypes generated in the previous step as input. This doesn't need to be split into multiple jobs because phenotype generation is much faster than genotype generation.
 
 ```
 #!/bin/bash

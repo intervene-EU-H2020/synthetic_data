@@ -2,20 +2,7 @@
 algorithm from the Julia pipeline
 """
 
-using DelimitedFiles
-
-function convert_genotype_data(syndata, plink, combine, synth_paths, traw_prefix, memory)
-    if combine
-        # combine all chromosomes into one .traw file
-        mergefile = @sprintf("%s_merge.txt", syndata)
-        open(mergefile, "w") do io
-            writedlm(io, synth_paths)
-        end
-        run(`$plink --bfile $syndata --merge-list $mergefile --recode A-transpose --memory $memory --out $traw_prefix`)
-    else
-        run(`$plink --bfile $syndata --recode A-transpose --memory $memory --out $syndata`)
-    end
-end
+using DelimitedFiles, Printf
 
 
 """There are two ways of running the phenotype program, either:
@@ -60,24 +47,15 @@ function create_parfile(phenotype_options, filepaths, traw_prefix, out_prefix)
 end
 
 
-function synthetic_pheno(filepaths, options, seed, combine, synth_paths)
-    if options["filepaths"]["phenotype"]["traw_prefix"] != "none"
-        # traw file already exists 
-        traw_prefix = options["filepaths"]["phenotype"]["traw_prefix"]
-        filepaths.phenotype_sample_list = @sprintf("%s.sample", traw_prefix)
-        parfile = create_parfile(options["phenotype_data"], filepaths, traw_prefix, filepaths.synthetic_data_traw_prefix)
-    else
-        traw_prefix = filepaths.synthetic_data_traw_prefix
-        memory = options["global_parameters"]["memory"]
-        convert_genotype_data(filepaths.synthetic_data_prefix, filepaths.plink, combine, synth_paths, traw_prefix, memory)
-        if combine
-            # if merging all chromosomes, need to give the pheno file a different name
-            parfile = create_parfile(options["phenotype_data"], filepaths, traw_prefix, traw_prefix)
-        else
-            parfile = create_parfile(options["phenotype_data"], filepaths, filepaths.synthetic_data_prefix, filepaths.synthetic_data_prefix)
-        end
-    end
-    
+function convert_genotype_data(input, output, plink, memory)
+    # convert from .bed to .traw format
+    run(`$plink --bfile $input --recode A-transpose --memory $memory --out $output`)
+end
+
+
+function synthetic_pheno(filepaths, options, traw_prefix, out_prefix, seed)
+    # create the parfile and generation synthetic phenotypes
+    parfile = create_parfile(options["phenotype_data"], filepaths, traw_prefix, out_prefix)
     phenoalg = filepaths.phenoalg
     run(`$phenoalg $parfile $seed`)
 end
@@ -87,21 +65,26 @@ function create_synthetic_phenotype(options)
     chromosome = parse_chromosome(options)
     superpopulation = parse_superpopulation(options)
     seed = options["global_parameters"]["random_seed"]
-
-    # synthetic genotype files are generated chromosome-by-chromosome
+    memory = options["global_parameters"]["memory"]
+    
     if chromosome == "all"
-        # creating phenotype based on genotype for all chromosomes
-        chromosome_i = 1
-        fp = parse_filepaths(options, chromosome_i, superpopulation)
-        all_synth_paths = []
         for chromosome_i in 1:22
-            fp_tmp = parse_filepaths(options, chromosome_i, superpopulation)
-            push!(all_synth_paths, fp_tmp.synthetic_data_prefix)
+            filepaths = parse_filepaths(options, chromosome_i, superpopulation)
+            input = filepaths.synthetic_data_prefix
+            output = string(filepaths.synthetic_data_traw_prefix,"-",chromosome_i)
+            convert_genotype_data(input, output, filepaths.plink, memory)
         end
-        synthetic_pheno(fp, options, seed, true, all_synth_paths)
     else
-        # creating phenotype based on genotype for a single chromosome
-        fp = parse_filepaths(options, chromosome, superpopulation)
-        synthetic_pheno(fp, options, seed, false, [])
+        filepaths = parse_filepaths(options, chromosome_i, superpopulation)
+        input = filepaths.synthetic_data_prefix
+        output = string(filepaths.synthetic_data_traw_prefix,"-",chromosome_i)
+        convert_genotype_data(input, output, filepaths.plink, memory)
     end
+
+    traw_prefix = filepaths.synthetic_data_traw_prefix
+    out_prefix = filepaths.synthetic_data_prefix 
+    synthetic_pheno(filepaths, options, traw_prefix, out_prefix, seed)
+    
+    @info @sprintf("Phenotype output is at %s.pheno{x}, where {x} is the phenotype number", out_prefix)
+
 end
