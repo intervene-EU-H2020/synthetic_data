@@ -5,7 +5,7 @@ using PyCall
 
 """Merge all the batch files together
 """
-function merge_batch_files(batch_files, outfile, plink)
+function merge_batch_files(batch_files, outfile, plink, memory)
     if length(batch_files) > 1
         # merge together the batch files
         mergelist = @sprintf("%s_mergefile.txt", outfile)
@@ -16,7 +16,7 @@ function merge_batch_files(batch_files, outfile, plink)
         end
         end
         
-        run(`$plink --bfile $basefile --merge-list $mergelist --make-bed --out $outfile`)
+        run(`$plink --bfile $basefile --merge-list $mergelist --make-bed --out $outfile --memory $memory`)
 
         # remove the batch files
         for file_prefix in batch_files

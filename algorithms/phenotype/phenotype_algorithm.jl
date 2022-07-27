@@ -72,16 +72,25 @@ function create_synthetic_phenotype(options)
             filepaths = parse_filepaths(options, chromosome_i, superpopulation)
             input = filepaths.synthetic_data_prefix
             output = string(filepaths.synthetic_data_traw_prefix,"-",chromosome_i)
-            convert_genotype_data(input, output, filepaths.plink, memory)
+            if options["filepaths"]["phenotype"]["traw_override"] == "none"
+                convert_genotype_data(input, output, filepaths.plink, memory)
+            end
         end
     else
-        filepaths = parse_filepaths(options, chromosome_i, superpopulation)
+        filepaths = parse_filepaths(options, chromosome, superpopulation)
         input = filepaths.synthetic_data_prefix
         output = string(filepaths.synthetic_data_traw_prefix,"-",chromosome_i)
-        convert_genotype_data(input, output, filepaths.plink, memory)
+        if options["filepaths"]["phenotype"]["traw_override"] == "none"
+            convert_genotype_data(input, output, filepaths.plink, memory)
+        end
     end
-
-    traw_prefix = filepaths.synthetic_data_traw_prefix
+    
+    if options["filepaths"]["phenotype"]["traw_override"] == "none"
+        traw_prefix = filepaths.synthetic_data_traw_prefix
+    else
+        traw_prefix = options["filepaths"]["phenotype"]["traw_override"]
+    end
+    
     out_prefix = filepaths.synthetic_data_prefix 
     synthetic_pheno(filepaths, options, traw_prefix, out_prefix, seed)
     

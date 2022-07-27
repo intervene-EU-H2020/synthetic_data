@@ -129,7 +129,7 @@ function create_synthetic_genotype_for_chromosome(metadata)
     @assert total_samples_written == metadata.nsamples # check all synthetic samples were written to the output
 
     @info "Merging all batch files"
-    merge_batch_files(batch_files, metadata.outfile_prefix, metadata.plink)
+    merge_batch_files(batch_files, metadata.outfile_prefix, metadata.plink, metadata.memory)
 end
 
 

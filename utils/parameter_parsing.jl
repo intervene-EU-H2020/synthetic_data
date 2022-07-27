@@ -59,6 +59,7 @@ mutable struct GenomicMetadata
     outfile_prefix::String
     batchsize::Integer
     plink::String
+    memory::Integer
 end
 
 
@@ -264,8 +265,9 @@ function parse_genomic_metadata(options, superpopulation, filepaths)
     outfile_prefix = filepaths.synthetic_data_prefix
     batchsize = get_batchsize(nsamples, options["global_parameters"]["batchsize"])
     plink = filepaths.plink
+    memory = options["global_parameters"]["memory"]
 
     nvariants = length(genetic_distances)
 
-    return GenomicMetadata(nsamples, nvariants, H1, H2, fixed_fields, haplotypes, index_map, population_groups, population_weights, population_N, population_Nes, population_rhos, genetic_distances, mutation_ages, outfile_prefix, batchsize, plink)
+    return GenomicMetadata(nsamples, nvariants, H1, H2, fixed_fields, haplotypes, index_map, population_groups, population_weights, population_N, population_Nes, population_rhos, genetic_distances, mutation_ages, outfile_prefix, batchsize, plink, memory)
 end

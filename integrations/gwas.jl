@@ -41,7 +41,6 @@ function main()
     trait_idx = 1
     pcafile = string(parsed_args["pca_prefix"], ".eigenvec")
     run_gwas_tools(parsed_args["plink2"], parsed_args["geno_prefix"], parsed_args["pheno_prefix"], trait_idx, pcafile, parsed_args["outprefix"])
-    plot_gwas(parsed_args["outprefix"], parsed_args["outprefix"])
 
 end
 

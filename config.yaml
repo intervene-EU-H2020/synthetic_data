@@ -38,6 +38,7 @@ filepaths:
   phenotype:
     causal_list: data/inputs/processed/1KG+HGDP/Test.CausalList
     reference: data/inputs/processed/1KG+HGDP/Africa.Annot
+    traw_override: none # can set to a value if using pre-simulated .traw input
   software:
     plink: plink
     plink2: plink2

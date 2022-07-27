@@ -6,7 +6,6 @@ include("optimisation/abc.jl")
 include("algorithms/genotype/genotype_algorithm.jl")
 include("algorithms/phenotype/phenotype_algorithm.jl")
 include("evaluation/evaluation.jl")
-include("integrations/prspipe.jl")
 
 """Executes the program, according to which pipelines and configuration options are specified in the input
 
@@ -46,11 +45,6 @@ function run_program(pipelines, options)
         @info "Evaluating synthetic data quality"
         run_evaluation(options)
     end
-
-    if pipelines["prspipe"]
-        @info "Preparing inputs for prspipe"
-        run_prspipe_prep(options)
-    end
 end
 
 
@@ -77,9 +71,6 @@ function parse_commandline()
         "--optimisation"
             help = "run procedure for optimising model parameter values"
             action = :store_true
-        "--prspipe"
-            help = "run procedure for preparing inputs to prspipe"
-            action = :store_true
     end
 
     return parse_args(s)
@@ -99,11 +90,10 @@ function main()
                      "genotype" => parsed_args["genotype"],
                      "phenotype" => parsed_args["phenotype"],
                      "evaluation" => parsed_args["evaluation"],
-                     "optimisation" => parsed_args["optimisation"],
-                     "prspipe" => parsed_args["prspipe"])
+                     "optimisation" => parsed_args["optimisation"])
 
     @info "Creating output directories"
-    outdirs = [@sprintf("%s/%s", options["filepaths"]["general"]["output_dir"], x) for x in ["evaluation", "optimisation", "reference", "prspipe"]]
+    outdirs = [@sprintf("%s/%s", options["filepaths"]["general"]["output_dir"], x) for x in ["evaluation", "optimisation", "reference"]]
     push!(outdirs, options["filepaths"]["general"]["output_dir"])
     for outdir in outdirs
         if !isdir(outdir)
