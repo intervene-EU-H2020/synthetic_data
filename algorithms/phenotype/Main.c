@@ -60,79 +60,60 @@ int main(int argc, char const *argv[])
 	        printf("Cannot open output causal file.\n");
 	        exit(0);
 	    } //check first wether the output file can be opened
-	    fprintf(OutFileCausal, "SNP\ttBaseEff\tMAF\tLDscore\tBeta\n");
+	    fprintf(OutFileCausal, "SNP\tBaseEff\tMAF\tLDscore\tBeta\n");
 		fclose(OutFileCausal);
 	}
 
-// takes traw (22 files, one for each chr) as input
-    FILE *InFileGeno;
-    int CHR;
-    char SNP[50];
-    char InGenoCHR[1000][22];
-
-    i = 0; // SNP counter
-    k = 0; // Causal SNP counter
-
-    for (CHR = 1; CHR < 23; CHR++) {
-	    sprintf(InGenoCHR[CHR-1],"%s-%d.traw", InGeno, CHR);
-	    InFileGeno = fopen(InGenoCHR[CHR-1], "r");
-	    if (InFileGeno == NULL) {
-	        printf("Cannot open the traw file %s, using other available chromosomes, if any.\n", InGenoCHR[CHR-1]);
-	        // exit(0);
-	    }
-	    else {
-			j = 0; // Sample counter; PopSampleCt for population sample counter
-			fgets(buffer, sizeof(buffer), InFileGeno); // read header
-			p = buffer;
-			tok = strtok_r(p, " ,\t", &p); // CHR
-			tok = strtok_r(p, " ,\t", &p); // SNP
-			tok = strtok_r(p, " ,\t", &p); // Morgan pos
-		    tok = strtok_r(p, " ,\t", &p); // BP pos
-		    tok = strtok_r(p, " ,\t", &p); // Ref Allele
-		    tok = strtok_r(p, " ,\t", &p); // ALT Allele
-		    while ((tok = strtok_r(p, " ,\t\n", &p))) {
-		    	strcpy(SampleList[j++], tok);
-		    }
-		    if (j != nSample) {
-		    	printf("Sample size in genotype file does not match population file, nSample = %ld, j = %ld.\n", nSample, j);
-		    	exit(0);
-		    }
-		    BaseBetaGen();
-			while (fgets(buffer, sizeof(buffer), InFileGeno) != NULL) {
-				p = buffer;
-				tok = strtok_r(p, " ,\t", &p); //CHR
-				if (CHR != atoi(tok)) {
-			    	printf("line %ld has invalid CHR code.\n", i+1);
-			        exit(0);
-			    }
-				else {
-					tok = strtok_r(p, " ,\t", &p); // SNP ID
-					strcpy(SNP, tok);
-					flag = IsCausal(SNP);
-					if (flag) {
-						k++;
-						tok = strtok_r(p, " ,\t", &p); // Morgan pos
-					    tok = strtok_r(p, " ,\t", &p); // BP pos
-					    tok = strtok_r(p, " ,\t", &p); // Ref Allele
-					    tok = strtok_r(p, " ,\t", &p); // ALT Allele
-					    j = 0;
-					    memset(PopSampleCt, 0, sizeof(long int) * nMaxPop);
-					    memset(PopMatTmp, 0, sizeof(double) * nMaxPop * nMaxInd * 3);
-					    memset(GenoMat, 0, sizeof(double) * nMaxInd);
-					    while ((tok = strtok_r(p, " ,\t", &p))) {
-					    	GenoMat[j] = atof(tok);
-					    	PopIndex = PopIndicator[j++];
-					    	tmpPopCt = PopSampleCt[PopIndex];
-					    	PopMatTmp[PopIndex][0][tmpPopCt] = atof(tok);
-					    	PopSampleCt[PopIndex]++;
-					    }
-					    AnalyzeSNP(CHR-1, SNP);
-					}
-					i++;
-				}
-			}
-			fclose(InFileGeno);
+	char SNP[50];
+    if( pio_open( &InGenoPlink, InGeno) != PIO_OK ) {
+		printf( "Cannot open plink file %s\n", InGeno);
+		exit(0);
+	}
+    else if( !pio_one_locus_per_row(&InGenoPlink) ){
+		printf( "This script requires that snps are rows and samples columns.\n" );
+		exit(0);
+	}
+	else if (nSample != pio_num_samples(&InGenoPlink)) {
+		printf("Plink file aample size does not match sample file.\n");
+		exit(0);
+	}
+	else {
+		i = 0; // SNP counter
+		j = 0; // sample counter
+		k = 0; // causal SNP counter
+		BaseBetaGen();
+		struct pio_sample_t *sample;
+		struct pio_locus_t *locus;
+		SNPbuffer = (snp_t *) malloc(pio_row_size(&InGenoPlink));
+		for (j = 0; j < pio_num_samples(&InGenoPlink); j++) {
+			sample = pio_get_sample( &InGenoPlink, j);
+			strcpy(SampleList[j], sample->iid);
 		}
+		while ((tok = strtok_r(p, " ,\t\n", &p))) {
+	    	strcpy(SampleList[j++], tok);
+	    }
+		while (pio_next_row( &InGenoPlink, SNPbuffer) == PIO_OK) {
+			locus = pio_get_locus( &InGenoPlink, i);
+			strcpy(SNP, locus->name);
+			flag = IsCausal(SNP);
+			if (flag) {
+				memset(PopSampleCt, 0, sizeof(long int) * nMaxPop);
+			    memset(PopMatTmp, 0, sizeof(double) * nMaxPop * nMaxInd * 3);
+			    memset(GenoMat, 0, sizeof(double) * nMaxInd);
+				for (j = 0; j < nSample; j++) {
+					GenoMat[j] = ((SNPbuffer[j]==3.0) ? 0.0 : 2-SNPbuffer[j]);
+					PopIndex = PopIndicator[j];
+					tmpPopCt = PopSampleCt[PopIndex];
+					PopMatTmp[PopIndex][0][tmpPopCt] = SNPbuffer[j];
+					PopSampleCt[PopIndex]++;
+				}
+			    AnalyzeSNP((int)locus->chromosome, SNP);
+			    k++;
+			}
+			i++;
+		}
+		free(SNPbuffer);
+		pio_close(&InGenoPlink);
 	}
 	printf("Input genomat: %ld SNPs; Using in total %ld causal SNPs.\n", i, k);
 
