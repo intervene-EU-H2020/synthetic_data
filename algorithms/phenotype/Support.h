@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <plinkio/plinkio.h>
 #include <gsl/gsl_errno.h>
 #include <gsl/gsl_statistics_double.h>
 #include <gsl/gsl_rng.h>
@@ -16,6 +17,9 @@
 extern int status;
 extern int statusPop;
 extern int statusTrait;
+
+struct pio_file_t InGenoPlink;
+snp_t *SNPbuffer;
 
 // Defined parameters
 #define nMaxCausal 500000
