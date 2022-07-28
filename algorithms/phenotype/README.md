@@ -2,6 +2,8 @@
 
 _"Working code" for phenotype generation, subject to further updates._
 
+_2022.07.28 Now accepting plink binary files as input. Need to install plinkio library._
+
 _2022.06.21 Now process genotype input file by chromosome, so that for larget data set generating traw file is more feasible._
 
 
@@ -10,11 +12,11 @@ _Hmm.._
 
 _2022.01.19 Made a little faster (hopefully?)._
 
-Dependents: gsl, blas
+Dependents: gsl, blas, lplinkio
 
 To compile, run 
 ```
-gcc Main.c Support.c -o where/and/what/you/want/it/to/be -L. -lm -lgsl -fPIC -lcblas -lblas
+gcc Main.c Support.c -o where/and/what/you/want/it/to/be -L. -lm -lgsl -fPIC -lcblas -lblas -lplinkio
 ```
 
 To use, run
