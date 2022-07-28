@@ -12,15 +12,6 @@
 #include <gsl/gsl_blas.h>
 #include <gsl/gsl_linalg.h>
 
-// DOES NOT deal with nan in Geno input! need to encode with something before used as input
-
-extern int status;
-extern int statusPop;
-extern int statusTrait;
-
-extern struct pio_file_t InGenoPlink;
-extern snp_t *SNPbuffer;
-
 // Defined parameters
 #define nMaxCausal 500000
 #define nMaxPop 10
@@ -29,6 +20,13 @@ extern snp_t *SNPbuffer;
 #define nPCAsnp 10000
 #define nMaxCovar 10
 #define nMaxBetaGen 10000
+
+extern int status;
+extern int statusPop;
+extern int statusTrait;
+
+extern struct pio_file_t InGenoPlink;
+extern snp_t *SNPbuffer;
 
 extern gsl_rng * r;
 
