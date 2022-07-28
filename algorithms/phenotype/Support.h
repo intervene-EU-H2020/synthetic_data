@@ -18,8 +18,8 @@ extern int status;
 extern int statusPop;
 extern int statusTrait;
 
-struct pio_file_t InGenoPlink;
-snp_t *SNPbuffer;
+extern struct pio_file_t InGenoPlink;
+extern snp_t *SNPbuffer;
 
 // Defined parameters
 #define nMaxCausal 500000
