@@ -7,15 +7,6 @@ int statusTrait;
 struct pio_file_t InGenoPlink;
 snp_t *SNPbuffer;
 
-// Defined parameters
-#define nMaxCausal 500000
-#define nMaxPop 10
-#define nMaxTrait 10
-#define nMaxInd 100000
-#define nPCAsnp 10000
-#define nMaxCovar 10
-#define nMaxBetaGen 10000
-
 gsl_rng * r;
 
 // IO file names
