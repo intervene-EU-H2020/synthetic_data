@@ -102,7 +102,7 @@ RUN set -eux; \
 	apt-get install -y --no-install-recommends \
         unzip \
         git \
-        autoconf automake build-essential pkg-config zlib1g-dev \
+        autoconf automake build-essential pkg-config zlib1g-dev cmake \
         libbz2-dev liblzma-dev
 
 RUN set -eux; \
@@ -115,7 +115,7 @@ RUN set -eux; \
     unzip $DOWNLOAD_DIR/plink1.zip -d "$PLINK_PATH"; \
 # Setup Plink2
     echo "Setting up Plink 2.0"; \
-    curl -fL -o $DOWNLOAD_DIR/plink2.zip "https://s3.amazonaws.com/plink2-assets/plink2_linux_avx2_20220302.zip"; \
+    curl -fL -o $DOWNLOAD_DIR/plink2.zip "https://s3.amazonaws.com/plink2-assets/plink2_linux_avx2_20220603.zip"; \
     unzip $DOWNLOAD_DIR/plink2.zip -d "$PLINK2_PATH"; \
 # Setup KING
     echo "Setting up KING"; \
@@ -151,6 +151,16 @@ RUN set -eux; \
 	mkdir $MAPTHIN_PATH; \
 	mv mapthin-v1.11-linux-x86_64/* $MAPTHIN_PATH; \
 	chmod +x $MAPTHIN_PATH/mapthin; \
+# Setup plinkio
+	echo "Setting up plinkio"; \
+	cd "$DOWNLOAD_DIR"; \
+	curl -fL -o libplinkio.zip https://github.com/mfranberg/libplinkio/archive/refs/tags/v0.9.8.zip; \
+	unzip libplinkio.zip; \
+	cd libplinkio-0.9.8; \
+	mkdir build; \
+	cd build; \
+	cmake ../; \
+	make && make test && make install; \
 # Debug
     # ls -la $TOOLS_DIR; \
     # ls -la $PLINK_PATH; \
@@ -205,7 +215,7 @@ RUN mkdir -p $PHENO_BIN_PATH
 ENV PATH $PHENO_BIN_PATH:$PATH
 RUN set -eux; \
     cd algorithms/phenotype; \
-	gcc Main.c Support.c -o $PHENO_BIN_PATH/phenoalg -L. -lm -lgsl -fPIC -lblas
+	gcc Main.c Support.c -o $PHENO_BIN_PATH/phenoalg -L. -lm -lgsl -fPIC -lblas -lplinkio
 
 # Setup path for commands
 ENV PATH "$SCRIPT_DIR/commands":$PATH
