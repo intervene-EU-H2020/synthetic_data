@@ -22,7 +22,6 @@ mutable struct Filepaths
     popfile_raw::String
     popfile_processed::String
     synthetic_data_prefix::String
-    synthetic_data_traw_prefix::String
     evaluation_output::String
     optimisation_output::String
     reference_dir::String
@@ -120,12 +119,16 @@ function parse_filepaths(options, chromosome, superpopulation)
     popfile_processed = format_filepath(options["filepaths"]["genotype"]["popfile_processed"], chromosome, superpopulation, false)
 
     synthetic_data_prefix = format_filepath(string(options["filepaths"]["general"]["output_dir"],"/",options["filepaths"]["general"]["output_prefix"]), chromosome, superpopulation, true)
-    synthetic_data_traw_prefix = format_filepath(string(options["filepaths"]["general"]["output_dir"],"/",options["filepaths"]["general"]["output_prefix"]), "", superpopulation, true)
     evaluation_output = format_filepath(string(options["filepaths"]["general"]["output_dir"],"/evaluation/",options["filepaths"]["general"]["output_prefix"]), chromosome, superpopulation, true)
     optimisation_output = format_filepath(string(options["filepaths"]["general"]["output_dir"],"/optimisation/",options["filepaths"]["general"]["output_prefix"]), chromosome, superpopulation, true)
     reference_dir = format_filepath(string(options["filepaths"]["general"]["output_dir"],"/reference"), chromosome, superpopulation, false)
     prspipe_dir = format_filepath(string(options["filepaths"]["general"]["output_dir"],"/prspipe"), chromosome, superpopulation, false)
     
+    # check format of output prefix
+    if !endswith(synthetic_data_prefix, @sprintf("-%s",chromosome))
+        throw(error("Config error: output_prefix must use the naming convention {prefix}-{chromosome} where {prefix} is replaced by your choice and {chromosome} is left as a wildcard"))
+    end
+
     phenotype_causal_list = format_filepath(options["filepaths"]["phenotype"]["causal_list"], chromosome, superpopulation, false)
     phenotype_sample_list = @sprintf("%s.sample", synthetic_data_prefix)
     phenotype_reference = format_filepath(options["filepaths"]["phenotype"]["reference"], chromosome, superpopulation, false)
@@ -137,7 +140,7 @@ function parse_filepaths(options, chromosome, superpopulation)
     mapthin = format_filepath(options["filepaths"]["software"]["mapthin"], chromosome, superpopulation, false)
     phenoalg = format_filepath(options["filepaths"]["software"]["phenoalg"], chromosome, superpopulation, false)
 
-    return Filepaths(vcf_input_raw, vcf_input_processed_prefix, vcf_input_processed, variant_list, remove_list, rsid_list, genetic_mapfile, genetic_distfile, mutation_mapfile, mutation_agefile, hap1_matrix_output, hap2_matrix_output, metadata_output, popfile_raw, popfile_processed, synthetic_data_prefix, synthetic_data_traw_prefix, evaluation_output, optimisation_output, reference_dir, prspipe_dir, phenotype_causal_list, phenotype_sample_list, phenotype_reference, vcftools, plink, plink2, king, mapthin, phenoalg)
+    return Filepaths(vcf_input_raw, vcf_input_processed_prefix, vcf_input_processed, variant_list, remove_list, rsid_list, genetic_mapfile, genetic_distfile, mutation_mapfile, mutation_agefile, hap1_matrix_output, hap2_matrix_output, metadata_output, popfile_raw, popfile_processed, synthetic_data_prefix, evaluation_output, optimisation_output, reference_dir, prspipe_dir, phenotype_causal_list, phenotype_sample_list, phenotype_reference, vcftools, plink, plink2, king, mapthin, phenoalg)
 end
 
 

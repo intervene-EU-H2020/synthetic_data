@@ -19,7 +19,7 @@ global_parameters:
 filepaths:
   general:
     output_dir: data/outputs/test
-    output_prefix: test_chr{chromosome}
+    output_prefix: test_chr-{chromosome}
   genotype:
     vcf_input_raw: data/inputs/raw/1KG+HGDP/1KG+HGDP.chr{chromosome}.hapmap.final.vcf.gz
     vcf_input_processed: data/inputs/processed/1KG+HGDP/1KG+HGDP.chr{chromosome}.hapmap.final.recode.vcf
@@ -38,7 +38,7 @@ filepaths:
   phenotype:
     causal_list: data/inputs/processed/1KG+HGDP/Test.CausalList
     reference: data/inputs/processed/1KG+HGDP/Africa.Annot
-    traw_override: none # can set to a value if using pre-simulated .traw input
+    plink_override: none # can set to a value if using pre-simulated genetics input
   software:
     plink: plink
     plink2: plink2
@@ -104,7 +104,7 @@ phenotype_data:
   PropotionCovar: 0,0,0,0,0,0
   Prevalence: 0.5,0.5,0.5,0.5,0.5,0.5
   TraitCorr: 1
-  PopulationCorr: 1,0,0,0,0,0,0,1,0,0,0,0,0,0,1,0,0,0,0,0,0,1,0,0,0,0,0,0,1,0,0,0,0,0,0,1
+  PopulationCorr: 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
   CompWeight: 1,5,10
   Causality:
       UseCausalList: false # if true the algorithm will use the causal_list filepath
