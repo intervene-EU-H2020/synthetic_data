@@ -65,8 +65,8 @@ function create_synthetic_phenotype(options)
     else
         filepaths = parse_filepaths(options, chromosome, superpopulation)
     end
-
-    out_prefix = filepaths.synthetic_data_prefix[1:end-ndigits(chromosome)-1]
+    
+    out_prefix = filepaths.synthetic_data_prefix[1:end-length(chromosome)-1]
 
     if options["filepaths"]["phenotype"]["plink_override"] == "none"
         genetics_prefix = out_prefix
