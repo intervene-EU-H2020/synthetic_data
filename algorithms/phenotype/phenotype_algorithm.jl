@@ -9,7 +9,7 @@ using DelimitedFiles, Printf
 1. Directly specify a list of causal SNPs; or
 2. Specify the polygenicity and pleiotropy parameters 
 """
-function create_parfile(phenotype_options, filepaths, genetics_prefix, out_prefix)
+function create_parfile(phenotype_options, filepaths, genetics_prefix, out_prefix, chromosome)
     lines = []
     push!(lines, @sprintf("nPopulation %s", phenotype_options["nPopulation"]))
     push!(lines, @sprintf("nTrait %s", phenotype_options["nTrait"]))
@@ -19,7 +19,7 @@ function create_parfile(phenotype_options, filepaths, genetics_prefix, out_prefi
     push!(lines, @sprintf("nComponent %s", phenotype_options["nComponent"]))
     push!(lines, @sprintf("PropotionGeno %s", phenotype_options["PropotionGeno"]))
     push!(lines, @sprintf("PropotionCovar %s", phenotype_options["PropotionCovar"]))
-    push!(lines, @sprintf("SampleList %s", filepaths.phenotype_sample_list))
+    push!(lines, @sprintf("SampleList %s-%s.sample", genetics_prefix, chromosome))
     
     if phenotype_options["Causality"]["UseCausalList"]
         push!(lines, @sprintf("CausalList %s", filepaths.phenotype_causal_list))
@@ -47,9 +47,9 @@ function create_parfile(phenotype_options, filepaths, genetics_prefix, out_prefi
 end
 
 
-function synthetic_pheno(filepaths, options, genetics_prefix, out_prefix, seed)
+function synthetic_pheno(filepaths, options, genetics_prefix, out_prefix, seed, chromosome)
     # create the parfile and generation synthetic phenotypes
-    parfile = create_parfile(options["phenotype_data"], filepaths, genetics_prefix, out_prefix)
+    parfile = create_parfile(options["phenotype_data"], filepaths, genetics_prefix, out_prefix, chromosome)
     phenoalg = filepaths.phenoalg
     run(`$phenoalg $parfile $seed`)
 end
@@ -61,12 +61,14 @@ function create_synthetic_phenotype(options)
     seed = options["global_parameters"]["random_seed"]
 
     if chromosome == "all"
-        filepaths = parse_filepaths(options, 1, superpopulation)
+        # use filepaths for the 1st chromosome
+        tmp_chromosome = 1
     else
-        filepaths = parse_filepaths(options, chromosome, superpopulation)
+        tmp_chromosome = chromosome
     end
-    
-    out_prefix = filepaths.synthetic_data_prefix[1:end-length(chromosome)-1]
+
+    filepaths = parse_filepaths(options, tmp_chromosome, superpopulation)
+    out_prefix = filepaths.synthetic_data_prefix[1:end-ndigits(tmp_chromosome)-1]
 
     if options["filepaths"]["phenotype"]["plink_override"] == "none"
         genetics_prefix = out_prefix
@@ -74,7 +76,7 @@ function create_synthetic_phenotype(options)
         genetics_prefix = options["filepaths"]["phenotype"]["plink_override"]
     end
 
-    synthetic_pheno(filepaths, options, genetics_prefix, out_prefix, seed)
+    synthetic_pheno(filepaths, options, genetics_prefix, out_prefix, seed, tmp_chromosome)
     
     @info @sprintf("Phenotype output is at %s.pheno{x}, where {x} is the phenotype number", out_prefix)
 
