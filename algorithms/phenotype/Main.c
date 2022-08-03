@@ -72,6 +72,8 @@ int main(int argc, char const *argv[])
 	i = 0; // SNP counter
     k = 0; // casual SNP counter
 
+	
+	printf("Before reading plink files.\n");
     for (CHR = 0; CHR < 22; CHR++) {
     	i_chr = 0;
     	sprintf(InGenoCHR[CHR],"%s-%d", InGeno, CHR+1);
@@ -88,6 +90,7 @@ int main(int argc, char const *argv[])
 			exit(0);
 		}
 		else {
+			printf("opened plink file %s.\n", InGenoCHR[CHR]);
 			j = 0; // sample counter
 			BaseBetaGen();
 			struct pio_sample_t *sample;
@@ -97,9 +100,6 @@ int main(int argc, char const *argv[])
 				sample = pio_get_sample( &InGenoPlink, j);
 				strcpy(SampleList[j], sample->iid);
 			}
-			while ((tok = strtok_r(p, " ,\t\n", &p))) {
-		    	strcpy(SampleList[j++], tok);
-		    }
 			while (pio_next_row( &InGenoPlink, SNPbuffer) == PIO_OK) {
 				locus = pio_get_locus( &InGenoPlink, i_chr);
 				strcpy(SNP, locus->name);
@@ -123,6 +123,7 @@ int main(int argc, char const *argv[])
 			}
 			free(SNPbuffer);
 			pio_close(&InGenoPlink);
+			printf("closed plink file %s.\n", InGenoCHR[CHR]);
 		}
 	}
 	printf("Input genomat: %ld SNPs; Using in total %ld causal SNPs.\n", i, k);
