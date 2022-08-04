@@ -13,10 +13,10 @@
 #include <gsl/gsl_linalg.h>
 
 // Defined parameters
-#define nMaxCausal 500000
+#define nMaxCausal 1000000
 #define nMaxPop 10
 #define nMaxTrait 10
-#define nMaxInd 500000
+#define nMaxInd 10000000
 #define nPCAsnp 10000
 #define nMaxCovar 10
 #define nMaxBetaGen 10000
