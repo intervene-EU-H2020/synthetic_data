@@ -77,8 +77,7 @@ int main(int argc, char const *argv[])
     	i_chr = 0;
     	sprintf(InGenoCHR[CHR],"%s-%d", InGeno, CHR+1);
 	    if( pio_open( &InGenoPlink, InGenoCHR[CHR]) != PIO_OK ) {
-			printf( "Cannot open plink file for chrmosome %d: %s, usign other chromosomes.\n", CHR+1, InGenoCHR[CHR]);
-			exit(0);
+			printf( "Cannot open plink file for chrmosome %d: %s, using other chromosomes.\n", CHR+1, InGenoCHR[CHR]);
 		}
 	    else if( !pio_one_locus_per_row(&InGenoPlink) ){
 			printf( "This script requires that snps are rows and samples columns.\n" );
