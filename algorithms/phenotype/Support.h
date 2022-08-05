@@ -16,7 +16,7 @@
 #define nMaxCausal 500000
 #define nMaxPop 10
 #define nMaxTrait 10
-#define nMaxInd 2000000
+#define nMaxInd 3000000
 #define nMaxCovar 10
 #define nMaxBetaGen 10000
 
