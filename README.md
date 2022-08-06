@@ -275,7 +275,7 @@ Parameters for phenotype data generation:
 | Pleiotropy | Float | nTrait vector of trait's pleiotropy relationship comparing to trait 1. i.e. if trait 2 has Pleiotropy = 0.9, it means 90% of causal SNPs in trait 1 are also causal in trait 2. Therefore, first entry of Pleiotropy vector is always 1. Entries separated by comma. |
 
 
-# Understanding your synthetic datasets]
+# Understanding your synthetic datasets
 
 ## Evaluating synthetic data quality
 
