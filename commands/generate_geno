@@ -1,5 +1,5 @@
 #!/bin/sh
-# Generate synthetic data
+# Generate synthetic genotypes
 CURR_DIR=`pwd`
 cd $SCRIPT_DIR
 julia --threads "$1" run_program.jl --genotype --config "$2"

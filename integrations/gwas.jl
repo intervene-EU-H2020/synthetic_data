@@ -2,7 +2,7 @@ include("../evaluation/metrics/eval_gwas.jl")
 
 using ArgParse
 
-"""Script for making summary statistics for prspipe
+"""Script for making gwas summary statistics
 """
 
 function parse_commandline()

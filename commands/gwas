@@ -1,5 +1,5 @@
 #!/bin/sh
-# Generate synthetic data
+# Run GWAS
 CURR_DIR=`pwd`
 cd $SCRIPT_DIR
 julia integrations/gwas.jl "$@"

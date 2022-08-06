@@ -22,7 +22,7 @@ curl -sfL -o $DATA_DIR/preprocessed.txt $URL_DATA_BUCKET
 # mv files.txt preprocessed.txt
 
 # xargs -n 1 curl -vO < preprocessed.txt
-PROC_DIR=$DATA_DIR/inputs/processed
+PROC_DIR=$DATA_DIR/inputs/processed/1KG+HGDP
 mkdir -p $PROC_DIR
 cd $PROC_DIR
 while IFS= read -r fileurl
@@ -32,6 +32,15 @@ do
   curl -O "${URL_DATA_BUCKET}${fileurl}"
 done < $DATA_DIR/preprocessed.txt
 
-echo "Fetching of preprocessed data completed. You can continue with 'generate' command."
+# unzip the large files
+echo "Unzipping large files"
+for chr in {1..22}
+do 
+  gunzip 1KG+HGDP.chr${chr}.hapmap.final.recode.vcf
+  gunzip 1KG+HGDP.chr${chr}.hapmap.h1
+  gunzip 1KG+HGDP.chr${chr}.hapmap.h2
+done
+
+echo "Fetching of preprocessed data completed."
 
 cd $CURR_DIR

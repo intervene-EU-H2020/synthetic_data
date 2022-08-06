@@ -9,7 +9,7 @@ HAPNEST has a modular architecture design, where each software module can be use
 
 ![architecture diagram](diagram.jpg)
 
-HAPNEST has been designed to be highly scalable for large synthetic data generation. For example, we have used HAPNEST to generate 1 million genotypes and corresponding phenotypes for 6 superpopulations and over 6.8 million variants in less than 12 hours (32GB RAM, 8 threads per machine). We have made this synthetic dataset publicly available for download at {TODO link to dataset}.
+HAPNEST has been designed to be highly scalable for large synthetic data generation. For example, we have used HAPNEST to simulate genetics data and corresponding phenotypes for 1 million individuals for 6 superpopulations and over 6.8 million variants in less than 12 hours (32GB RAM, 8 threads per machine). We have made this synthetic dataset publicly available for download at {TODO link to dataset}.
 
 This software tool was developed by members of [INTERVENE (INTERnational consortium of integratiVE geNomics prEdiction)](https://www.interveneproject.eu/). If you would like to cite this software, please refer to our manuscript {TODO our preferred citation}.
 
@@ -67,13 +67,13 @@ singularity exec --bind data/:/data/ containers/synthetic-data-v1.0.0.sif valida
 
 ## Extended version
 
-This quickstart tutorial will show you the simplest approach for generating and evaluating synthetic datasets.
+This quickstart tutorial will show you the simplest approach for generating and evaluating synthetic datasets. It will generate a small dataset of 1000 samples for 6 ancestry groups and HapMap3 variants on chromosome 1. Later we discuss how to customise the synthetic datasets.
 
 ### Preface on containerisation
 
-For ease of portability and reproducibility, we've made this software available as both Singularity and Docker containers. These containerisation systems streamline software dependency management by creating a standardised environment, to make it easier for you to get started with generating synthetic datasets. 
+For ease of portability and reproducibility, we've made this software available as both Singularity and Docker containers. These containerisation systems streamline software dependency management by creating a standardised environment, to make it easier for you to get started with generating synthetic datasets. Please see instructions [here](https://docs.docker.com/get-docker/) for downloading and installing Docker. We have also made Singularity containers available as this approach is often preferred by high performance computing services.
 
-You can download your choice of container from one of the following links:
+Download your choice of container from one of the following links:
 - Singularity: TODO
 - Docker: TODO
 

@@ -1,5 +1,5 @@
 #!/bin/sh
-# Generate synthetic data
+# Generate synthetic phenotypes
 CURR_DIR=`pwd`
 cd $SCRIPT_DIR
 julia run_program.jl --phenotype --config "$@"
