@@ -704,6 +704,8 @@ void BaseBetaGen() {
 		}
 		gsl_blas_dgemm(CblasNoTrans, CblasNoTrans, 1.0, tmpL, GenoBeta, 0.0, tmpCorrGenoBeta);
 		gsl_matrix_memcpy(GenoBeta, tmpCorrGenoBeta);
+		gsl_matrix_free(tmpCorrGenoBeta);
+		gsl_matrix_free(tmpL);
 	}
 }
 
@@ -781,6 +783,8 @@ void GetEnvEff() {
 		}
 		gsl_blas_dgemm(CblasNoTrans, CblasNoTrans, 1.0, tmpL, tmpEnvEff, 0.0, tmpCorrEnvEff);
 		gsl_matrix_memcpy(tmpEnvEff, tmpCorrEnvEff);
+		gsl_matrix_free(tmpCorrEnvEff);
+		gsl_matrix_free(tmpL);
 	}
 	else if (statusTrait && nTrait > 1) {
 		printf("Trait correlation matrix is not positive definite, assuming enveromental effect independent.\n");
@@ -790,6 +794,7 @@ void GetEnvEff() {
 		for (k = 0; k < nTrait; k++)
 			EnvEff[k][l] = gsl_matrix_get(tmpEnvEff, k, l);
 	}
+	gsl_matrix_free(tmpEnvEff);
 }
 
 
