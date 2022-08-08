@@ -861,6 +861,7 @@ double GetMAF(int popIndex) {
 	}
 	freq = gsl_stats_mean(tmpGeno, 1, j)/2.0;
 	freq = (freq > 0.5) ? (1-freq) : freq;
+	free(tmpGeno);
 	return(freq);
 }
 
