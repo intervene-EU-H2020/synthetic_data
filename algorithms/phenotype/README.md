@@ -72,7 +72,7 @@ Currently the parameters are as below
 
 ```Polygenicity``` nTrait vector of trait polygenicity, measured by proportion of total SNPs being causal. e.g. Polygenicity = 0.05 meaning around 5% SNPs will be causal.
 
-```CausalList``` is a list of predefined SNPs to be used as causal, overrides ```Polygenicity``` parameter if specified. Each column contains causal SNPs for one trait, columns separated by comma.
+```CausalList``` is the prefix for lists of predefined SNPs to be used as causal, overrides ```Polygenicity``` parameter if specified. Each column contains causal SNPs for one trait, columns separated by comma. CausalList is specified per phenotype. #For each trait, the causal list file should be names as ```_CausalList_n```, where n is the trait index.#
 
 ```SampleList``` is a population and covariate (if any) list, in the order of sample listed in the header of input .traw file. Fist column should contain categorical population code for each sample (mandatory); rest of the columns should contains numerical covariates, columns separated by comma. Length of this file must match sample size in .traw file.
 
