@@ -9,9 +9,9 @@ HAPNEST has a modular architecture design, where each software module can be use
 
 ![architecture diagram](diagram.jpg)
 
-HAPNEST has been designed to be highly scalable for large synthetic data generation. For example, we have used HAPNEST to simulate genetics data and corresponding phenotypes for 1 million individuals for 6 superpopulations and over 6.8 million variants in less than 12 hours (32GB RAM, 8 threads per machine). We have made this synthetic dataset publicly available for download at {TODO link to dataset}.
+HAPNEST has been designed to be highly scalable for large synthetic data generation. We have used HAPNEST to simulate genetics data and corresponding phenotypes for 1 million individuals for 6 superpopulations and over 6.8 million variants in less than 12 hours (32GB RAM, 8 threads per machine).
 
-This software tool was developed by members of [INTERVENE (INTERnational consortium of integratiVE geNomics prEdiction)](https://www.interveneproject.eu/). If you would like to cite this software, please refer to our manuscript {TODO our preferred citation}.
+This software tool was developed by members of [INTERVENE (INTERnational consortium of integratiVE geNomics prEdiction)](https://www.interveneproject.eu/). If you would like to cite this software, please cite the URL of this repository.
 
 
 ## Contents
@@ -34,7 +34,7 @@ This software tool was developed by members of [INTERVENE (INTERnational consort
 
 ## TLDR
 
-1. Download the [Singularity container](TODO) (or [Docker container](TODO), but the following commands will differ slightly)
+1. Download the [Docker container](https://hub.docker.com/r/sophiewharrie/intervene-synthetic-data)
 2. Setup the following directory structure with the container you just downloaded and a copy of the `config.yaml` file from this repository:
 
 ```
@@ -71,17 +71,21 @@ This quickstart tutorial will show you the simplest approach for generating and 
 
 ### Preface on containerisation
 
-For ease of portability and reproducibility, we've made this software available as both Singularity and Docker containers. These containerisation systems streamline software dependency management by creating a standardised environment, to make it easier for you to get started with generating synthetic datasets. Please see instructions [here](https://docs.docker.com/get-docker/) for downloading and installing Docker. We have also made Singularity containers available as this approach is often preferred by high performance computing services.
+For ease of portability and reproducibility, we've made this software available as a Docker container. Containerisation streamlines software dependency management by creating a standardised environment, to make it easier for you to get started with generating synthetic datasets. If you are not familiar with Docker, please see instructions [here](https://docs.docker.com/get-docker/) for downloading and installing Docker. 
 
-Download your choice of container from one of the following links:
-- Singularity: TODO
-- Docker: TODO
+Download the Docker container from the following link: https://hub.docker.com/r/sophiewharrie/intervene-synthetic-data
+
+If you are using Singularity, use the following command to convert the Docker container to a Singularity container:
+
+```
+singularity build synthetic-data-v1.0.0.sif docker-archive://synthetic-data-v1.0.0.tar
+```
 
 Alternatively, you can run this software without a container by manually installing the software dependencies. If you prefer this approach, you can view the list of required dependencies in the `Dockerfile` of this repository. 
 
 ### Instructions for generating and evaluating synthetic datasets
 
-1. **Download one of the software containers mentioned in the previous section.**
+1. **Download the software container mentioned in the previous section.**
 
 The rest of these instructions will be based on the Singularity container, but the same idea also applies for Docker, or running the software without a container.
 
