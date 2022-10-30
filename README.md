@@ -34,60 +34,62 @@ This software tool was developed by members of [INTERVENE (INTERnational consort
 
 ## TLDR
 
-1. Download the [Docker container](https://hub.docker.com/r/sophiewharrie/intervene-synthetic-data)
-2. Setup the following directory structure with the container you just downloaded and a copy of the `config.yaml` file from this repository:
+Steps 1-4 only need to be run once the first time you install HAPNEST. Step 5 describes how you can generate and then evaluate a synthetic dataset. If you encounter any errors when running these steps, please see the more detailed documentation below.
+
+1. Download the Singularity container by running the following command:
+
+```
+singularity pull docker://sophiewharrie/intervene-synthetic-data
+```
+
+2. Setup the directory structure illustrated below with the container you just downloaded and a copy of the `config.yaml` file from this repository:
 
 ```
 .
 ├── data
 |   └── config.yaml
 └── containers
-    └── synthetic-data-v1.0.0.sif
+    └── intervene-synthetic-data_latest.sif
 ```
 
 3. Initialise the software dependencies from the root directory you set up in the previous step:
 
 ```
-singularity exec --bind data/:/data/ containers/synthetic-data-v1.0.0.sif init
+singularity exec --bind data/:/data/ containers/intervene-synthetic-data_latest.sif init
 ```
 
 4. Fetch the reference dataset:
 
 ```
-singularity exec --bind data/:/data/ containers/synthetic-data-v1.0.0.sif fetch
+singularity exec --bind data/:/data/ containers/intervene-synthetic-data_latest.sif fetch
 ```
 
 5. Generate synthetic genotypes and phenotypes, and evaluate the data quality:
 
 ```
-singularity exec --bind data/:/data/ containers/synthetic-data-v1.0.0.sif generate_geno 1 data/config.yaml
-singularity exec --bind data/:/data/ containers/synthetic-data-v1.0.0.sif generate_pheno data/config.yaml
-singularity exec --bind data/:/data/ containers/synthetic-data-v1.0.0.sif validate data/config.yaml
+singularity exec --bind data/:/data/ containers/intervene-synthetic-data_latest.sif generate_geno 1 data/config.yaml
+singularity exec --bind data/:/data/ containers/intervene-synthetic-data_latest.sif generate_pheno data/config.yaml
+singularity exec --bind data/:/data/ containers/intervene-synthetic-data_latest.sif validate data/config.yaml
 ```
 
 ## Extended version
 
-This quickstart tutorial will show you the simplest approach for generating and evaluating synthetic datasets. It will generate a small dataset of 1000 samples for 6 ancestry groups and HapMap3 variants on chromosome 1. Later we discuss how to customise the synthetic datasets.
+This quickstart tutorial will show you the simplest approach for generating and evaluating synthetic datasets. This example will generate a small dataset of 1000 samples for 6 ancestry groups and HapMap3 variants on chromosome 1. Later we discuss how to customise the synthetic datasets.
 
-### Preface on containerisation
+1. **Download the HAPNEST container.**
 
-For ease of portability and reproducibility, we've made this software available as a Docker container. Containerisation streamlines software dependency management by creating a standardised environment, to make it easier for you to get started with generating synthetic datasets. If you are not familiar with Docker, please see instructions [here](https://docs.docker.com/get-docker/) for downloading and installing Docker. 
+For ease of portability and reproducibility, we've made this software available as Docker and Singularity containers. Containerisation streamlines software dependency management by creating a standardised environment, to make it easier for you to get started with generating synthetic datasets.  
 
-Download the Docker container from the following link: https://hub.docker.com/r/sophiewharrie/intervene-synthetic-data
+The HAPNEST container is available at the link https://hub.docker.com/r/sophiewharrie/intervene-synthetic-data. The instructions provided in this documentation use the Singularity container, but can be adapted to work directly with the Docker container.
 
-If you are using Singularity, use the following command to convert the Docker container to a Singularity container:
+Download the Singularity container by running the following command:
 
 ```
-singularity build synthetic-data-v1.0.0.sif docker-archive://synthetic-data-v1.0.0.tar
+singularity pull docker://sophiewharrie/intervene-synthetic-data
 ```
 
 Alternatively, you can run this software without a container by manually installing the software dependencies. If you prefer this approach, you can view the list of required dependencies in the `Dockerfile` of this repository. 
 
-### Instructions for generating and evaluating synthetic datasets
-
-1. **Download the software container mentioned in the previous section.**
-
-The rest of these instructions will be based on the Singularity container, but the same idea also applies for Docker, or running the software without a container.
 
 2. **Choose a location where you want to generate synthetic data, and create a `data` directory containing a copy of the `config.yaml` file downloaded from this repository and a `containers` directory containing the downloaded container file.**
 
@@ -96,23 +98,29 @@ The rest of these instructions will be based on the Singularity container, but t
 ├── data
 |   └── config.yaml
 └── containers
-    └── synthetic-data-v1.0.0.sif
+    └── intervene-synthetic-data_latest.sif
 ```
 
-Your container version may be different, so you should update this in any subsequent commands. The `config.yaml` file contains the parameter values used for synthetic data generation. In this tutorial we will use the default configuration.
+If your container version has a different name you should update this in any subsequent commands. The `config.yaml` file contains the parameter values used for synthetic data generation. In this tutorial we will use the default configuration.
 
 3. **From the root directory you setup in the previous step, run the `init` command to complete the setup of software dependencies:**
 
 ```
-singularity exec --bind data/:/data/ containers/synthetic-data-v1.0.0.sif init
+singularity exec --bind data/:/data/ containers/intervene-synthetic-data_latest.sif init
 ```
 
-By default this will store Julia package files in the `~/.julia` directory. If you don't want the files stored at this location, add `--env JULIA_DEPOT_PATH={path-to-your-preffered-location}` to the above command (and all subsequent singularity commands). Also notice that the above command binds the `data` directory you created in the previous step. This directory is used by the synthetic data generation program to access input reference files and store output data files.
+This command binds the `data` directory you created in the previous step, which is used by HAPNEST to access input reference files and store output data files.
+
+By default the above command will store Julia package files in the `~/.julia` directory. If you experience an error related to updating the registry at `~/.julia/...` you may need to give an explicit [depot path](https://docs.julialang.org/en/v1/manual/environment-variables/#JULIA_DEPOT_PATH) by adding `--env JULIA_DEPOT_PATH={path-to-your-preffered-location}` to the previous command **and all subsequent commands**. For example:
+
+```
+singularity exec --bind data/:/data/ --env JULIA_DEPOT_PATH=/data/.julia containers/intervene-synthetic-data_latest.sif init
+```
 
 4. **The first time using the container, you need to fetch the reference dataset using the `fetch` command:**
 
 ```
-singularity exec --bind data/:/data/ containers/synthetic-data-v1.0.0.sif fetch
+singularity exec --bind data/:/data/ containers/intervene-synthetic-data_latest.sif fetch
 ```
 
 This will download the reference files used as input to the synthetic data generation program to the `data/inputs/processed` directory. See [preprocessing/README.md](preprocessing/README.md) if you would like to know more about how this data was created and for information about creating your own reference datasets.
@@ -120,8 +128,8 @@ This will download the reference files used as input to the synthetic data gener
 5. **Now generate a synthetic dataset using the `generate_geno` and `generate_pheno` commands:**
 
 ```
-singularity exec --bind data/:/data/ containers/synthetic-data-v1.0.0.sif generate_geno 1 data/config.yaml
-singularity exec --bind data/:/data/ containers/synthetic-data-v1.0.0.sif generate_pheno data/config.yaml
+singularity exec --bind data/:/data/ containers/intervene-synthetic-data_latest.sif generate_geno 1 data/config.yaml
+singularity exec --bind data/:/data/ containers/intervene-synthetic-data_latest.sif generate_pheno data/config.yaml
 ```
 
 The number given after `generate_geno` in the first command is the number of computing threads you want the software to use. We recommend increasing this to a higher value for faster synthetic data generation. Running the above commands should generate a small synthetic dataset in the `data/outputs/test` directory. 
@@ -131,7 +139,7 @@ Now it would be useful to evaluate the quality of this data.
 6. **Evaluate synthetic data quality using the `validate` command:**
 
 ```
-singularity exec --bind data/:/data/ containers/synthetic-data-v1.0.0.sif validate data/config.yaml
+singularity exec --bind data/:/data/ containers/intervene-synthetic-data_latest.sif validate data/config.yaml
 ```
 
 This will store visualisations in the `data/outputs/test/evaluation` directory and print results for quantitative metrics. See our manuscript for details about the evaluation workflow.
@@ -288,7 +296,7 @@ The evaluation workflow computes a set of visualisations and quantitative metric
 The evaluation workflow can be run using the `validate` command, e.g. 
 
 ```
-singularity exec --bind data/:/data/ containers/synthetic-data-v1.0.0.sif validate data/config.yaml
+singularity exec --bind data/:/data/ containers/intervene-synthetic-data_latest.sif validate data/config.yaml
 ```
 
 Note that you can use the evaluation workflow with any PLINK-formatted synthetic dataset, i.e. it doesn't have to be generated using this tool.
@@ -312,7 +320,7 @@ The evaluation metrics are printed to standard output and plots are stored at `o
 The optimisation workflow uses approximate Bayesian computation (ABC) rejection sampling to estimate the posterior distributions of the unknown model parameters for the genotype generation model. This workflow can be run using the `optimise` command, e.g.
 
 ```
-singularity exec --bind data/:/data/ containers/synthetic-data-v1.0.0.sif optimise data/config.yaml
+singularity exec --bind data/:/data/ containers/intervene-synthetic-data_latest.sif optimise data/config.yaml
 ```
 
 | Parameter name | Possible values | Description |
@@ -353,7 +361,7 @@ cp ${CONFIG}.yaml ${CONFIG}$n.yaml
 sed -i 's/${chr}'"/$n/g" ${CONFIG}$n.yaml
 
 # generate data for each chromosome
-singularity exec --bind data/:/data/ containers/synthetic-data-v1.0.0.sif generate_geno 8 ${CONFIG}$n.yaml
+singularity exec --bind data/:/data/ containers/intervene-synthetic-data_latest.sif generate_geno 8 ${CONFIG}$n.yaml
 ```
 
 3. The script below shows how to generate synthetic phenotypes, using the genotypes generated in the previous step as input. This shouldn't be split into multiple jobs because the phenotype generation algorithm needs to sum genetic effects across all chromosomes included in the dataset.
@@ -368,5 +376,5 @@ cp ${CONFIG}.yaml ${CONFIG}_pheno$n.yaml
 sed -i 's/${chr}'"/all/g" ${CONFIG}_pheno$n.yaml
 
 # generate phenotype data
-singularity exec --bind data/:/data/ containers/synthetic-data-v1.0.0.sif generate_pheno ${CONFIG}_pheno$n.yaml
+singularity exec --bind data/:/data/ containers/intervene-synthetic-data_latest.sif generate_pheno ${CONFIG}_pheno$n.yaml
 ```
