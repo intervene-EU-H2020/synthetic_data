@@ -64,9 +64,9 @@ Currently the parameters are as below
 
 ```nComponent``` and ```CompWeight``` are number of guassian mixture components and their weights.
 
-```PopulationCorr``` is flattened correlation matrix for population genetic correlation (symmetric positive definite). nPop x nPop entries separated by comma.
+```PopulationCorr``` is a flattened correlation matrix for _population genetic correlation_ (symmetric positive definite). nPop x nPop entries separated by comma. Here _population genetic correlation_ is defined as correlation of SNP effects on the same trait across differnet populations. For the same trait, we assume the same set of causal variants shared across all populations, but each population can have their specific but overall correlated effect sizes.
 
-```TraitCorr``` is flattened correlation matrix for traits genetic correlation (symmetric positive definite). nTrait x nTrait entries separated by comma.
+```TraitCorr``` is a flattened correlation matrix for _traits correlation_ (symmetric positive definite). nTrait x nTrait entries separated by comma. Here _traits correlation_ parameter applies to 1. genetic effects of _shared_ causal variants between traits and 2. correlation of enviromental noise between traits.
 
 ```Pleiotropy``` is nTrait vector of trait's pleiotropy relationship **comparing to trait 1**. i.e. if trait 2 has Pleiotropy = 0.9, it means 90% of causal SNPs in trait 1 are also causal in trait 2. Therefore, first entry of ```Pleiotropy``` vector is always 1. Entries separated by comma.
 
