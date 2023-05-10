@@ -32,7 +32,11 @@ int main(int argc, char const *argv[])
 
     ExtractParam();
     ReadPopulation();
-    ReadRef();
+    if ( !NoRefFlag )
+	    ReadRef();
+
+	if (InterFlag)
+		ReadInter();
 
     if (!PolyFlag)
 		ReadCausal();
@@ -52,16 +56,18 @@ int main(int argc, char const *argv[])
 
 	printf("memset, done.\n");
 
-	for (k = 0; k < nTrait; k++) {
-		strcpy(tmpOutCausal, OutCausal);
-		sprintf(tmpBuff, "%d", (int)k+1);
-		OutFileCausal = fopen(strcat(tmpOutCausal, tmpBuff),"w");
-		if (OutFileCausal == NULL) {
-	        printf("Cannot open output causal file.\n");
-	        exit(0);
-	    } //check first wether the output file can be opened
-	    fprintf(OutFileCausal, "SNP\tBaseEff\tMAF\tLDscore\tBeta\n");
-		fclose(OutFileCausal);
+	if (CausalEffFlag != 1) { // if user input causal effect sizes, do not output causal SNP file
+		for (k = 0; k < nTrait; k++) {
+			strcpy(tmpOutCausal, OutCausal);
+			sprintf(tmpBuff, "%d", (int)k+1);
+			OutFileCausal = fopen(strcat(tmpOutCausal, tmpBuff),"w");
+			if (OutFileCausal == NULL) {
+		        printf("Cannot open output causal file.\n");
+		        exit(0);
+		    } //check first wether the output file can be opened
+		    fprintf(OutFileCausal, "SNP\tBaseEff\tMAF\tLDscore\tBeta\n");
+			fclose(OutFileCausal);
+		}
 	}
 
 	int CHR;
@@ -72,7 +78,6 @@ int main(int argc, char const *argv[])
 	i = 0; // SNP counter
     k = 0; // casual SNP counter
 
-	
     for (CHR = 0; CHR < 22; CHR++) {
     	i_chr = 0;
     	sprintf(InGenoCHR[CHR],"%s-%d", InGeno, CHR+1);
@@ -106,14 +111,22 @@ int main(int argc, char const *argv[])
 				    memset(PopMatTmp, 0, sizeof(double) * nMaxPop * nMaxInd * 3);
 				    memset(GenoMat, 0, sizeof(double) * nMaxInd);
 					for (j = 0; j < nSample; j++) {
-						GenoMat[j] = ((SNPbuffer[j]==3.0) ? 0.0 : 2-SNPbuffer[j]);
+						GenoMat[j] = ((SNPbuffer[j]==3.0) ? 0.0 : 2-SNPbuffer[j]); // counting the number of A1 allele in the bim file
 						PopIndex = PopIndicator[j];
 						tmpPopCt = PopSampleCt[PopIndex];
-						PopMatTmp[PopIndex][0][tmpPopCt] = SNPbuffer[j];
+						PopMatTmp[PopIndex][0][tmpPopCt] = ((SNPbuffer[j]==3.0) ? 0.0 : 2-SNPbuffer[j]); // counting the number of A1 allele in the bim file
 						PopSampleCt[PopIndex]++;
 					}
 				    AnalyzeSNP((int)locus->chromosome, SNP);
 				    k++;
+				}
+				if (InterFlag) {
+					flag = FindInterItem(SNP);
+					if (flag != -1) {
+						for (j = 0; j < nSample; j++) {
+							InterItemMat[flag][j] = ((SNPbuffer[j]==3.0) ? 0.0 : 2-SNPbuffer[j]);
+						}
+					}
 				}
 				i++;
 				i_chr++;
@@ -127,6 +140,13 @@ int main(int argc, char const *argv[])
 	if (nCovar) {
 		printf("Getting Cov Effect...\n");
 		GetCovarEff();
+		printf("done.\n");
+	}
+
+
+	if (InterFlag) {
+		printf("Getting Interaction Effect...\n");
+		GetInterEff();
 		printf("done.\n");
 	}
 
