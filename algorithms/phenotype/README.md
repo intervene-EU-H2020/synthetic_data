@@ -2,6 +2,8 @@
 
 _"Working code" for phenotype generation, subject to further updates._
 
+_2023.05.10 Implemented interaction effect; users pecified causal effect; user specified homo/heter effect, and included some minor fixed. Still testing, Zhiyu need to update readme._
+
 _2022.07.28 Now accepting plink binary files as input. Need to install plinkio library._
 
 _2022.06.21 Now process genotype input file by chromosome, so that for larget data set generating traw file is more feasible._
