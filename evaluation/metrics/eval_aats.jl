@@ -63,10 +63,12 @@ function run_aats(ibsfile_cross)
     p = Progress(length(ids_real); desc="Computing on reference dataset", enabled=!is_logging(stderr))
     for (idx, id) ∈ enumerate(ids_real)
         d_TT[idx] = minimum(
-            df_real[(df_real.ID1 .== id) .| (df_real.ID2 .== id), :Dist]
+            df_real[(df_real.ID1 .== id) .| (df_real.ID2 .== id), :Dist];
+            init=10.0 # Some high value in case of no ID in file
         )
         d_TS[idx] = minimum(
-            df_cross[df_cross.REAL .== id, :Dist]
+            df_cross[df_cross.REAL .== id, :Dist];
+            init=10.0
         )
         ProgressMeter.next!(p)
     end
@@ -77,10 +79,12 @@ function run_aats(ibsfile_cross)
     p = Progress(length(ids_real); desc="Computing on synthetic dataset", enabled=!is_logging(stderr))
     for (idx, id) ∈ enumerate(ids_synt)
         d_SS[idx] = minimum(
-            df_synt[(df_synt.ID1 .== id) .| (df_synt.ID2 .== id), :Dist]
+            df_synt[(df_synt.ID1 .== id) .| (df_synt.ID2 .== id), :Dist];
+            init=10.0
         )
         d_ST[idx] = minimum(
-            df_cross[df_cross.SYNT .== id, :Dist]
+            df_cross[df_cross.SYNT .== id, :Dist];
+            init=10.0
         )
         ProgressMeter.next!(p)
     end
