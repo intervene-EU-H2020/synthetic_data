@@ -2,7 +2,7 @@
 
 _"Working code" for phenotype generation, subject to further updates._
 
-_2023.05.10 Implemented interaction effect; user specified causal effect; user specified homo/heter effect; made annotation file optional; and included some minor fix to (hopefully) make more robust. Still testing, Zhiyu still needs to current annotation file aligning to genoytpe generation output (chr_pos_allele) and add some warning messages._
+_2023.05.10 Implemented interaction effect; user specified causal effect; user specified homo/heter effect; made annotation file optional; fixed a bug searching for SNPs in the reference file; and included some minor fix to (hopefully) make more robust. Tested and working. Please let us know if you notice anything abnormal with the new functions._
 
 _2022.07.28 Now accepting plink binary files as input. Need to install plinkio library._
 
