@@ -572,28 +572,27 @@ void ReadCausal() {
 	    	while (fgets(buffer, sizeof(buffer), InFileCausal) != NULL) {
 	    		p = buffer;
 				tok = strtok_r(p, " ,\t\n", &p);
-				if ( tok[0] != '\0' ) {
-				    strcpy(CausalList[k][nCausal[k]], tok);
-				    if (CausalEffFlag == 1) {
-				    	tok = strtok_r(p, " ,\t\n", &p);
-				    	if ( tok[0] != '\0' ) {
-							CausalEff[k][nCausal[k]][0] = atof(tok);
-						}
-						else {
-							printf("Trait %ld SNP %s missing homogenous causal effect size. Assigning 0.0.\n", k, CausalList[k][nCausal[k]]);
-							CausalEff[k][nCausal[k]][0] = 0.0;
-						}
-						tok = strtok_r(p, " ,\t\n", &p);
-				    	if ( tok[0] != '\0' ) {
-							CausalEff[k][nCausal[k]][1] = atof(tok);
-						}
-						else {
-							printf("Trait %ld SNP %s missing heterogenous causal effect size. Assigning 0.0.\n", k, CausalList[k][nCausal[k]]);
-							CausalEff[k][nCausal[k]][1] = 0.0;
-						}	
-				    }
-				    nCausal[k] += 1;
-		    	}
+			    strcpy(CausalList[k][nCausal[k]], tok);
+			    if (CausalEffFlag == 1) {
+			    	tok = strtok_r(p, " ,\t\n", &p);
+			    	if ( tok == NULL ) {
+						printf("Trait %ld SNP %s missing homogenous causal effect size. Assigning 0.0.\n", k, CausalList[k][nCausal[k]]);
+						CausalEff[k][nCausal[k]][0] = 0.0;
+					}
+					else {
+						CausalEff[k][nCausal[k]][0] = atof(tok);
+						
+					}
+					tok = strtok_r(p, " ,\t\n", &p);
+			    	if ( tok == NULL ) {
+						printf("Trait %ld SNP %s missing heterogenous causal effect size. Assigning 0.0.\n", k, CausalList[k][nCausal[k]]);
+						CausalEff[k][nCausal[k]][1] = 0.0;
+					}
+					else {
+						CausalEff[k][nCausal[k]][1] = atof(tok);
+					}
+			    }
+			    nCausal[k] += 1;
 	    	}
 			printf("Trait %ld: input %ld causal SNPs.\n", k, nCausal[k]);
 			fclose(InFileCausal);
@@ -632,32 +631,33 @@ void ReadInter() {
 	    	while (fgets(buffer, sizeof(buffer), InFileInteract) != NULL) {
 	    		p = buffer;
 				tok = strtok_r(p, " ,\t\n", &p);
-				if ( tok[0] != '\0' ) {
-				    strcpy(InterList[k][nInter[k]].Term1, tok);
-				    if (FindInterItem(tok) == -1) {
-				    	strcpy(InterItemList[nTotInterItem], tok);
-				    	nTotInterItem += 1;
-				    }
-				}
+			    
+			    strcpy(InterList[k][nInter[k]].Term1, tok);
+			    if (FindInterItem(tok) == -1) {
+			    	strcpy(InterItemList[nTotInterItem], tok);
+			    	nTotInterItem += 1;
+			    }
+
 				tok = strtok_r(p, " ,\t\n", &p);
-				if ( tok[0] != '\0' ) {
-				    strcpy(InterList[k][nInter[k]].Term2, tok);
-				    if (FindInterItem(tok) == -1) {
-				    	strcpy(InterItemList[nTotInterItem], tok);
-				    	nTotInterItem += 1;
-				    }
-				}
-				else {
+				if (tok == NULL) {
 					printf("Missing 2nd interaction term. Skip.\n");
 					strcpy(InterList[k][nInter[k]].Term2, "NaN");
 				}
-				tok = strtok_r(p, " ,\t\n", &p);
-				if ( tok[0] != '\0' )
-				    InterList[k][nInter[k]].InterEff = atof(tok);
 				else {
-					printf("Missing interaction effect size. Assigning 0.0.\n");
-					InterList[k][nInter[k]].InterEff = 0.0;
-				}
+					strcpy(InterList[k][nInter[k]].Term2, tok);
+				    if (FindInterItem(tok) == -1) {
+				    	strcpy(InterItemList[nTotInterItem], tok);
+				    	nTotInterItem += 1;
+				    }
+				    
+				    tok = strtok_r(p, " ,\t\n", &p);
+					if ( tok == NULL ) {
+						printf("Missing interaction effect size. Assigning 0.0.\n");
+						InterList[k][nInter[k]].InterEff = 0.0;
+					}
+					else
+						InterList[k][nInter[k]].InterEff = atof(tok);
+				}					
 				nInter[k] += 1;
 	    	}
 			printf("Trait %ld: input %d interaction terms.\n", k, nInter[k]);
@@ -665,7 +665,7 @@ void ReadInter() {
 		}
 	}
 	if (nTotInterItem != 0) {
-		printf("Total %d interaction terms.\n", nTotInterItem);
+		printf("Total %d interaction items.\n", nTotInterItem);
 		InterItemMat = malloc(nSample * sizeof(double *));
 		for (i = 0; i < nTotInterItem; i++) {
 			InterItemMat[i] = malloc(nSample * sizeof(double));
@@ -833,56 +833,58 @@ void GetInterEff() {
 	int CovarIndex[2];
 	int SNPindex[2];
 	int Term1SNP; int Term2SNP;
-
 	printf("Note: SNP x SNP interaction is considered genetic effect; SNP x covariate, covariate x covariate interactions are considered covariate effect.\n");
+
 	for (k = 0; k < nTrait; k++) {
 		for (i = 0; i < nInter[k]; i++) {
-			memset(CovarIndex, 0, sizeof(int) * 2);
-			memset(SNPindex, 0, sizeof(int) * 2);
-			if (strncmp("covar", InterList[k][i].Term1, strlen("covar")) == 0) {
-				CovarIndex[0] = atoi(InterList[k][i].Term1 + 5) - 1;
-				Term1SNP = 0;
-			}
-			else {
-				SNPindex[0] = FindInterItem(InterList[k][i].Term1);
-				Term1SNP = 1;
-			}
-
-			if (strncmp("covar", InterList[k][i].Term2, strlen("covar")) == 0) {
-				CovarIndex[1] = atoi(InterList[k][i].Term2 + 5) - 1;
-				Term2SNP = 0;
-			}
-			else {
-				SNPindex[1] = FindInterItem(InterList[k][i].Term2);
-				Term2SNP = 1;
-			}
-
-			if (Term1SNP && Term2SNP) { // Epistasis, effect attributed to genetics
-				for (j = 0; j < nSample; j++)
-					GenoEff[k][j] += InterList[k][i].InterEff * InterItemMat[SNPindex[0]][j] * InterItemMat[SNPindex[1]][j];
-			}
-			if (Term1SNP && !Term2SNP) { // SNP x covariate interaction
-				if (CovarIndex[1] < nCovar){
-					for (j = 0; j < nSample; j++)
-						CovarEff[k][j] += InterList[k][i].InterEff * InterItemMat[SNPindex[0]][j] * CovarMat[CovarIndex[1]][j];
+			if ( strcmp("NaN", InterList[k][i].Term1) && strcmp("NaN", InterList[k][i].Term2) ) {
+				memset(CovarIndex, 0, sizeof(int) * 2);
+				memset(SNPindex, 0, sizeof(int) * 2);
+				if (strncmp("covar", InterList[k][i].Term1, strlen("covar")) == 0) {
+					CovarIndex[0] = atoi(InterList[k][i].Term1 + 5) - 1;
+					Term1SNP = 0;
 				}
-				else 
-					printf("Covariate index our of bound! Input %d covatiates, index %d.\n", nCovar, CovarIndex[1]+1);
-			}
-			if (!Term1SNP && Term2SNP) { // SNP x covariate interaction
-				if (CovarIndex[0] < nCovar)
-					for (j = 0; j < nSample; j++)
-						CovarEff[k][j] += InterList[k][i].InterEff * InterItemMat[SNPindex[1]][j] * CovarMat[CovarIndex[0]][j];
-				else 
-					printf("Covariate index our of bound! Input %d covatiates, index %d.\n", nCovar, CovarIndex[0]+1);
-			}
-			if (!Term1SNP && !Term2SNP) { // covariate x covariate interaction
-				if ((CovarIndex[0] < nCovar) && (CovarIndex[1] < nCovar)) {
-					for (j = 0; j < nSample; j++)
-						CovarEff[k][j] += InterList[k][i].InterEff * CovarMat[CovarIndex[0]][j] * CovarMat[CovarIndex[1]][j];
+				else {
+					SNPindex[0] = FindInterItem(InterList[k][i].Term1);
+					Term1SNP = 1;
 				}
-				else 
-					printf("Covariate index our of bound! Input %d covatiates, index %d and %d.\n", nCovar, CovarIndex[0]+1, CovarIndex[1]+1);
+
+				if (strncmp("covar", InterList[k][i].Term2, strlen("covar")) == 0) {
+					CovarIndex[1] = atoi(InterList[k][i].Term2 + 5) - 1;
+					Term2SNP = 0;
+				}
+				else {
+					SNPindex[1] = FindInterItem(InterList[k][i].Term2);
+					Term2SNP = 1;
+				}
+
+				if (Term1SNP && Term2SNP) { // Epistasis, effect attributed to genetics
+					for (j = 0; j < nSample; j++)
+						GenoEff[k][j] += InterList[k][i].InterEff * InterItemMat[SNPindex[0]][j] * InterItemMat[SNPindex[1]][j];
+				}
+				if (Term1SNP && !Term2SNP) { // SNP x covariate interaction
+					if (CovarIndex[1] < nCovar){
+						for (j = 0; j < nSample; j++)
+							CovarEff[k][j] += InterList[k][i].InterEff * InterItemMat[SNPindex[0]][j] * CovarMat[CovarIndex[1]][j];
+					}
+					else 
+						printf("Covariate index our of bound! Input %d covatiates, index %d.\n", nCovar, CovarIndex[1]+1);
+				}
+				if (!Term1SNP && Term2SNP) { // SNP x covariate interaction
+					if (CovarIndex[0] < nCovar)
+						for (j = 0; j < nSample; j++)
+							CovarEff[k][j] += InterList[k][i].InterEff * InterItemMat[SNPindex[1]][j] * CovarMat[CovarIndex[0]][j];
+					else 
+						printf("Covariate index our of bound! Input %d covatiates, index %d.\n", nCovar, CovarIndex[0]+1);
+				}
+				if (!Term1SNP && !Term2SNP) { // covariate x covariate interaction
+					if ((CovarIndex[0] < nCovar) && (CovarIndex[1] < nCovar)) {
+						for (j = 0; j < nSample; j++)
+							CovarEff[k][j] += InterList[k][i].InterEff * CovarMat[CovarIndex[0]][j] * CovarMat[CovarIndex[1]][j];
+					}
+					else 
+						printf("Covariate index our of bound! Input %d covatiates, index %d and %d.\n", nCovar, CovarIndex[0]+1, CovarIndex[1]+1);
+				}
 			}
 		}
 	}
@@ -963,10 +965,10 @@ double IsCausal(char SNP[50]) {
 
 long int FindSNPinRef(char SNP[50], int chr) {
 	int i; 
-	for (i = 0; i < SNPct[chr]; i++) {
-		// printf("i = %d, SNP = %s, total SNP on chr = %d\n", i, RefSNP[chr][i].SNP, SNPct[chr]);
-		if (strcmp(SNP, RefSNP[chr][i].SNP) == 0)
+	for (i = 0; i < SNPct[chr-1]; i++) {
+		if (strcmp(SNP, RefSNP[chr-1][i].SNP) == 0) {
 			return(i);
+		}
 	}
 	return(-1);
 }
@@ -1034,8 +1036,8 @@ void AnalyzeSNP(int chr, char SNP[50]) {
 			CausalAnnot = 1.0;
 		}
 		else {
-	    	CausalLDscore = RefSNP[chr][SNPindex].AfricaLDscore;
-	    	CausalAnnot = RefSNP[chr][SNPindex].DHS + 1;
+	    	CausalLDscore = RefSNP[chr-1][SNPindex].AfricaLDscore;
+	    	CausalAnnot = RefSNP[chr-1][SNPindex].DHS + 1;
 	    }
 	    memset(tmpMAF, '\0', sizeof tmpMAF);
 	    for (n = 0; n < nPop; n++) {
