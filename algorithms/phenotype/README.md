@@ -80,7 +80,7 @@ Currently the parameters are as below
 
 ```SampleList``` is a population and covariate (if any) list, in the order of sample listed in the header of input .traw file. Fist column should contain categorical population code for each sample (mandatory); rest of the columns should contains numerical covariates, columns separated by comma. Length of this file must match sample size in .traw file.
 
-```Reference``` It also takes an optional reference file for LD. A example reference file with hapmap3 SNPs can be downloaded with HAPNEST. If this is not provided, LD and functional based effect size simulation will be disabled.
+```Reference``` It also takes an **optional** reference file for LD. A example reference file with hapmap3 SNPs can be downloaded with HAPNEST. If this is not provided, LD and functional based effect size simulation will be disabled.
 
 ```GenoFile``` Input genotype file, in .traw format **by chromosome**, ie takes plink files by chromosome, named as _GenoFile_-chr.bim/bed/fam, where chr is the chromosome number (1-22). Can be generated using ```plink --make-bed``` from other formats
 
