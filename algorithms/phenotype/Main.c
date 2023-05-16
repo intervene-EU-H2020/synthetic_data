@@ -3,10 +3,20 @@
 
 int main(int argc, char const *argv[])
 {
+	if (argc < 2) {
+		printf("No parameter file input. Terminate.\n");
+		exit(0);
+	}
+
 	gsl_set_error_handler_off();
 	const gsl_rng_type * T;
 	gsl_rng_env_setup();
-    gsl_rng_default_seed = atoi(argv[2]);
+	if (argc < 3) {
+		printf("No random seed input. Using 142857.\n");
+		gsl_rng_default_seed = 142857;
+	}
+	else
+		gsl_rng_default_seed = atoi(argv[2]);
     T = gsl_rng_default;
     r = gsl_rng_alloc (T);
 
