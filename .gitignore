@@ -1,4 +1,5 @@
 data/inputs
 data/outputs
 software/
+logs/
 Manifest.toml
