@@ -33,11 +33,12 @@ function create_cross_datasets(ref_prefix, plink)
     cross1_prefix = @sprintf("%s_1", ref_prefix)
     cross2_prefix = @sprintf("%s_2", ref_prefix)
     nsamples_cross1 = nrow(fam1_df)
+    nsamples_cross2 = nrow(fam2_df)
 
     run(`$plink --bfile $ref_prefix --keep $fam_file1 --make-bed --out $cross1_prefix`)
     run(`$plink --bfile $ref_prefix --keep $fam_file2 -make-bed --out $cross2_prefix`)
     
-    return cross1_prefix, cross2_prefix, nsamples_cross1
+    return cross1_prefix, cross2_prefix, nsamples_cross1, nsamples_cross2
 end
 
 
