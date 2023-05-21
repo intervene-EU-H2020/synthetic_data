@@ -26,7 +26,7 @@ This software tool was developed by members of [INTERVENE (INTERnational consort
     - [Phenotype data parameters](#phenotype-data-parameters)
 - [Understanding your synthetic datasets](#understanding-your-synthetic-datasets)
     - [Evaluating synthetic data quality](#evaluating-synthetic-data-quality)
-    - [Optimising model parameters using ABC](#optimising-model-parameters)
+    - [Optimising model parameters using ABC](#optimising-model-parameters-using-abc)
 - [Large scale synthetic data generation](#large-scale-synthetic-data-generation)
 
 
