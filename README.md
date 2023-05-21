@@ -26,7 +26,7 @@ This software tool was developed by members of [INTERVENE (INTERnational consort
     - [Phenotype data parameters](#phenotype-data-parameters)
 - [Understanding your synthetic datasets](#understanding-your-synthetic-datasets)
     - [Evaluating synthetic data quality](#evaluating-synthetic-data-quality)
-    - [Optimising model parameters](#optimising-model-parameters)
+    - [Optimising model parameters using ABC](#optimising-model-parameters-using-abc)
 - [Large scale synthetic data generation](#large-scale-synthetic-data-generation)
 
 
@@ -64,13 +64,19 @@ singularity exec --bind data/:/data/ containers/intervene-synthetic-data_latest.
 singularity exec --bind data/:/data/ containers/intervene-synthetic-data_latest.sif fetch
 ```
 
-5. Generate synthetic genotypes and phenotypes, and evaluate the data quality:
+5. Generate synthetic genotypes and phenotypes, and (optionally) evaluate the data quality:
 
+Synthetic data generation:
 ```
 singularity exec --bind data/:/data/ containers/intervene-synthetic-data_latest.sif generate_geno 1 data/config.yaml
 singularity exec --bind data/:/data/ containers/intervene-synthetic-data_latest.sif generate_pheno data/config.yaml
+```
+
+Evaluation (optional - please note this can take a while to execute for larger synthetic datasets):
+```
 singularity exec --bind data/:/data/ containers/intervene-synthetic-data_latest.sif validate data/config.yaml
 ```
+
 
 ## Extended version
 
@@ -136,7 +142,7 @@ The number given after `generate_geno` in the first command is the number of com
 
 Now it would be useful to evaluate the quality of this data.
 
-6. **Evaluate synthetic data quality using the `validate` command:**
+6. **Evaluate synthetic data quality using the `validate` command (optional - please note this can take a while to execute for larger synthetic datasets):**
 
 ```
 singularity exec --bind data/:/data/ containers/intervene-synthetic-data_latest.sif validate data/config.yaml
@@ -299,7 +305,7 @@ The evaluation workflow can be run using the `validate` command, e.g.
 singularity exec --bind data/:/data/ containers/intervene-synthetic-data_latest.sif validate data/config.yaml
 ```
 
-Note that you can use the evaluation workflow with any PLINK-formatted synthetic dataset, i.e. it doesn't have to be generated using this tool.
+Note that you can use the evaluation workflow with any PLINK-formatted synthetic dataset, i.e. it doesn't have to be generated using this tool. However, please note that the code assumes that the IDs in the .fam file begin with the prefix "syn".
 
 You can enable/disable different types of metrics by setting `true`/`false` values in the configuration file:
 
@@ -315,13 +321,100 @@ You can enable/disable different types of metrics by setting `true`/`false` valu
 
 The evaluation metrics are printed to standard output and plots are stored at `output_dir/evaluation`, where `output_dir` is specified in the `config.yaml` file. 
 
-## Optimising model parameters
+## Optimising model parameters using ABC
 
-The optimisation workflow uses approximate Bayesian computation (ABC) rejection sampling to estimate the posterior distributions of the unknown model parameters for the genotype generation model. This workflow can be run using the `optimise` command, e.g.
+Approximate Bayesian computation (ABC) is a likelihood-free infererence technique that can be applied to estimate the posterior distributions of parameters for simulation-based models. The key steps in performing an ABC analysis are summarised below:
+
+0. **Setup**: This tutorial assumes that you have made a copy of the `config.yaml` file. You can either update the configuration for your own use case or use the values described in this tutorial. In particular:
+  - For `global_parameters`, you should set a `chromosome` (choose a specific value between 1-22) and a `superpopulation` (choose one of `AFR`, `AMR`, `EAS`, `EUR`, `CSA`, `MID`)
+  - For `filepaths`, either update the values or use the defaults, which will use 1KG+HGDP as the reference dataset
+  - For `genotype_data`, set `use_default: true` and choose the size of the synthetic datasets by specifying a value for `nsamples`
+
+Example - copy the full `config.yaml` file and edit the following sections:
+```
+global_parameters:
+  ...
+  chromosome: 1
+  superpopulation: EUR
+
+...
+
+genotype_data:
+  samples:
+    use_default: true # setting this to true will ignore the custom population groups
+    ...
+    default:
+      nsamples: 1000
+```
+
+***Note: if you want to continue with the default settings, you can skip to step 4***
+
+1. **Define prior distributions for the unknown parameters**: First we need to define prior distributions representing our prior beliefs about the values for the unknown parameters: effective population size, `Ne`, and recombination rate, `rho`. HAPNEST uses uniform priors for these parameters, for a fixed superpopulation. Update the `config.yaml` file to specify the upper and lower bounds of the uniform distributions for `rho` and `Ne`. For example, `uniform_lower: 0, uniform_lower: 3` will uniformly sample parameter values between 0 and 3. 
+
+Example:
+```
+optimisation:
+  # prior distributions - specify lower/upper bounds for uniform priors
+  priors:
+    rho:
+      uniform_lower: 0
+      uniform_upper: 3
+    Ne:
+      uniform_lower: 0
+      uniform_upper: 50000
+```
+
+2. **Define a summary statistic or a set of summary statistics that capture the relevant features of the data:** The summary statistics are used to quantify the objectives for the ABC simulation. HAPNEST currently supports two options: (1) `ld_decay`, which aims to preserve LD structure of real genotype data by minimising the Euclidean distance between LD decay curves of the reference and synthetic datasets, and (2) `kinship`, which aims to preserve relatedness structure of real genotype data, using a kinship-based relatedness analysis. You can choose to use one or both of these summary statistics, by setting the value/s to `true` or `false` in the `config.yaml` file.
+
+Example:
+```
+optimisation:
+  ...
+  # choice of summary statistic/s
+  summary_statistics:
+    ld_decay: true
+    kinship: true
+```
+
+3. **Choose a simulation type and specify the simulation parameters:** Choose either the `simulation_rejection_ABC` or `emulation_rejection_ABC` approach by setting `run: true` and specify a `threshold` for accepting/rejecting parameters based on the summary statistics (if you are unsure of a suitable threshold for your use case you can select an arbitrarily high value such as 1.0 and see step 5 for post-simulation analysis). Simulation-based rejection sampling (`simulation_rejection_ABC`) repeatedly samples parameters from the prior distributions and calculates summary statistics for data simulated from the model using those parameters to decide whether to accept or reject the candidate samples. Emulation-based rejection sampling (`emulation_rejection_ABC`) is a more efficient variation of simulation-based rejection sampling that learns a surrogate model to estimate the summary statistic values for different parameter values, which can aid computationally expensive simulations of large synthetic datasets. For method-specific parameters, see the [documentation for the Julia GpABC package](https://tanhevg.github.io/GpABC.jl/stable/).
+
+Example:
+```
+optimisation:
+  # inference type - simulation-based rejection ABC or emulation-based rejection ABC
+  simulation_rejection_ABC:
+    run: true
+    n_particles: 500
+    threshold: 0.15
+    max_iter: 500
+    write_progress: true
+  emulation_rejection_ABC:
+    run: false
+    n_particles: 500
+    threshold: 0.15
+    n_design_points: 50
+    max_iter: 500
+    write_progress: true
+```
+
+
+4. **Run a simulation to generate samples of parameters from the prior distributions and simulate data from the model using those parameters:** The `optimise` command runs the ABC simulation and calculates the summary statistics for the simulated data and compares them with the summary statistics for the reference data using a distance measure. The idea is that parameters are accepted if the distance is below the predefined `threshold` and rejected otherwise, where the accepted parameters form an approximation of the posterior distribution.
 
 ```
 singularity exec --bind data/:/data/ containers/intervene-synthetic-data_latest.sif optimise data/config.yaml
 ```
+
+5. **Analyse and use the results for generating synthetic datasets:** The optimisation pipeline creates two outputs in the `optimisation` directory: (1) `{prefix}_sim.csv`, the raw table of accepted parameter values and their distance measure `d`; and (2) `{prefix}_sim.png`, a plot of the resulting posterior distributions for each parameter. In the Jupyter notebook `optimisation/example/analysis.ipynb` we provide example code for conducting further analysis of these results. To summarize:
+  - Further analyse the posterior distributions for each parameter by plotting histograms or density plots for varying acceptance thresholds (example pictured below)
+  - Calculate point estimates, such as the mean, for each parameter. These point estimates can then be used as values for `rho` and `Ne` in the `config.yaml` file for generating synthetic datasets
+  - Perform model validation by simulating datasets with the new parameter values and comparing the simulated data with the observed data using HAPNEST's `evaluation` pipeline
+
+![abc diagram](abc_diagram.png)
+
+
+***
+
+A summary of options in the `config.yaml` file for optimisation is provided below:  
 
 | Parameter name | Possible values | Description |
 | --- | --- | --- |

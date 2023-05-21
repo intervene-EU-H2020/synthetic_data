@@ -13,10 +13,12 @@ include("../algorithms/genotype/genotype_algorithm.jl")
 """
 struct ABCMetadata
     statistics::Vector # list of summary statistics included in the optimisation 
-    ref_prefix::String # prefix for the reference dataset
+    ref_prefix::String # prefix for the reference dataset used to generate synthetic data
+    eval_ref_prefix::String # prefix for other reference used to compute summary statistics
     out_prefix::String # prefix for the synthetic dataset
     superpopulation::String # abbreviation for superpopulation
     nsamples_ref::Integer # number of samples in reference dataset
+    nsamples_eval_ref::Integer # number of samples for evaluation reference dataset
     nsamples_syn::Integer # number of samples in synthetic dataset
     bp_to_cm_map::Dict # a mapping to convert bp to cm distances
     plink::String # plink software path
@@ -116,7 +118,7 @@ end
 """
 function get_reference_statistics(ref_prefix, nsamples_ref)
     if "kinship" ∈ abc_metadata.statistics
-        cross1_prefix, cross2_prefix, nsamples_cross1 = create_cross_datasets(ref_prefix, abc_metadata.plink)
+        cross1_prefix, cross2_prefix, nsamples_cross1, nsamples_cross2 = create_cross_datasets(ref_prefix, abc_metadata.plink)
         sumstat = calculate_summary_statistic(ref_prefix, nsamples_ref, cross2_prefix, cross1_prefix, nsamples_cross1, true)
     else
         cross_prefix=NaN
@@ -132,9 +134,10 @@ function get_abc_metadata(options, superpopulation, filepaths, chromosome)
     bp_to_cm_map = create_bp_cm_ref(filepaths.genetic_distfile)
     statistics = [k for k in ["ld_decay", "kinship"] if options["optimisation"]["summary_statistics"][k]]
     ref_prefix, nsamples_ref = create_reference_dataset(filepaths.vcf_input_processed, filepaths.popfile_processed, genomic_metadata.population_weights, filepaths.plink, filepaths.reference_dir, chromosome)
+    ref1_prefix, ref2_prefix, nsamples_ref1, nsamples_ref2 = create_cross_datasets(ref_prefix, filepaths.plink)
     out_prefix = filepaths.optimisation_output
     nsamples_syn = options["genotype_data"]["samples"]["default"]["nsamples"]
-    return ABCMetadata(statistics, ref_prefix, out_prefix, superpopulation, nsamples_ref, nsamples_syn, bp_to_cm_map, filepaths.plink, filepaths.king, filepaths.mapthin)
+    return ABCMetadata(statistics, ref1_prefix, ref2_prefix, out_prefix, superpopulation, nsamples_ref1, nsamples_ref2, nsamples_syn, bp_to_cm_map, filepaths.plink, filepaths.king, filepaths.mapthin)
 end
 
 
@@ -151,7 +154,7 @@ function run_abc_for_superpopulation(options, filepaths, superpopulation, chromo
     global abc_metadata = get_abc_metadata(options, superpopulation, filepaths, chromosome)
 
     @info "Computing summary statistics for reference data"
-    sumstat_reference = get_reference_statistics(abc_metadata.ref_prefix, abc_metadata.nsamples_ref)
+    sumstat_reference = get_reference_statistics(abc_metadata.eval_ref_prefix, abc_metadata.nsamples_eval_ref)
     
     @info "Running optimisation pipeline"
     t = @elapsed begin
