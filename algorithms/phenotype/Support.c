@@ -196,7 +196,7 @@ void ExtractParam() {
     i = 0; k = 0;
     while ((tok = strtok_r(p, ",", &p))) {
     	if (i < nPop && k < nTrait) {
-    		if (atof(tok) > 0.0 && atof(tok) < 1.0) {
+    		if (atof(tok) >= 0.0 && atof(tok) <= 1.0) {
 	    		GenoEffProp[i][k] = atof(tok);
 	    		k += 1;
 	    		if (k == nTrait) {
