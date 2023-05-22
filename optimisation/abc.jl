@@ -49,11 +49,12 @@ end
 
 """Calculate summary statistics for ABC
 
-Set use_cross=true if calculating kinship for the reference dataset (because the is only one dataset)
+Set use_cross=true if calculating kinship for the reference dataset (because there is only one dataset)
 """
 function calculate_summary_statistic(syn_prefix, nsamples_syn, ref_prefix, cross_prefix=NaN, nsamples_cross=NaN, use_cross=false)
     if "ld_decay" ∈ abc_metadata.statistics
-        sumstat = LD_decay(syn_prefix, abc_metadata.plink, abc_metadata.mapthin, syn_prefix, abc_metadata.bp_to_cm_map)
+        ld_decay = LD_decay(syn_prefix, abc_metadata.plink, abc_metadata.mapthin, syn_prefix, abc_metadata.bp_to_cm_map)
+        sumstat = ld_decay[:,2]
     end
     if "kinship" ∈ abc_metadata.statistics
         if use_cross
@@ -68,6 +69,7 @@ function calculate_summary_statistic(syn_prefix, nsamples_syn, ref_prefix, cross
             sumstat = sumstat_kin
         end
     end
+    sumstat = reshape(sumstat,length(sumstat),1)
     return sumstat
 end
 

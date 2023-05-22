@@ -31,5 +31,5 @@ function kinship_cross(synfile, nsamples_synfile, reffile, king, out_prefix)
     
     data = [duplicate_samples, first_degree_samples, second_degree_samples, total_related_samples]
     
-    return [1:length(data) data]
+    return data
 end
