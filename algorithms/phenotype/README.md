@@ -2,6 +2,8 @@
 
 _"Working code" for phenotype generation, subject to further updates._
 
+_2023.05.10 Implemented interaction effect; user specified causal effect size; user specified homo/heter effect; made annotation file optional; fixed a bug searching for SNPs in the reference file; and included some minor fix to (hopefully) make more robust. Tested and working. Please let us know if you notice anything abnormal with the new functions._
+
 _2022.07.28 Now accepting plink binary files as input. Need to install plinkio library._
 
 _2022.06.21 Now process genotype input file by chromosome, so that for larget data set generating traw file is more feasible._
@@ -13,6 +15,8 @@ _Hmm.._
 _2022.01.19 Made a little faster (hopefully?)._
 
 Dependents: gsl, blas, lplinkio
+
+## Basic usage
 
 To compile, run 
 ```
@@ -76,13 +80,40 @@ Currently the parameters are as below
 
 ```SampleList``` is a population and covariate (if any) list, in the order of sample listed in the header of input .traw file. Fist column should contain categorical population code for each sample (mandatory); rest of the columns should contains numerical covariates, columns separated by comma. Length of this file must match sample size in .traw file.
 
-```Reference``` **It also takes a reference file for LD, but it's a little too big for github (~36Mb in .gz). Need to put it somewhere**
+```Reference``` It also takes an **optional** reference file for LD. A example reference file with hapmap3 SNPs can be downloaded with HAPNEST. If this is not provided, LD and functional based effect size simulation will be disabled.
 
 ```GenoFile``` Input genotype file, in .traw format **by chromosome**, ie takes plink files by chromosome, named as _GenoFile_-chr.bim/bed/fam, where chr is the chromosome number (1-22). Can be generated using ```plink --make-bed``` from other formats
 
 _For each trait_, it outputs two files, ```.pheno``` includes the genetic effect, environmental effect and synthetic phenotype for each individual.
 
 ```.causal``` includes the causal SNPs and their effect sizes in each population.
+
+## User specified variant effects
+
+As showed above, user can specified a list of causal variants for each trait, or trait polygenicity parameter to control the amount of variants being causal. In both cases, effect sizes of causal variants will be drawn randomly from a distribution. Alternatively, user can also specify the effect of each causal variant in the list. In this case, ```CausalList``` for each trait should contain 2 column: variant ID, and effect size in terms of beta for homo and homozygous genotypes, seperated by comma. Below is an example
+```
+rs56175625  0.5,0.25
+rs57804877  0.2,0.15
+rs201404203 0.3,0
+```
+The first row means causal variant ```rs56175625``` has effect 0.5 for genotype AA and effect 0.25 for Aa, were A is the risk allele. 
+For user-sepcified effects to be applied, please make sure to add below in the parameter file:
+```
+CausalEffect  T
+```
+Otherwise the effect size column in the ```CausalList``` will be ignored.
+**Note when user-sepcified effects are applied, trait and population genetic correlation will be disabled.** There will not be any population specific effect under user-sepcified effect option. 
+
+## Adding interaction terms
+
+You can now add interaction effects to the phenotype using the ```Interaction``` parameter. Similar to ```CausalList```, it takes prefix for lists of predefined interaction items to be applied on the phenotype. The list should contrain three columns: interaction term1, term2 and the effect size. An example looks like below:
+```
+rs202076079	covar1	0.1
+covar1	covar2	0.3
+rs16831418	rs115414386	0.2
+```
+Row 1 means that the genotype of variant rs202076079 x the first covariate in the ```SampleList``` (first column proceeding sample ID) has effect of 0.1 on the phenotype. Note the interaction can include SNP x SNP interaction (Epistasis effect), SNP x covariate effect or covariate x covariate effect. Covariate terms should be specified as ```covar```n, where n is the covariate index as ordered in the ```SampleList```.
+**Same as ```CausalList```, for each trait, the interation item file should be names as**  ```prefix```**n, where n is the trait index.**
 
 
 

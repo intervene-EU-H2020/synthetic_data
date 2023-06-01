@@ -115,7 +115,7 @@ RUN set -eux; \
     unzip $DOWNLOAD_DIR/plink1.zip -d "$PLINK_PATH"; \
 # Setup Plink2
     echo "Setting up Plink 2.0"; \
-    curl -fL -o $DOWNLOAD_DIR/plink2.zip "https://s3.amazonaws.com/plink2-assets/plink2_linux_avx2_20220603.zip"; \
+    curl -fL -o $DOWNLOAD_DIR/plink2.zip "https://s3.amazonaws.com/plink2-assets/plink2_linux_avx2_latest.zip"; \
     unzip $DOWNLOAD_DIR/plink2.zip -d "$PLINK2_PATH"; \
 # Setup KING
     echo "Setting up KING"; \

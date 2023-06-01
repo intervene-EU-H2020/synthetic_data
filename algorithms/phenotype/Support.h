@@ -12,14 +12,6 @@
 #include <gsl/gsl_blas.h>
 #include <gsl/gsl_linalg.h>
 
-// Defined parameters
-#define nMaxCausal 500000
-#define nMaxPop 10
-#define nMaxTrait 10
-#define nMaxInd 3000000
-#define nMaxCovar 10
-#define nMaxBetaGen 10000
-
 extern int status;
 extern int statusPop;
 extern int statusTrait;
@@ -27,17 +19,30 @@ extern int statusTrait;
 extern struct pio_file_t InGenoPlink;
 extern snp_t *SNPbuffer;
 
+// Defined parameters
+#define nMaxCausal 500000
+#define nMaxPop 10
+#define nMaxTrait 10
+#define nMaxInd 2000000
+#define nPCAsnp 10000
+#define nMaxCovar 10
+#define nMaxBetaGen 10000
+#define nMaxInter 50 // max 50 for each trait
+#define nMaxInterItem 1000 // nMaxInter * nMaxTrait * 2
+
+
 extern gsl_rng * r;
 
 // IO file names
 extern char InCausal[1000];
+extern char InInteract[1000];
 extern char InRef[1000];
 extern char InSample[1000];
 extern char InGeno[1000];
 extern char OutCausal[1000];
 extern char OutPheno[1000];
 
-extern int PolyFlag, BinaryFlag;
+extern int PolyFlag, BinaryFlag, CausalEffFlag, NoRefFlag, InterFlag;
 extern double pCausal[nMaxTrait];
 extern int CausalFlag[nMaxTrait];
 extern char tmpPCausal[10000];
@@ -62,6 +67,7 @@ extern int nSamplePerPop[nMaxPop];
 extern char PopList[nMaxPop][50];
 extern char SampleList[nMaxInd][100];
 extern char CausalList[nMaxTrait][nMaxCausal][50];
+extern double CausalEff[nMaxTrait][nMaxCausal][2];
 
 extern double CausalMAF[nMaxPop];
 extern double CausalLDscore;
@@ -73,7 +79,8 @@ extern double CausalBeta[nMaxPop][nMaxTrait];
 extern double BaseBeta[nMaxPop][nMaxTrait]; // Population * Trait
 extern double * GenoEff[nMaxTrait]; 
 extern double * CovarEff[nMaxTrait]; // Covar Eff includes effect from PCs and non genetic covariates (user input)
-extern double * EnvEff[nMaxTrait]; // Include corrlated noise and trait specific noise 
+extern double * EnvEff[nMaxTrait]; // Include corrlated noise and trait specific noise
+extern double * InterEff[nMaxTrait]; // Include corrlated noise and trait specific noise
 extern double * PhenoSim[nMaxTrait][2]; // 1--Continious measurement/liability 2--binary diagnosis
 
 extern double GenoEffProp[nMaxPop][nMaxTrait];
@@ -91,6 +98,9 @@ extern gsl_matrix * SigmaPop;
 extern gsl_matrix * L;
 extern gsl_vector * mu;
 
+extern gsl_matrix * tmpCorrGenoBeta;
+extern gsl_matrix * tmpL;
+
 extern double VarGeno[nMaxPop][nMaxTrait];
 extern double VarCovar[nMaxPop][nMaxTrait];
 extern double VarEnv[nMaxPop][nMaxTrait];
@@ -98,6 +108,8 @@ extern double GCEweight[nMaxPop][3];
 extern long int nCausal[nMaxTrait], nSample, nBetaIndex;
 extern int nPop, nTrait, nItem, nValidItem, nCovar;
 extern double a, b, c, prob;
+
+extern char tmpBuff[20];
 
 struct SNPinRef {
    char SNP[50];
@@ -107,10 +119,23 @@ struct SNPinRef {
    int DHS; // 1 -- yes, 0 -- no
 };  
 typedef struct SNPinRef SNPinfo;
-
 extern SNPinfo RefSNP[26][200000];
 extern long int SNPct[26];
 extern char buffer[50000000];
+
+
+struct InteractionItem {
+   char Term1[50];
+   char Term2[50];
+   double InterEff;
+};  
+typedef struct InteractionItem InterItem;
+extern int nTotInterItem;
+extern InterItem InterList[nMaxTrait][nMaxInter];
+extern char InterItemList[nMaxInterItem][50];
+extern int nInter[nMaxTrait];
+extern double ** InterItemMat;
+
 
 void ReadParam(const char *ParIn);
 
@@ -124,13 +149,21 @@ void ReadPopulation();
 
 void ReadCausal();
 
+int FindInterItem(char item[50]);
+
+void ReadInter();
+
 void ReadRef();
+
+long int findSNPinCausalList(char SNP[50], int k);
 
 void BaseBetaGen();
 
 void BaseBetaGet(double sigma);
 
 void GetCovarEff();
+
+void GetInterEff();
 
 void GetEnvEff();
 
